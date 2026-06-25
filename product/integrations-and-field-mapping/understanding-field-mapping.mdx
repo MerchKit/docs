@@ -1,0 +1,88 @@
+---
+title: "Understanding Field Mapping"
+description: "Learn what field mapping is and why it's critical for integration success."
+---
+
+# Understanding Field Mapping
+
+Field mapping is the translation layer between your external platform and Merchkit. It tells Merchkit which columns from your platform match which attributes in Merchkit.
+
+## What Is Field Mapping?
+
+When you import data from Shopify, every Shopify field (Title, Description, Product Type, etc.) exists in Merchkit under the same or a different name. Field mapping is the explicit pairing:
+
+```
+Shopify Field  →  Merchkit Column
+Title          →  Product Name
+Body HTML      →  Description
+Product Type   →  Category
+```
+
+Without clear mappings, Merchkit wouldn't know where to put imported data or what to export.
+
+## Import vs. Export Mapping
+
+**Import Mapping** = "When I pull data from the platform, where should each field go in Merchkit?"
+
+- Platform fields come in → Merchkit columns receive them
+- You control which SKUs to import with filters
+- Merges with existing Merchkit data
+
+**Export Mapping** = "When I push data back to the platform, which Merchkit column matches which platform field?"
+
+- Merchkit columns go out → Platform fields receive them
+- You decide what to publish and when
+- Updates the platform with your Merchkit enhancements
+
+## The Configure Field Mapping Modal
+
+Once your integration is connected, you'll configure mapping in the **Configure Field Mapping** modal. Access it from **Workspace → Integrations** → click your integration → **Configure Fields**.
+
+[SCREENSHOT: Configure Field Mapping modal with Import and Export tabs]
+
+The modal has two tabs:
+
+1. **Import Mapping** — How incoming data is organized
+2. **Export Mapping** — How outgoing data is organized
+
+Each tab shows:
+
+- A **dropdown** for multiple mapping profiles (e.g., "Default Import (Default)", or custom mappings you create)
+- **Field sections** organized by type: Product Fields, Metafields, Variant Fields, Variant Metafields
+- A **two-column layout** showing the translation: Platform Field → Merchkit Column (Import) or Merchkit Column → Platform Field (Export)
+- **Mapping controls**: Add, remove, or edit individual field pairs
+
+## Why Field Mapping Matters
+
+Without proper field mapping:
+
+- **Import fails**: Data arrives but lands in the wrong place, or doesn't arrive at all.
+- **Export overwrites**: You export Merchkit data, and it replaces good platform data because the mapping was wrong.
+- **Data inconsistency**: Your platform and Merchkit diverge, and you can't trust either as the source of truth.
+
+With good mapping:
+
+- You control the data flow end-to-end.
+- Imports are fast and predictable.
+- Exports sync your enhancements back to the live platform safely.
+- You can create multiple mapping profiles for different workflows (e.g., one for updates, one for new products).
+
+## When You Need Mapping
+
+You set up mapping once per integration. After that, every import or export uses the active mapping profile.
+
+- **First import**: You'll create or adjust mappings to pull in your product data correctly.
+- **Subsequent imports**: The same mapping applies unless you switch profiles.
+- **Exports**: You'll set up export mapping to push changes back out.
+
+## What Happens if a Field Isn't Mapped?
+
+**On Import**: Unmapped platform fields are ignored. They don't come into Merchkit.
+
+**On Export**: Unmapped Merchkit columns are shown with a gold/warning highlight, reminding you they won't sync out to the platform.
+
+This is by design—you decide what crosses the boundary, not an automated assumption.
+
+---
+
+**Next step**: [Setting Up Import Mapping](/product/integrations-and-field-mapping/setting-up-import-mapping)

@@ -1,0 +1,107 @@
+---
+title: "Running Your First Enrichment"
+description: "Execute AI enrichment on your products by selecting them in the Products view and using the Generate dropdown to populate attributes automatically."
+---
+
+# Running Your First Enrichment
+
+Once you've configured your attributes for AI enrichment in Part A, you're ready to run your first enrichment job. This is where Merchkit's AI reads your product data and generates values for the attributes you've set up.
+
+## Before You Start
+
+Make sure you've completed [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai). Your attributes must have:
+- The "Use AI" toggle enabled
+- A prompt defined
+- (Optional but recommended) Acceptable values configured
+
+## Step 1: Navigate to the Products View
+
+Go to your workspace and open the **Products** view. You'll see a table with all your products listed.
+
+[SCREENSHOT: Products view with product table showing columns for product name, SKU, and various attributes]
+
+## Step 2: Select the Products You Want to Enrich
+
+Check the checkbox next to each product you want to enrich. You can:
+- Select individual products by clicking their checkboxes
+- Use the header checkbox to select all products on the current page
+- Select across multiple pages if you have filters applied
+
+**Tip for your first run:** Start with 5–10 products. This helps you review the results quickly and catch any configuration issues before scaling up.
+
+[SCREENSHOT: Products table with several product rows highlighted with checkboxes selected, action bar appearing at bottom of screen]
+
+## Step 3: Open the Generate Dropdown
+
+Once you've selected your products, an **action bar** appears at the bottom of the screen. Click the **Generate** dropdown button.
+
+[SCREENSHOT: Action bar at bottom of screen showing "Generate" dropdown button]
+
+## Step 4: Choose Your Generate Option
+
+The Generate dropdown offers two options:
+
+### Option A: Generate Empty Attributes Only (⌘↵ / Ctrl+Enter)
+**Most common choice.** This option tells Merchkit to fill in only attributes that are currently empty. If an attribute already has a value—whether manually entered or from a previous enrichment—it's left untouched.
+
+**Use this when:**
+- Running enrichment for the first time
+- You've reviewed and manually corrected some values and don't want them overwritten
+- You want to preserve any reviewed data while filling in the gaps
+
+### Option B: Generate All Attributes
+This option re-generates **every** AI-configured attribute for the selected products, including attributes that already have values.
+
+**Use this when:**
+- You've updated your prompts and want all products to reflect the new logic
+- You've changed your Acceptable Values and need to regenerate to enforce the new constraints
+- You want a fresh start on specific attributes across your product set
+- **Warning:** This will overwrite any manually edited values. Use with caution on data you've already reviewed and corrected.
+
+[SCREENSHOT: Generate dropdown menu showing both options with descriptions]
+
+## What Happens Behind the Scenes
+
+When you click Generate, Merchkit runs the enrichment for each selected product:
+
+1. **Reads your product context:** Product data selections you configured (name, description, category, etc.) plus your Image Source
+2. **Applies your prompt:** The AI reads your custom prompt and understands what you're asking it to generate
+3. **Respects constraints:** If you've set Acceptable Values, the AI only generates values from that list
+4. **Checks dependencies:** If a dependent attribute is empty, the AI skips that product for that attribute
+5. **Generates output:** The AI produces a value and populates it in the table
+
+**Important:** Formulas, manual-entry fields, and Reference Lookups are never touched by the AI. Only attributes with the "Use AI" toggle enabled are affected.
+
+## What to Expect
+
+Results start appearing in your Products table immediately as the enrichment processes:
+
+- **Processing time** depends on the number of products and attributes being enriched. Typically, batches of 10–50 products complete within seconds to a minute.
+- **Status indication:** You'll see values populate in the table cells in real time.
+- **No waiting screen:** You can continue working in other parts of your workspace while enrichment runs in the background.
+
+## Reviewing Your Results
+
+After enrichment completes, take time to review what the AI generated. Open the next article, [Reviewing AI-Generated Content](/product/attributes-and-enrichment/reviewing-ai-content), to learn how to spot-check your results and assess quality before scaling up.
+
+## Common Issues
+
+**No Generate button appears**
+- Make sure you've selected at least one product. The action bar only shows when products are selected.
+- Verify that your workspace has attributes configured with "Use AI" enabled. If no AI-enabled attributes exist, Generate won't appear.
+
+**Enrichment completes but some products show no values**
+- Check if any dependent attributes are empty. The AI requires these to generate values for downstream attributes.
+- Review your attribute configuration—make sure your Prompt is clear and your Acceptable Values (if set) actually match your use case.
+
+**Values look wrong or too generic**
+- This usually points to a prompt that needs refinement or product data context that's missing. Jump to [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) to fix values, then see [Re-running Enrichment](/product/attributes-and-enrichment/rerunning-enrichment) to improve your configuration for the next batch.
+
+**I accidentally ran "Generate All Attributes" and overwrote my edits**
+- Don't worry—you can manually fix the values or re-run with "Generate Empty Attributes Only" next time. Merchkit doesn't have an undo, but you can edit cells directly in the table. See [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) for details.
+
+## Next Steps
+
+1. **Review your results:** Head to [Reviewing AI-Generated Content](/product/attributes-and-enrichment/reviewing-ai-content) to learn how to spot-check quality and identify issues.
+2. **Make corrections:** Use [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) to manually fix any values that don't look right.
+3. **Refine and scale:** Once you're confident, check out [Re-running Enrichment](/product/attributes-and-enrichment/rerunning-enrichment) to run enrichment on larger batches and improve your configuration over time.

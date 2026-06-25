@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Merchkit",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -9,26 +9,144 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "tab": "Product",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "product/getting-started/getting-started",
+              "product/getting-started/what-is-merchkit",
+              "product/getting-started/key-concepts-and-terminology",
+              "product/getting-started/onboarding-roadmap",
+              "product/getting-started/navigating-the-interface",
+              "product/getting-started/understanding-products-view"
+            ]
+          },
+          {
+            "group": "Sources & Importing",
+            "pages": [
+              "product/sources-and-importing/sources-and-importing",
+              "product/sources-and-importing/how-data-gets-into-merchkit",
+              "product/sources-and-importing/importing-first-catalog-csv",
+              "product/sources-and-importing/preparing-your-data-for-import",
+              "product/sources-and-importing/how-sources-work",
+              "product/sources-and-importing/adding-sources-to-product",
+              "product/sources-and-importing/bulk-importing-sources",
+              "product/sources-and-importing/working-with-vendors",
+              "product/sources-and-importing/managing-product-images",
+              "product/sources-and-importing/import-validation-errors",
+              "product/sources-and-importing/reimporting-updating-products"
+            ]
+          },
+          {
+            "group": "Attributes & Enrichment",
+            "pages": [
+              "product/attributes-and-enrichment/attributes-and-enrichment",
+              "product/attributes-and-enrichment/understanding-attributes",
+              "product/attributes-and-enrichment/auto-created-attributes",
+              "product/attributes-and-enrichment/configuring-attribute-for-ai",
+              "product/attributes-and-enrichment/writing-effective-prompts",
+              "product/attributes-and-enrichment/acceptable-values",
+              "product/attributes-and-enrichment/creating-custom-attributes",
+              "product/attributes-and-enrichment/field-type-guide",
+              "product/attributes-and-enrichment/building-dependent-attributes",
+              "product/attributes-and-enrichment/working-with-categories",
+              "product/attributes-and-enrichment/running-first-enrichment",
+              "product/attributes-and-enrichment/reviewing-ai-content",
+              "product/attributes-and-enrichment/editing-overriding-output",
+              "product/attributes-and-enrichment/rerunning-enrichment",
+              "product/attributes-and-enrichment/enrichment-quality",
+              "product/attributes-and-enrichment/bulk-enrichment",
+              "product/attributes-and-enrichment/parent-child-relationships"
+            ]
+          },
+          {
+            "group": "Integrations & Field Mapping",
+            "pages": [
+              "product/integrations-and-field-mapping/integrations-and-field-mapping",
+              "product/integrations-and-field-mapping/how-integrations-work",
+              "product/integrations-and-field-mapping/connecting-an-integration",
+              "product/integrations-and-field-mapping/understanding-field-mapping",
+              "product/integrations-and-field-mapping/setting-up-import-mapping",
+              "product/integrations-and-field-mapping/using-import-filters",
+              "product/integrations-and-field-mapping/setting-up-export-mapping",
+              "product/integrations-and-field-mapping/metafields-and-variants",
+              "product/integrations-and-field-mapping/platform-specific-guides",
+              "product/integrations-and-field-mapping/triggering-integration-sync"
+            ]
+          },
+          {
+            "group": "Channels & Content Generation",
+            "pages": [
+              "product/channels-and-content-generation/channels-and-content-generation",
+              "product/channels-and-content-generation/how-channels-work",
+              "product/channels-and-content-generation/adding-a-channel",
+              "product/channels-and-content-generation/channel-grid-view",
+              "product/channels-and-content-generation/channel-attribute-templates",
+              "product/channels-and-content-generation/customizing-channel-prompts",
+              "product/channels-and-content-generation/generating-channel-content",
+              "product/channels-and-content-generation/channel-specific-guides",
+              "product/channels-and-content-generation/pre-export-validation",
+              "product/channels-and-content-generation/exporting-channel-data",
+              "product/channels-and-content-generation/feed-validation-errors",
+              "product/channels-and-content-generation/continuous-optimization"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "product/troubleshooting/troubleshooting",
+              "product/troubleshooting/import-source-errors",
+              "product/troubleshooting/attribute-enrichment-issues",
+              "product/troubleshooting/integration-mapping-errors",
+              "product/troubleshooting/channel-feed-errors",
+              "product/troubleshooting/account-access-issues"
+            ]
+          },
+          {
+            "group": "Glossary",
+            "pages": [
+              "product/glossary/glossary",
+              "product/glossary/glossary-terms"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "product/reference/reference",
+              "product/reference/formula-functions"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API & MCP",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "developers/overview",
+              "developers/authentication",
+              "developers/conventions",
+              "developers/mcp"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "openapi": "https://app.merchkit.com/api/v1/openapi"
+          }
         ]
       }
     ],
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "merchkit.com",
+          "href": "https://www.merchkit.com",
+          "icon": "house"
         }
       ]
     }
@@ -41,32 +159,22 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@merchkit.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "Go to App",
+      "href": "https://app.merchkit.com/home"
     }
   },
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude", "mcp", "cursor", "vscode"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/merchkit",
+      "linkedin": "https://linkedin.com/company/merchkit"
     }
   }
 }

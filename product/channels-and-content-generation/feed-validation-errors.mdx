@@ -1,0 +1,354 @@
+---
+title: "Feed Validation & Error Resolution"
+description: "Diagnose and fix common channel and feed rejection reasons. Understand channel-specific error patterns and how to resolve them."
+---
+
+# Feed Validation & Error Resolution
+
+Sometimes a marketplace rejects your feed or individual products. Don't panic—most rejections are fixable. This guide walks you through diagnosing and resolving common errors.
+
+## Where Errors Come From
+
+Errors can originate from:
+
+1. **Pre-export validation in Merchkit** — Catches format and required field issues before export
+2. **Marketplace feed validation** — Happens when you upload; marketplace checks format, business rules, and completeness
+3. **Listing suppression** — After marketplace accepts your feed, listings are suppressed (hidden) if they violate policies
+
+## Understanding Error Messages
+
+When a marketplace rejects your feed, you receive:
+
+- **Error list** — Specific products or attributes with issues
+- **Error codes** — Marketplace-specific codes (e.g., "INVALID_PRICE_FORMAT")
+- **Error descriptions** — Plain-English explanation of what's wrong
+- **Error locations** — Which row/product/attribute has the issue
+
+[SCREENSHOT: Example Wayfair feed rejection email with error list]
+
+### Common Error Message Formats
+
+**Wayfair:**
+> "Row 42: Required attribute 'Carton_Width' is missing. Product SKU: SOFA-001"
+
+**Amazon:**
+> "Error: Invalid value for 'List Price'. Expected numeric format, got 'Call for price'. Submission ID: B00001"
+
+**Google Merchant:**
+> "Missing required attribute: 'gtin'. Product ID: 12345. Category: Furniture > Sofas"
+
+## Diagnosing Errors: The Process
+
+When you receive a feed rejection:
+
+1. **Read the error message carefully** — Identify which product(s) and which attribute(s)
+2. **Categorize the error type** — Is it missing data? Wrong format? Business rule violation?
+3. **Fix the issue in Merchkit** — Edit the data or regenerate
+4. **Re-validate** — Check that the fix worked
+5. **Re-export and resubmit** — Upload the corrected feed
+
+## Common Error Types by Category
+
+### Category 1: Missing Required Fields
+
+**Error:** "Required field 'X' is missing for product SKU: [SKU]"
+
+**Cause:** A marketplace-required attribute is blank.
+
+**How to fix:**
+
+1. Open the channel in Merchkit
+2. Locate the affected SKU
+3. Click the empty attribute cell
+4. Either:
+   - Manually enter a value, or
+   - Edit the attribute's AI prompt and regenerate
+5. Save and re-export
+
+[SCREENSHOT: Filling in missing Carton Width in Wayfair channel]
+
+**Prevention:** Before export, filter to show "Empty required attributes" and fill them all.
+
+### Category 2: Format Errors
+
+**Error:** "Invalid format for 'Price'. Expected numeric, got 'USD 99.99'"
+
+**Cause:** Data doesn't match the required format.
+
+**Common format issues:**
+
+| Attribute | Wrong Format | Correct Format |
+|-----------|--------------|-----------------|
+| Price | "$99.99" or "Ninety-nine dollars" | 99.99 |
+| Date | "April 5th, 2026" | 2026-04-05 |
+| Dimensions | "3 feet by 2 feet" | 36 (inches) |
+| Quantity | "Ten units" | 10 |
+| Availability | "Yes" or "In stock soon" | In Stock or Out of Stock |
+| Color | "light blue" or "LIGHT BLUE" | Light Blue (exact match) |
+
+**How to fix:**
+
+1. Identify which format is expected (check marketplace docs)
+2. Open the channel and edit the affected attribute
+3. Reformat to match the expected format
+4. If multiple products have the same format error, edit the AI prompt and regenerate
+
+[SCREENSHOT: Fixing price format from $99.99 to 99.99]
+
+**Prevention:** Use Merchkit's input helpers (date picker, number field) when available. Customize prompts to specify exact format.
+
+### Category 3: Business Rule Violations
+
+**Error:** "Violation: Sale price must be lower than regular price"
+
+**Cause:** Your data violates the marketplace's business logic.
+
+**Common business rule violations:**
+
+| Violation | Cause | Fix |
+|-----------|-------|-----|
+| Sale price > regular price | Price discrepancy | Set sale price lower than regular price |
+| Inventory negative | Stock count error | Set inventory to 0 or remove listing |
+| Invalid category | Product in wrong category | Assign to correct marketplace category |
+| Price below threshold | Price too low for category | Check marketplace's minimum price |
+| Unauthorized material claims | Material misleading | Use accurate, provable materials |
+| Duplicate SKU | SKU used twice in feed | Ensure each product has unique SKU |
+
+**How to fix:**
+
+1. Understand the business rule (check marketplace documentation)
+2. Identify which products violate it
+3. Fix the data in Merchkit
+4. Re-export and resubmit
+
+[SCREENSHOT: Fixing sale price to be lower than regular price]
+
+### Category 4: Attribute Value Mismatch
+
+**Error:** "Invalid value for 'Color'. Accepted values: [Blue, Red, Green]. Got: 'Light Blue'"
+
+**Cause:** You entered a value that's not in the marketplace's allowed list.
+
+**How to fix:**
+
+1. Identify which values are allowed (check marketplace or Merchkit's dropdown)
+2. Change the attribute to match allowed values exactly
+3. For example, if "Light Blue" isn't allowed but "Blue" is, change to "Blue"
+
+For dropdowns in Merchkit:
+
+1. Click the attribute cell
+2. A dropdown appears with allowed values
+3. Select the correct value from the list
+
+[SCREENSHOT: Dropdown showing allowed color values]
+
+**Prevention:** When setting up attributes, always use select/dropdown fields when the marketplace provides a fixed list of values.
+
+### Category 5: Image or Media Errors
+
+**Error:** "Image URL invalid or inaccessible. URL: https://mysite.com/images/sofa.jpg"
+
+**Cause:** The image URL is broken or the image file is missing.
+
+**How to fix:**
+
+1. Check that the image URL is correct
+2. Verify the image file exists at that location
+3. Test the URL in a browser (should show the image)
+4. If the URL is wrong, correct it
+5. If the image is missing, upload a new image to your server and update the URL
+
+[SCREENSHOT: Testing image URL in browser]
+
+**Prevention:** Before exporting, spot-check that all image URLs are live and images load.
+
+### Category 6: Character Encoding Issues
+
+**Error:** "Invalid character in description: 'ü'. Only ASCII characters allowed"
+
+**Cause:** The marketplace doesn't support special characters (accents, non-English characters, etc.).
+
+**How to fix:**
+
+1. Identify the special character (usually flagged in the error)
+2. Replace with ASCII equivalent:
+   - "Café" → "Cafe"
+   - "Sofa $299" → "Sofa 299"
+   - "100% linen" → "100 percent linen"
+
+3. Re-export and resubmit
+
+[SCREENSHOT: Removing special characters from product description]
+
+**Prevention:** When creating AI prompts, specify "Remove special characters and use only ASCII characters" to prevent this at generation.
+
+## Channel-Specific Error Patterns
+
+### Wayfair Error Patterns
+
+**Most common Wayfair rejections:**
+
+1. **Missing packaging dimensions** (Carton Width, Height, Depth, Weight)
+   - Fix: Measure cartons accurately and fill these critical attributes
+
+2. **Assembly time missing** (Assembly Required = Yes but Assembly Time missing)
+   - Fix: Provide assembly time in minutes
+
+3. **Category-specific attributes missing**
+   - Fix: Ensure products are in the correct category view and all category-specific required fields are filled
+
+4. **Material composition incomplete**
+   - Fix: Break down materials clearly with percentages
+
+**Wayfair debugging tips:**
+- Use the category view selector to ensure you're in the right category
+- Review Wayfair's attribute documentation for your specific product category
+- Test with a small batch (5-10 products) before submitting 1,000+
+
+### Amazon Error Patterns
+
+**Most common Amazon rejections:**
+
+1. **Missing primary image**
+   - Fix: Ensure the first image is a clean product shot with white/simple background
+
+2. **Bullet points too long or grammatically incorrect**
+   - Fix: Edit to be concise (1-2 sentences each) and grammatically correct
+
+3. **Duplicate SKU or ASIN conflict**
+   - Fix: Use unique SKUs; if updating existing listings, match exact ASIN
+
+4. **Price/availability inconsistency**
+   - Fix: Ensure listed price matches current website price
+
+**Amazon debugging tips:**
+- Use Amazon's listings report to see which products were successfully created vs. errors
+- Check **Manage Inventory** for suppressed listings (shows why they're suppressed)
+- Review Amazon's guidelines for your product category
+
+### Google Merchant Error Patterns
+
+**Most common Google Merchant rejections:**
+
+1. **Missing GTIN (barcode)**
+   - Fix: Add valid UPC/EAN/GTIN
+
+2. **Link URL doesn't work or is wrong**
+   - Fix: Verify product URL leads to the exact product
+
+3. **Price mismatch between feed and website**
+   - Fix: Ensure feed price matches your website
+
+4. **Image URL broken**
+   - Fix: Verify image URLs are correct and images load
+
+**Google Merchant debugging tips:**
+- Google Merchant Center's **Diagnostics** tab shows all errors
+- Issues are categorized by severity (Critical, Warning)
+- Use Google's validation tool to test URLs before submitting
+
+## Resolution Workflow
+
+Here's a step-by-step process for resolving rejected feeds:
+
+### Step 1: Receive Error
+Marketplace sends you an email or you check the feed submission status.
+
+[SCREENSHOT: Wayfair rejection email]
+
+### Step 2: Export Error Report
+Most marketplaces provide an error report (CSV or PDF).
+
+Save this locally for reference.
+
+### Step 3: Categorize Errors
+Group errors by type:
+- Missing fields
+- Format errors
+- Business rule violations
+- Other
+
+[SCREENSHOT: Error report with 23 errors, 15 missing fields, 8 format issues]
+
+### Step 4: Prioritize Fixes
+Fix in this order:
+1. **Critical errors** (feed-wide rejections first)
+2. **Missing required fields** (affects many products)
+3. **Format errors** (systematic fixes)
+4. **Business rule violations** (product-specific)
+
+### Step 5: Fix in Merchkit
+
+For each error:
+
+1. **Open the channel**
+2. **Locate the affected product**
+3. **Edit the problematic attribute**
+4. **Verify the fix**
+5. **If multiple products have the same issue, edit the prompt and regenerate**
+
+[SCREENSHOT: Opening Wayfair channel and fixing missing Carton Width]
+
+### Step 6: Re-Validate
+Before re-exporting:
+
+1. **Filter to show only fixed products**
+2. **Spot-check they look correct**
+3. **Check Merchkit's validation dashboard** — should show 0 errors for those products
+
+### Step 7: Re-Export
+Click **Export** again with the fixed data.
+
+### Step 8: Resubmit
+Upload the corrected feed to the marketplace.
+
+### Step 9: Monitor
+Check the marketplace's feed status for acceptance or new errors.
+
+[SCREENSHOT: Monitoring feed submission status in Wayfair]
+
+## Batch Fixes for Common Errors
+
+If the same error affects many products, fix it systematically:
+
+**Example: Wrong format for "Assembly Time" (needs minutes, currently has "30 min")**
+
+1. Open the channel
+2. Filter to show products with Assembly Time = "30 min" (or similar format)
+3. Edit the AI prompt for the Assembly Time attribute
+4. Regenerate for the filtered products
+5. This applies the corrected prompt to all affected products at once
+
+[SCREENSHOT: Regenerating Assembly Time attribute for multiple products]
+
+This is much faster than manually editing each product.
+
+## Preventing Future Errors
+
+After you've resolved a batch of errors, prevent them in the future:
+
+1. **Document the error** — Note what caused it and how you fixed it
+2. **Update your process** — Did you miss a validation step? Add it to your workflow
+3. **Refine your prompts** — If an AI prompt caused the error, improve it
+4. **Educate your team** — Share learnings with team members managing other channels
+
+## When to Contact Support
+
+Some errors are unfixable in Merchkit:
+
+- **Marketplace policy violation** — Your products don't meet marketplace requirements (e.g., counterfeit, restricted categories)
+- **Account issue** — Your marketplace account has restrictions or is flagged
+- **Marketplace bug** — Rare, but sometimes the marketplace has issues accepting valid data
+
+In these cases:
+
+1. **Document the error carefully**
+2. **Contact the marketplace's seller support** — they can investigate
+3. **Contact Merchkit support** — they can advise if the issue is with the format or the marketplace
+
+## Next Steps
+
+Once your feed is accepted and products are live:
+
+- [Continuous Optimization: Refining Live Listings](/product/channels-and-content-generation/continuous-optimization) — Improve listing performance and sales

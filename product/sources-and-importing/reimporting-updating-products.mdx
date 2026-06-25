@@ -1,0 +1,159 @@
+---
+title: "Re-importing & Updating Existing Products"
+description: "Update your product catalog by re-importing CSV data"
+---
+
+# Re-importing & Updating Existing Products
+
+After your initial catalog import, you'll often need to update product data — prices change, new products arrive, vendor information shifts. In Merchkit, you can re-import a CSV to update existing products without creating duplicates.
+
+## How Product Matching Works
+
+When you re-import a CSV, Merchkit matches rows to existing products to decide whether to create new products or update existing ones.
+
+### Matching by Identifier
+
+Merchkit uses your **product identifier field** (usually SKU) to find matches:
+
+- **If a CSV row has an SKU that matches an existing product** → Merchkit updates that product
+- **If a CSV row has a new SKU** → Merchkit creates a new product (see the toggle below)
+
+You can also match on other unique fields if SKU isn't your identifier. During the import preview, you'll choose which field to use for matching.
+
+[SCREENSHOT: Matching field selection in import preview]
+
+## The "Create new Products" Toggle
+
+During the import flow, you'll see a toggle: **"Create new Products for CSV rows without a match"**.
+
+### When It's ON
+
+- CSV rows with new SKUs (no existing match) will create new products
+- Existing products with matching SKUs will be updated
+- This is useful when you're adding new products to your catalog alongside updating existing ones
+
+**Use case:** You're importing a monthly vendor shipment that includes 50 new SKUs and updates to 100 existing ones.
+
+### When It's OFF
+
+- CSV rows with new SKUs will be skipped (not imported)
+- Only existing products with matching SKUs will be updated
+- This is useful when you want to refresh data on existing products without accidentally creating new ones
+
+**Use case:** You're importing a price list that should only update existing products; any new SKUs in the file are data errors you want to ignore.
+
+[SCREENSHOT: Create new Products toggle highlighted]
+
+## What Happens to Existing Attribute Values
+
+### Updated Columns
+
+When a product matches, any columns you mapped in the import will overwrite the existing values.
+
+**Example:** Your existing product has Price: $25.00. Your CSV row maps Price: $22.99. After re-import, the product's price is $22.99.
+
+### Unmapped Columns
+
+Columns in your CSV that you didn't map to any attribute are ignored. Existing product data in those attributes stays unchanged.
+
+**Example:** Your CSV has a "Warehouse Location" column that you didn't map. The product's existing Warehouse Location attribute (if one exists) is not affected.
+
+### Blank/Empty Values
+
+If your CSV contains empty cells for a mapped column:
+
+- If the product attribute is optional, it may be left blank or untouched
+- If the product attribute is required, Merchkit will flag a validation error
+
+Best practice: Only map columns you want to update. Leave unmapped columns out of the import entirely.
+
+## Common Use Cases for Re-importing
+
+### Updating Prices
+
+You receive a new price list from your vendor. Re-import with only the SKU and Price columns mapped, with the toggle OFF to update only existing products.
+
+### Adding New Products to an Existing Catalog
+
+Your catalog has 1,000 products. You add 200 new SKUs from a new vendor. Re-import with the toggle ON to update the 1,000 existing products and create 200 new ones in a single import.
+
+### Refreshing Vendor Data
+
+Your vendors' lead times and MOQ values changed. Re-import just the SKU, Vendor, Lead Time, and MOQ columns to refresh that information across your product catalog.
+
+### Syncing with Your Source System
+
+You have a master product database. Each month, export the latest data and re-import it into Merchkit to keep your catalog in sync.
+
+[SCREENSHOT: Re-import workflow with toggle options]
+
+## Best Practices for Safe Re-imports
+
+### Always Preview Before Importing
+
+1. Upload your CSV file
+2. Review the preview screen carefully
+3. Check that columns are mapped to the correct attributes
+4. Spot-check a few rows to ensure values look right
+5. Verify the toggle is set correctly (ON or OFF based on your intent)
+6. Only then click **Import**
+
+### Use "Create a new View" to Review Changes
+
+After importing, you can create a filtered view to see what changed:
+
+1. Go to your Products list
+2. Click **+ Create a new View**
+3. Filter by the columns you updated (e.g., "Last Updated is in the last 24 hours")
+4. Review a sample of updated products to confirm the import worked correctly
+
+[SCREENSHOT: Filtered view showing recently updated products]
+
+### Start with a Test Import
+
+If you're importing a large dataset:
+
+1. Extract a small sample of 10-20 rows from your CSV
+2. Run a test import with those rows
+3. Preview the results and confirm the update worked as expected
+4. Then import the full file
+
+### Keep a Backup
+
+Before importing a large batch of updates:
+
+1. Export your current product catalog (if possible)
+2. Save it as a backup
+3. Then run the import
+
+If something goes wrong, you'll have the original data to reference.
+
+## Common Re-import Issues
+
+### "This will overwrite existing data"
+
+Merchkit shows this warning because matched products will be updated. This is expected behavior. Review the preview and confirm the toggle setting before proceeding.
+
+### "Duplicate identifiers in the CSV"
+
+Your CSV file contains two rows with the same SKU. This creates ambiguity — which row should update the product? Fix this by removing duplicates from your CSV, then re-import.
+
+### "0 products matched"
+
+No rows in your CSV matched existing products. Possible causes:
+
+- **Toggle is ON but all SKUs are new** → This will create new products (if that's your intent, proceed)
+- **Toggle is OFF but all SKUs are new** → No products will be imported; adjust the toggle if you want to create new products
+- **SKU values don't match** → Check that your CSV SKUs exactly match the SKUs in Merchkit (case-sensitive, no extra spaces)
+
+### "Some columns weren't mapped"
+
+You have columns in your CSV that you didn't map to attributes. This is okay — those columns will simply be ignored. If you want to import that data, cancel the import, create the corresponding attribute, and re-import.
+
+## Validation Errors During Re-import
+
+If you encounter validation errors during a re-import, refer to [Import Validation: Understanding Errors & Warnings](/product/sources-and-importing/import-validation-errors) for troubleshooting steps.
+
+## Next Steps
+
+Your products are in Merchkit and you can keep them up to date with re-imports. Next, you'll set up Attributes to tell the AI how to enrich your catalog. Head to [Understanding Attributes in Merchkit](/product/attributes-and-enrichment/understanding-attributes).

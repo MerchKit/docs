@@ -1,0 +1,60 @@
+---
+title: "How Integrations Work in Merchkit"
+description: "Learn how integrations connect your external platforms to Merchkit for automated data sync."
+---
+
+# How Integrations Work in Merchkit
+
+Integrations are the data pipes that connect your external platforms—like Shopify, BigCommerce, or Salsify—directly to Merchkit. They let you import product data in, enrich it in Merchkit, and export your changes back to those platforms, all without manual copy-paste.
+
+## Integrations vs. Channels
+
+You might see both "Integrations" and "Channels" mentioned in Merchkit. Here's the key difference:
+
+- **Integrations** = Data pipes for syncing product information to and from external platforms (ERPs, PIMs, commerce platforms). They move raw product data in both directions.
+- **Channels** = Content generation tools that take your Merchkit data and create optimized content specifically for marketplaces like Walmart or Wayfair.
+
+Think of it this way: Integrations bring your data in and push it back out. Channels transform that data into marketplace-specific content.
+
+## The "Import to Enrich, Export to Update" Workflow
+
+Here's how most teams use integrations:
+
+1. **Import**: You connect to your source platform (Shopify, Akeneo, etc.) and pull product data into Merchkit. This is your starting data.
+2. **Enrich**: You add, edit, or enhance product information inside Merchkit—write SEO descriptions, add keywords, fix missing data, organize collections.
+3. **Export**: You map your Merchkit columns back to that platform and sync your changes. Your enhancements now flow back to your live store.
+
+This loop lets you work in a single place (Merchkit) while keeping all your external platforms in sync.
+
+## Where to Find Integrations
+
+Go to **Workspace → Integrations**. You'll see:
+
+- **Add New Integrations** grid: Available platforms you can connect (Shopify, BigCommerce, Salsify, Akeneo, WooCommerce, Walmart, Wayfair).
+- **Active Integrations** list: Platforms you've already connected, with their last sync time.
+
+[SCREENSHOT: Integrations page with Add New Integrations grid and Active Integrations list]
+
+## How Data Actually Moves
+
+When you trigger an import or export:
+
+1. Merchkit uses your configured field mappings to translate between platform fields and Merchkit columns.
+2. Data flows through the API connection you've authenticated.
+3. The platform updates, and Merchkit records the sync timestamp.
+
+If something goes wrong (bad mapping, auth expired), the sync will fail and warn you. You'll fix the mapping and try again.
+
+## What You'll Set Up
+
+To use an integration, you'll need to:
+
+1. **Connect** the platform (authenticate with your API key or credentials)
+2. **Map fields** (tell Merchkit which platform columns match which Merchkit attributes)
+3. **Trigger syncs** (import once, then export after you enrich)
+
+Each of these steps has its own guide. Start with connecting your first integration, then learn how to map fields to control what data moves where.
+
+---
+
+**Next step**: [Connecting an Integration](/product/integrations-and-field-mapping/connecting-an-integration)

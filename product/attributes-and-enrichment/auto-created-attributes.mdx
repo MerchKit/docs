@@ -1,0 +1,58 @@
+---
+title: "Quick Start: Auto-Created Attributes from Integrations"
+description: "When you import from Shopify or another connected platform, Merchkit automatically creates attributes from your existing fields and metafields. Here's how to find them and use them."
+---
+
+# Quick Start: Auto-Created Attributes from Integrations
+
+When you connect Merchkit to Shopify or another platform, you get a head start: Merchkit automatically creates attributes from your existing product fields and custom metafields. This is the fastest path to setting up your data structure.
+
+## What Gets Auto-Created?
+
+When you import from an integrated platform, Merchkit generates attributes for:
+
+**Standard product fields** — title, description, price, vendor, product type, tags, handle, and other native fields from your source platform
+
+**Custom metafields** — any custom fields or metafields you've defined in Shopify or your source system are mapped to Merchkit attributes automatically
+
+This means if you already have a "Material" metafield in Shopify, it will automatically appear in Merchkit as an attribute.
+
+## Finding Your Auto-Created Attributes
+
+1. Open **Workspace → Attributes** in your sidebar
+2. Make sure **Products** is selected in the entity type dropdown
+3. Look through the table — your auto-created attributes will be listed there
+
+[SCREENSHOT: Attributes page showing a mix of auto-created and custom attributes in the table]
+
+You'll typically see attributes like:
+- `title` (product title)
+- `description` (product description)
+- `price` (product price)
+- `vendor` (vendor name)
+- Custom fields you created in your source platform
+
+## What to Do Next: Review and Enable AI
+
+Auto-created attributes are a starting point, but you'll want to review and configure them:
+
+1. **Review the field types** — Check that each auto-created attribute has the correct field type (Text, Number, Image, etc.)
+
+2. **Enable Use AI where needed** — For attributes you want Merchkit to enrich or generate, click the attribute to open the Configure Attribute panel and toggle **Use AI** on
+
+3. **Customize prompts** — If an auto-created attribute has a default prompt, you can modify it to fit your needs. For example, if you auto-created a "short_description" attribute, you might customize its prompt to: "Generate a compelling product description under 100 characters based on the product title and full description."
+
+4. **Leave others as-is** — If you want to keep an auto-created attribute as a reference field (not AI-generated), leave Use AI off
+
+[SCREENSHOT: Configure Attribute panel showing Use AI toggle, field type, and prompt section]
+
+## For Users Who Imported via CSV
+
+If you imported your products via CSV rather than through an integration, skip this article. Your attributes aren't pre-created, so go directly to [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai) to create your first attributes manually.
+
+## Next Steps
+
+Once you've reviewed your auto-created attributes:
+- **To customize an attribute:** [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai)
+- **To write effective prompts:** [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts)
+- **To learn about field types:** [Field Types](/product/attributes-and-enrichment/field-type-guide)

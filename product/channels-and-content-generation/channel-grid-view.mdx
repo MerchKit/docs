@@ -1,0 +1,110 @@
+---
+title: "Understanding the Channel Grid View"
+description: "Explore the dedicated per-channel grid view, channel-specific attributes, and category views for marketplaces with per-category requirements like Wayfair."
+---
+
+# Understanding the Channel Grid View
+
+When you click a channel in your sidebar, you enter its **dedicated grid view**—a unique table interface designed specifically for that channel's requirements. It looks similar to your Products view, but it contains only channel-specific attributes and formatting.
+
+## What You See in the Channel Grid
+
+The channel grid displays:
+
+- **SKU column** — Your product's internal identifier
+- **Product name** — From your main catalog
+- **Channel-specific attributes** — Required and optional fields unique to that marketplace
+- **Status indicators** — Empty fields, errors, ready-to-export status
+- **Attribute prompts** — Small icons showing which attributes have AI prompts available
+
+[SCREENSHOT: Wayfair channel grid view with attribute columns]
+
+### Channel-Specific Attributes
+
+Every channel has different required attributes. Here are examples:
+
+**Wayfair example:**
+- Extensive attributes including Carton Width, Carton Height, Assembly Required, Care Instructions, Warranty, Material Composition, Color, Size, and many more varying by category.
+
+**Amazon example:**
+- Brand, Bullet Points, Main Image, Enhanced Content, A+ Content sections, Technical Specifications
+
+**Google Merchant example:**
+- Title, Description, Price, Availability, Condition, Image Link, Product Type
+
+These attributes are **separate from your main Products view**. The channel grid is where you fill marketplace-specific data.
+
+## Category-Specific Views
+
+Some channels (particularly Wayfair) have **per-category requirements**. Different product categories need different attributes.
+
+**Example: Wayfair**
+
+Wayfair's furniture categories have their own attribute sets:
+- Category **305 – Sofas** requires attributes like Seating Capacity, Frame Material, Cushion Fill
+- Category **306 – Chairs** requires different attributes like Seat Height, Back Type, Armrest Style
+
+When you open the Wayfair channel, you see a **category selector** at the top of the grid.
+
+[SCREENSHOT: Wayfair category selector dropdown showing "305 - Sofas", "306 - Chairs", etc.]
+
+### Switching Between Categories
+
+1. Click the **category dropdown** at the top of the channel grid
+2. Select a different category (e.g., switch from Sofas to Chairs)
+3. The grid **reloads with the attributes for that category**
+4. Only products in that category appear (or you can filter to show all and fill per-category)
+
+This lets you work on category-specific data without confusion.
+
+## Navigating the Grid
+
+The channel grid works like your main Products view:
+
+**Scrolling horizontally** — Use arrow keys or scroll to view more attributes to the right
+
+**Filtering** — Use the filter bar to show only empty attributes, only complete products, specific SKUs, etc.
+
+**Sorting** — Click column headers to sort by attribute name, completion status, or other values
+
+**Editing inline** — Click a cell to edit its value directly, or use the Generate feature to auto-fill multiple attributes at once
+
+[SCREENSHOT: Channel grid with filter and sort controls]
+
+## Attribute Status Indicators
+
+As you work in the channel grid, you'll see visual cues:
+
+- **Empty cell** — The attribute is blank and needs to be filled
+- **Green checkmark** — The attribute is complete and valid
+- **Red warning** — The attribute has an error (format issue, invalid selection, etc.)
+- **AI prompt icon** — A small lightning bolt or magic wand icon indicating an AI prompt is available for this attribute
+
+## The Channel URL
+
+Each channel has its own dedicated URL. You can bookmark it for quick access:
+
+- `merchkit.com/home/[company-name]/channels/wayfair`
+- `merchkit.com/home/[company-name]/channels/amazon`
+- `merchkit.com/home/[company-name]/channels/google-merchant`
+
+This means you can jump directly to a specific channel without going through the sidebar.
+
+## How This Differs from Products View
+
+| Feature | Products View | Channel Grid |
+|---------|---------------|-------------|
+| **Contains** | Your master catalog data | Marketplace-specific attributes only |
+| **Attributes** | Core product fields | Channel's required/optional fields |
+| **Editing** | Edit source product data | Edit channel-formatted data |
+| **Purpose** | Source of truth | Channel destination |
+| **Validation** | General product completeness | Marketplace-specific rules |
+
+## Ready to Fill Attributes?
+
+Now that you understand the channel grid structure, you're ready to learn how to:
+
+- Fill attributes using [Channel Attribute Templates](/product/channels-and-content-generation/channel-attribute-templates)
+- Generate content with AI using [Generating Channel Content](/product/channels-and-content-generation/generating-channel-content)
+
+Or, if you want to customize how attributes are filled, check out [Customizing Channel Attribute Prompts](/product/channels-and-content-generation/customizing-channel-prompts).

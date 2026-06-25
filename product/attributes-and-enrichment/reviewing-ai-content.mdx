@@ -1,0 +1,130 @@
+---
+title: "Reviewing AI-Generated Content"
+description: "Learn how to assess enrichment results in your Products table, spot-check quality across categories, and identify issues to fix."
+---
+
+# Reviewing AI-Generated Content
+
+After you run enrichment, your results appear directly in the Products table. This is where you assess whether the AI-generated values are accurate, consistent, and ready for use. You don't need to check every single product—a smart spot-check approach is faster and more effective.
+
+## Where Your Results Live
+
+Once enrichment completes, head back to your **Products view**. The attributes you just enriched now show values in their respective columns.
+
+[SCREENSHOT: Products table with newly populated attribute columns showing AI-generated values]
+
+## The Review Workflow
+
+Your enrichment results live in the same Products table where you work every day. This means:
+
+- **No separate review screen.** You review directly in the table.
+- **Real-time feedback.** As you review, you can immediately edit values (see [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) for details).
+- **Easy to scale.** Once you're confident in the quality, you can run enrichment on larger batches knowing your review process is simple.
+
+## Rationale, Citations, and Confidence Rating
+
+Every AI-generated value in Merchkit comes with a **rationale field** that you can inspect alongside the value itself. The rationale is the AI's explanation of how it arrived at the value, and it includes:
+
+- **Where the value came from** — which source(s) the AI used (the URL, document, or text), and the specific content that produced the answer (cited or quoted directly when possible)
+- **What the AI generated** — when the value was inferred or composed rather than directly extracted, the rationale states what was generated and how
+- **Confidence rating** — a qualitative rating of **High**, **Medium**, or **Low** that summarizes how confident the AI is in the value
+
+This rationale is your fastest way to spot-check accuracy. Instead of opening the source and hunting for the value, click the cell to read the AI's reasoning and citations. If the rationale shows a strong source quote and the value matches, you can move on. If the rationale shows weak citations or a Low confidence rating, that's a cell to dig into.
+
+[SCREENSHOT: A cell in the Products table with the rationale panel open, showing the cited source quote, the AI's reasoning, and a confidence rating badge (High/Medium/Low)]
+
+**Filtering by confidence rating.** Confidence ratings are filterable in Views. A common review pattern is to create a View filtered to all values with **Low** or **Medium** confidence on a specific attribute or category, then work through that View as a focused review queue. This is the closest thing in Merchkit to a traditional "review queue" — you build it via filters rather than via a dedicated UI.
+
+**Inferred vs. extracted values.** When a value is inferred (e.g., from a parent SKU's value via parent/child relationships, or from cross-attribute reasoning) rather than directly extracted from a source, the rationale states this explicitly — for example, "Inferred from parent SKU 220D Series; not present in this variant's source page." Inferred values typically carry Medium or Low confidence and surface in confidence-filtered Views automatically.
+
+## Reviewing at Scale
+
+If you've enriched hundreds or thousands of products, don't try to check every one. Instead, use these techniques to review efficiently:
+
+### Use Views to Filter Recently Enriched Products
+
+Create a view that shows only the products you just enriched:
+- Filter by a date range (products updated today)
+- Filter by category or vendor to review similar products together
+- Combine filters to create a focused sample
+
+This narrows your review set to a manageable number.
+
+[SCREENSHOT: Products view with filter applied showing only recently enriched products]
+
+### Sort by Specific Attributes
+
+Click the column header of an attribute you just enriched to sort by that column. This groups similar values together, making patterns and outliers easier to spot.
+
+[SCREENSHOT: Products table sorted by a newly enriched attribute, showing all values of the same type grouped together]
+
+### Scan Across Rows
+
+Once you've filtered and sorted, scan horizontally across the table to see how each product's enriched data looks in context with other product information (name, category, price, etc.). This helps you judge whether the AI-generated value makes sense for that specific product.
+
+## What to Look For
+
+When spot-checking, evaluate on three dimensions:
+
+### 1. Accuracy
+Does the value match the product?
+- **Example:** If you enriched "Suggested Use Case" for a camping tent, does the AI suggest appropriate activities (camping, hiking) rather than unrelated uses?
+- **Red flag:** Values that don't match the product's actual purpose or nature.
+
+### 2. Format
+Does the value follow the structure you asked for?
+- **Length:** Is it the right length (one sentence, 3 bullet points, etc.)?
+- **Tone:** Does it match your brand voice (professional, casual, technical)?
+- **Structure:** If you asked for a specific format (e.g., "Price range: $X–$Y"), is it formatted correctly?
+- **Red flag:** Values that are too long, too short, wrong tone, or don't follow your template.
+
+### 3. Consistency
+Do similar products have similar output patterns?
+- **Example:** If you enriched "Size Range" for apparel, do all shirts have sizes like "XS–XXL," and all jackets also follow that same pattern?
+- **Red flag:** One product says "Fits sizes 2–20," another says "Small to Extra Large," and a third says "All sizes." Same attribute, three different formats.
+
+## Spot-Checking Strategy
+
+Rather than reviewing every product, pick a representative sample:
+
+1. **Choose products across categories.** If you sell apparel, home goods, and electronics, pick a few products from each category.
+2. **Sample different vendors.** If you work with multiple suppliers, review products from 2–3 vendors.
+3. **Pick different price ranges.** If your catalog spans budget to premium, include products from each tier.
+4. **Include edge cases.** If some of your products are unusual (limited editions, custom items, very old stock), include one or two of those.
+
+This approach catches issues across your product diversity without needing to review every row.
+
+## Tracing Back to Configuration
+
+If output looks wrong, the issue usually lies in one of four places:
+
+1. **Prompt clarity.** Your prompt might be too vague, contradictory, or missing context. Re-read it and imagine explaining it to a colleague—if it's unclear to you, the AI will struggle too.
+2. **Product data context.** The AI might be missing the information it needs. Check that you've selected the right Product Data fields when configuring the attribute.
+3. **Image Source.** If your attribute relies on product images, verify that the images are clear, relevant, and actually show the product (not just packaging or logos).
+4. **Acceptable Values (if set).** If you've limited the AI to specific values, verify those values are appropriate for the actual products you're enriching.
+
+To troubleshoot, go back to the [Attributes page](/product/attributes-and-enrichment/understanding-attributes) (Workspace → Attributes), find the attribute, and review its configuration. Once you've made changes, use [Re-running Enrichment](/product/attributes-and-enrichment/rerunning-enrichment) to test your improvements on a small batch before scaling.
+
+## Common Issues
+
+**Output is too generic or vague**
+- Example: "Description" shows "A product that serves its intended purpose" for all products.
+- **Likely cause:** Your prompt is too broad or Product Data context is missing. Try adding more specific guidance (e.g., "Include the material, primary use, and key features") and ensure you've selected descriptive Product Data fields.
+
+**Values don't match the expected format**
+- Example: You asked for "Price: $X–$Y" but got "Ranging from X dollars to Y dollars."
+- **Likely cause:** Your prompt template isn't strict enough, or Acceptable Values aren't set. Consider refining your prompt with an explicit example, or use Acceptable Values to enforce a specific pattern.
+
+**Some products have blank values while others don't**
+- Example: 50 products enriched successfully, but 20 are empty.
+- **Likely cause:** The AI requires a dependent attribute to generate the value, and some of your products are missing that dependency. Check your attribute configuration and verify all required upstream attributes have values.
+
+**Values are inconsistent across similar products**
+- Example: One "Fabric Type" says "Cotton," another says "100% cotton," another says "Natural fiber—cotton."
+- **Likely cause:** Your prompt doesn't enforce consistent formatting, or Acceptable Values aren't used. Consider using a strict Acceptable Values list (Cotton, Polyester, Wool, Blend) to ensure uniformity.
+
+## Next Steps
+
+1. **Fix individual values:** If you spot errors in specific cells, head to [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) to correct them.
+2. **Improve your prompt:** If you see systematic issues, update your attribute configuration and then check out [Re-running Enrichment](/product/attributes-and-enrichment/rerunning-enrichment) to re-generate with the updated logic.
+3. **Scale up:** Once you're confident in quality, run enrichment on larger batches using the same approach.

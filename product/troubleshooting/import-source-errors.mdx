@@ -1,0 +1,209 @@
+---
+title: "Import & Source Errors"
+description: "Troubleshoot CSV import errors, source encoding issues, and document upload problems."
+---
+
+# Import & Source Errors
+
+Merchkit supports importing product catalogs via CSV and enriching them with data from URLs, PDFs, Excel files, and more. If you encounter an error during import or source upload, this guide helps you diagnose and fix it.
+
+## CSV Import Errors
+
+### Error: "Missing or Invalid Headers"
+
+**What it means:** Your CSV doesn't have column headers, or the headers don't match expected product field names.
+
+**What causes it:**
+- First row is blank.
+- Headers contain special characters or extra spaces.
+- Using non-English column names that Merchkit doesn't recognize.
+
+**How to fix it:**
+1. Open your CSV in Excel or Google Sheets.
+2. Verify that row 1 contains column names (e.g., "Product Name", "SKU", "Description", "Price").
+3. Remove extra spaces before or after header names.
+4. Use standard English names or map columns during import.
+5. Re-upload the file.
+
+[SCREENSHOT: CSV with valid headers highlighted]
+
+### Error: "Duplicate Columns"
+
+**What it means:** Your CSV has two or more columns with the same header name.
+
+**What causes it:**
+- Copy-pasting a column multiple times.
+- Merging sheets with overlapping column names.
+
+**How to fix it:**
+1. Open your CSV.
+2. Identify the duplicate column(s).
+3. Delete the duplicate or rename it (e.g., change second "Price" to "Sale Price").
+4. Re-upload.
+
+### Error: "File Too Large"
+
+**What it means:** Your CSV exceeds Merchkit's file size limit.
+
+**What causes it:**
+- CSV contains more than 1 million rows.
+- Large blob of data in a single column (e.g., entire product description as very long text).
+
+**How to fix it:**
+1. Split your CSV into multiple smaller files (e.g., Products A-M, N-Z).
+2. Remove unnecessary columns (e.g., very long text fields not needed for enrichment).
+3. Import each file separately, or contact Support for batch import options.
+
+### Error: "Encoding Error" or "Invalid Characters"
+
+**What it means:** Your CSV uses a character encoding (UTF-8, Latin-1, etc.) that Merchkit can't read, causing garbled or unrecognized characters.
+
+**What causes it:**
+- CSV created in Microsoft Excel using a non-UTF-8 encoding.
+- File copied from a system using a different language/encoding.
+
+**How to fix it:**
+1. Open your CSV in Excel, Google Sheets, or a text editor.
+2. **In Excel**: Save As > CSV (Comma-delimited) > Under "Tools," ensure UTF-8 is selected.
+3. **In Google Sheets**: File > Download > CSV (it auto-detects encoding).
+4. **In a text editor** (Notepad++, VS Code): Convert encoding to UTF-8 and save.
+5. Re-upload the file.
+
+[SCREENSHOT: Excel "Save As" dialog with encoding option highlighted]
+
+### Error: "Data Type Mismatch"
+
+**What it means:** A column contains data that doesn't match the expected field type (e.g., text in a number field).
+
+**What causes it:**
+- Price column has text like "free" or "$19.99" instead of numbers.
+- SKU column has numbers but should be treated as text (leading zeros get dropped).
+- Date column has mixed formats (MM/DD/YYYY vs YYYY-MM-DD).
+
+**How to fix it:**
+1. Identify the problematic column.
+2. Ensure all values match the expected type:
+   - **Numbers**: Remove currency symbols, commas, and text.
+   - **Text**: For SKUs with leading zeros, format column as "Text" in Excel before exporting.
+   - **Dates**: Use a consistent format (YYYY-MM-DD is safest).
+3. Re-upload.
+
+### Error: "Row X: Invalid Data"
+
+**What it means:** A specific row contains invalid or corrupt data.
+
+**What causes it:**
+- Special characters breaking CSV structure (e.g., unescaped quotes in a description).
+- Merged cells in Excel that didn't export properly.
+- Line breaks or newlines within a cell.
+
+**How to fix it:**
+1. Open your CSV in a text editor to see the problematic row.
+2. Look for unescaped quotes or special characters: `"`, `|`, `<`, `>`, etc.
+3. In Excel, use **Find & Replace** to clean up:
+   - Replace `"` with `'` (single quotes).
+   - Replace newlines: Press Ctrl+H, search for `Ctrl+J`, replace with a space.
+4. Save and re-upload.
+
+[SCREENSHOT: Find & Replace dialog]
+
+## Source Errors
+
+Sources are external files or URLs you use to enrich products. Common source errors:
+
+### Error: "URL Not Accessible" or "Connection Timeout"
+
+**What it means:** Merchkit can't reach or download from the URL you provided.
+
+**What causes it:**
+- URL is incorrect or contains a typo.
+- Website is down or blocking automated access.
+- URL requires authentication (login/password).
+- Network firewall blocking the request.
+
+**How to fix it:**
+1. Copy the URL and paste it into your browser to verify it works.
+2. If the URL requires login, Merchkit can't access it directly. Instead, download the file and upload it as a document.
+3. Check if the website blocks bots: Some sites have robots.txt or rate limiting. Try adding your Merchkit IP to allowlists (contact Support for IP list).
+4. If the domain is correct but unreachable, try using an alternative URL or source.
+
+[SCREENSHOT: URL input field with validation error]
+
+### Error: "Document Too Large"
+
+**What it means:** The file you're uploading exceeds 25 MB.
+
+**What causes it:**
+- PDF with high-resolution images.
+- Excel file with multiple sheets and large datasets.
+- Uncompressed Word document with embedded media.
+
+**How to fix it:**
+1. Compress the file:
+   - **PDF**: Use an online PDF compressor or re-export at lower resolution.
+   - **Excel**: Remove unused sheets, delete extra columns, and save as .xlsx (not .xls).
+   - **Word**: Remove embedded images or videos; save as .docx.
+2. Split the document: If it's a multi-sheet workbook, separate it into smaller files.
+3. Re-upload.
+
+### Error: "Unsupported File Format"
+
+**What it means:** You've uploaded a file type Merchkit doesn't support.
+
+**Supported formats:**
+- **Documents**: PDF, DOCX, XLSX, XLS, ODT, RTF
+- **URLs**: Any publicly accessible webpage (HTTP/HTTPS)
+- **Text**: Direct pasted text input
+
+**What causes it:**
+- Uploading an unsupported format like .pages, .numbers, .pub, .pptx, etc.
+
+**How to fix it:**
+1. Convert your file to a supported format:
+   - Mac Pages → Export as DOCX or PDF.
+   - Mac Numbers → Export as XLSX.
+   - PowerPoint → Save slides as PDF.
+2. Re-upload the converted file.
+
+### Error: "Source Failed to Process"
+
+**What it means:** The file uploaded successfully, but Merchkit couldn't extract or parse its content.
+
+**What causes it:**
+- PDF is image-based (scanned document) with no selectable text.
+- Encrypted or password-protected document.
+- Corrupted file or incomplete upload.
+
+**How to fix it:**
+1. For scanned PDFs, use OCR (Optical Character Recognition) to extract text:
+   - Use a free tool like ILovePDF.com or Adobe Acrobat's OCR feature.
+   - Re-upload the OCR'd PDF.
+2. For encrypted files, remove the password protection and re-upload.
+3. Re-download and re-upload the file to ensure it's not corrupted.
+
+[SCREENSHOT: Source status indicator showing "Failed to Process"]
+
+## Import Flow: Step-by-Step Debugging
+
+When importing a CSV with Merchkit's 3-step flow:
+
+1. **Upload & Preview**: You see a preview of your data. If columns look scrambled or truncated, it's likely an encoding issue.
+2. **Map Fields**: Merchkit asks you to match CSV columns to product fields. If a column is missing or unrecognized, you'll see it here. Select the correct field from the dropdown.
+3. **Review & Confirm**: Before final import, verify row counts and field mappings are correct. If something seems off, go back and re-upload with corrections.
+
+[SCREENSHOT: CSV import flow with field mapping]
+
+## Still Having Trouble?
+
+If none of these solutions work:
+
+1. **Download the error log**: After a failed import, click **Download Error Report** (if available). This shows exactly which rows failed and why.
+2. **Contact Support**: Email support@merchkit.com with:
+   - Your CSV file (or a sample of it).
+   - The error message you received.
+   - A screenshot of the error.
+   - Your workspace and import ID (visible in the URL bar).
+
+---
+
+**Next:** Troubleshoot AI enrichment and attribute generation in [Attribute & Enrichment Issues](/product/troubleshooting/attribute-enrichment-issues).

@@ -1,0 +1,232 @@
+---
+title: "Glossary & Terminology"
+description: "Canonical definitions for all Merchkit terms, UI labels, and synonym mappings. Use this glossary to understand Merchkit's vocabulary and find the right term when searching for help."
+---
+
+## How to Use This Glossary
+
+Merchkit's product ecosystem includes several interconnected concepts. When you're learning the platform or troubleshooting an issue, you may encounter unfamiliar terminology. This glossary provides:
+
+- **Core Term Definitions** — What each term means and how it's used in Merchkit
+- **UI Location** — Where to find this term or feature in the application
+- **Related Articles** — Links to the main help article covering this topic
+- **Synonym Mappings** — Common alternate names for the same concept (critical for searching)
+
+**Pro Tip:** If you search for a term and don't immediately find what you're looking for, check the **Synonym Quick-Reference** at the end of this article—your term might be listed under a different name.
+
+---
+
+## Core Terms (Alphabetical)
+
+### Acceptable Values
+
+**Definition:** A comma-separated constraint list that restricts AI-generated values to a specific set of options you define. When you set acceptable values on an attribute, the AI will only return values from that list, preventing out-of-spec content generation.
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Acceptable Values field
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Attributes
+
+**Definition:** Columns in your product table that store product information (e.g., "Title", "Description", "Price"). Attributes are the core units of product data. Each attribute has a field type, AI toggle to enable/disable generation, a prompt that instructs the AI what to generate, and optional constraints like acceptable values or required dependencies.
+
+**UI Location:** Products → [Grid View] (every column is an attribute); Workspace → Attributes (attribute management)
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Categories
+
+**Definition:** A taxonomy for organizing products into logical groups (e.g., "Sofas", "Rugs", "Lighting"). Categories help structure your catalog and can be required by certain channels during export (e.g., Wayfair requires category assignments). Categories can have their own attributes to hold category-specific metadata.
+
+**UI Location:** Products → Products Sidebar → Categories; Workspace → Categories
+
+**Related Article:** [Creating and Managing Categories](/product/attributes-and-enrichment/working-with-categories)
+
+---
+
+### Channels
+
+**Definition:** Sales channels where Merchkit generates optimized, platform-specific content. Channels include Wayfair, Walmart, Amazon, Google Merchant, ChatGPT/GEO, Houzz, Mirakl, and others. Each channel has a dedicated grid view with pre-loaded attribute templates reflecting that channel's requirements and best practices.
+
+**UI Location:** Top navigation → [Channel Name] (e.g., "Walmart", "Amazon")
+
+**Related Article:** [Working with Channels](/product/channels-and-content-generation/how-channels-work)
+
+---
+
+### CSV Import
+
+**Definition:** A 3-step workflow for bulk-uploading product data from a spreadsheet into Merchkit. Steps: (1) Choose file, (2) Preview the data, (3) Map columns to Merchkit attributes. Accessible via the Import dropdown in the Products toolbar.
+
+**UI Location:** Products → Import → CSV Import
+
+**Related Article:** [Importing Products via CSV](/product/sources-and-importing/importing-first-catalog-csv)
+
+---
+
+### Enrichment / Generate
+
+**Definition:** The AI process of automatically filling in product attribute values. Triggered by clicking the Generate button in the action bar. Two modes: "Generate Empty Attributes Only" (fills only blank fields; keyboard shortcut ⌘↵) and "Generate All Attributes" (regenerates all values). The AI reads product data, sources, and your attribute prompt to produce output.
+
+**UI Location:** Products → [Select product(s)] → Action Bar → Generate
+
+**Related Article:** [Enriching Products with AI](/product/attributes-and-enrichment/running-first-enrichment)
+
+---
+
+### Field Mapping
+
+**Definition:** The configuration step that connects external platform fields to Merchkit attributes when importing or exporting data via an integration. Import Mapping defines which platform fields map to which Merchkit attributes (platform → Merchkit). Export Mapping does the reverse (Merchkit → platform). Configured in the Integrations modal.
+
+**UI Location:** Workspace → Integrations → [Integration Name] → Field Mapping tabs
+
+**Related Article:** [Setting Up Integrations](/product/integrations-and-field-mapping/how-integrations-work)
+
+---
+
+### Field Types
+
+**Definition:** The data format of an attribute. Merchkit supports: Single Line Text, Number, Image (uses Nano Banana model), Formula (supports 30 functions), Reference Lookup (links to vendor or category data), Collection Reference (links to multiple records), and Record Reference (links to a single record).
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Field Type dropdown
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Formula
+
+**Definition:** A field type that computes values based on other attributes using 30 built-in functions (e.g., CONCATENATE, IF, LENGTH, ROUND). Formulas are read-only and automatically recalculate when referenced attributes change.
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Field Type: Formula
+
+**Related Article:** [Using Formulas](/product/reference/formula-functions)
+
+---
+
+### Integrations
+
+**Definition:** Data pipelines that connect Merchkit to external platforms like Shopify, BigCommerce, Salsify, Akeneo, WooCommerce, Walmart, and Wayfair. Integrations enable import (platform → Merchkit) and export (Merchkit → platform) with field mapping. Important: Integrations are NOT the same as Channels.
+
+**UI Location:** Workspace → Integrations
+
+**Related Article:** [Setting Up Integrations](/product/integrations-and-field-mapping/how-integrations-work)
+
+---
+
+### Insert Value / {{ }} Tags
+
+**Definition:** A syntax for referencing other attribute values within an attribute's prompt. When you type `@` or click the "Insert Value" button, you can select an attribute to dynamically reference. The prompt will use `{{ attribute_name }}` syntax to substitute the actual value at generation time.
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Prompt field → Insert Value button
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Products
+
+**Definition:** Individual items in your catalog, each uniquely identified by an SKU. Products can have parent-child relationships: a parent product (e.g., "Sofa Model X") can have multiple variants (children) for different sizes or colors. Each product is a row in the Products grid and contains values for every attribute.
+
+**UI Location:** Products → Products Grid
+
+**Related Article:** [Managing Your Product Catalog](/product/getting-started/understanding-products-view)
+
+---
+
+### Reference Lookup
+
+**Definition:** A field type that creates a link from a product to data stored elsewhere—typically vendor or category attributes. Unlike a simple text field, a Reference Lookup pulls in external data (e.g., a vendor's pricing policy) and can be used in formulas and prompts.
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Field Type: Reference Lookup
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Required Values
+
+**Definition:** A dependency gate that specifies one or more attributes that must have values before a dependent attribute's AI generation can run. For example, you might require "Brand" to be filled in before generating "SEO Title". This ensures AI generation has sufficient context.
+
+**UI Location:** Workspace → Attributes → [Attribute Name] → Required Values field
+
+**Related Article:** [Working with Attributes](/product/attributes-and-enrichment/understanding-attributes)
+
+---
+
+### Sources
+
+**Definition:** Per-product reference material (URLs, plain text, or documents up to 25MB) that the AI reads during content generation/enrichment. Sources are NOT the same as imported product data from integrations or CSV files. They provide context to inform AI-generated outputs.
+
+**UI Location:** Products → [Product Detail] → Sources tab
+
+**Related Article:** [Adding Sources for Better AI Generation](/product/sources-and-importing/how-sources-work)
+
+---
+
+### Vendors
+
+**Definition:** Suppliers or manufacturers linked to products. Vendors can have their own attributes (e.g., "Pricing Policy", "Lead Time") that are referenced by products via Reference Lookup. Use vendors to centralize supplier information and avoid data duplication.
+
+**UI Location:** Workspace → Vendors; Products → [Product Detail] → Vendor field
+
+**Related Article:** [Managing Vendors](/product/sources-and-importing/working-with-vendors)
+
+---
+
+### Views
+
+**Definition:** Saved configurations of your Products table that remember columns displayed, applied filters, and sort order. Views allow you to quickly switch between different product perspectives (e.g., a "Walmart Feed" view showing only Walmart-relevant attributes, a "Missing Descriptions" view filtered to products without descriptions).
+
+**UI Location:** Products → Views dropdown (at top of Products grid)
+
+**Related Article:** [Creating and Managing Views](/product/getting-started/understanding-products-view)
+
+---
+
+### Workspace
+
+**Definition:** The organizational container that holds your products, attributes, integrations, channels, and team settings. You can switch workspaces using the workspace switcher at the top of the sidebar. Each workspace is a separate, isolated environment for product management and enrichment.
+
+**UI Location:** Top of Sidebar → Workspace Switcher
+
+---
+
+## Synonym Quick-Reference
+
+Use this table if you search for a term and don't find it immediately. Look up the synonym and jump to the correct Merchkit term.
+
+| Synonym / Alternate Term | Merchkit Term | Why the Difference |
+|---|---|---|
+| Feed | [Channels](#channels) | "Feed" is common in ecommerce, but Merchkit calls optimized sales destinations "Channels" |
+| Marketplace | [Channels](#channels) | Wayfair, Walmart, and Amazon are channels; the term "marketplace" is less specific |
+| Destination | [Channels](#channels) | Industry jargon for where content is published; Merchkit uses "Channels" |
+| Retailer | [Channels](#channels) | Often refers to a sales platform; in Merchkit, these are Channels |
+| Spreadsheet | [CSV Import](#csv-import) | Merchkit specifically handles CSV files during bulk import |
+| Upload | [CSV Import](#csv-import) or [Sources](#sources) | Uploading data via CSV or uploading reference documents are both common; context matters |
+| Field | [Attributes](#attributes) | Industry-standard term for a database column; Merchkit calls these Attributes |
+| Column | [Attributes](#attributes) | Visual term for what you see in the table; Merchkit calls these Attributes |
+| Connector | [Integrations](#integrations) | "Connector" is common in data platforms; Merchkit uses "Integration" |
+| Plugin | [Integrations](#integrations) | "Plugin" suggests add-ons; Merchkit's Integrations are core data pipes |
+| Sync | [Integrations](#integrations) | Syncing data is what Integrations do; the term is less specific than "Integration" |
+| Enrichment | [Enrichment / Generate](#enrichment--generate) | Both terms are used interchangeably; "Generate" is more action-focused |
+| AI Generation | [Enrichment / Generate](#enrichment--generate) | What the AI does; "Enrichment" is the broader process, "Generate" is the button |
+| Taxonomy | [Categories](#categories) | Formal term for classification system; Merchkit uses "Categories" |
+| Product Type | [Categories](#categories) | Common way to group products; in Merchkit, this is handled by Categories |
+| Mapping | [Field Mapping](#field-mapping) | Short form; full term is "Field Mapping" |
+| Data Source | [Sources](#sources) | External reference material you provide to the AI; called "Sources" in Merchkit |
+| Reference Material | [Sources](#sources) | Documentation, URLs, or text files the AI reads; Merchkit calls these Sources |
+| PIM | [Integrations](#integrations) | Merchkit is not a PIM, but it integrates with PIM systems like Salsify and Akeneo |
+| Lookup | [Reference Lookup](#reference-lookup) | Short form of the field type name |
+
+---
+
+## Need Help Finding Something?
+
+- **Search the Help Center** using any term from this glossary or the Synonym Quick-Reference—our search will redirect you
+- **Browse by Article Section** — Visit the main Help Center to explore articles by topic
+- **Ask Support** — If you can't find what you're looking for, contact our support team

@@ -1,0 +1,97 @@
+---
+title: "Key Concepts & Terminology"
+description: "Learn the core building blocks of Merchkit — Products, Sources, Attributes, Categories, Integrations, and Channels — and how they relate to each other."
+---
+
+Before you start working in Merchkit, it helps to understand the core concepts you'll encounter. This article explains what each one means and how they connect to each other.
+
+For a complete glossary with synonym mappings, see [Glossary & Terminology](/product/glossary/glossary).
+
+## Products
+
+A **Product** is the central record in Merchkit. Each product represents one item in your catalog — a sofa, a rug, a mirror. Products live in the **Products** table, which is the main view you'll see when you log in.
+
+Each product has attributes (data fields like Title, Description, Price, Color), can have sources attached to it (documents, URLs, or text that give the AI context), and can have images.
+
+Products can also have **parent-child relationships**. A parent product might be "Arya Machine Woven Rug" and its children are the individual size/color variants.
+
+## Sources
+
+A **Source** is any piece of reference material you attach to a product to give the AI more context for enrichment. Sources can be:
+
+- **URLs** — a link to a product page, spec sheet, or supplier listing
+- **Text** — raw product descriptions, specification data, or notes pasted directly
+- **Documents** — uploaded files such as PDFs, Excel spreadsheets, Word docs, ODT, or RTF (up to 25MB per file)
+
+Sources are attached at the product level. When you click on a product's "Data Sources" cell, a panel opens where you can add URLs, text, or drag-and-drop files. The **Sources** page in the sidebar shows a flat list of all sources across your entire catalog.
+
+Sources are different from your initial CSV import. The CSV import creates your products and populates their basic attributes. Sources provide additional context that the AI uses during enrichment — think of them as the raw material the AI reads to generate better output.
+
+## Attributes
+
+An **Attribute** is a data field on a product — like Title, Brand, Color, Price, SEO Description, or Carton Width. Attributes are the building blocks of your catalog.
+
+In Merchkit, attributes are more than just static fields. Each attribute can be configured with:
+
+- **A field type** — what kind of data it holds (text, number, image, formula, reference lookup)
+- **An AI toggle** — whether the AI should generate values for this attribute
+- **A prompt** — instructions that tell the AI exactly what to generate and how
+- **Acceptable values** — a constrained list that forces the AI to return only specific values (e.g., for a Color attribute: "Red, Blue, Green, Black, White")
+- **Product data context** — which other data the AI should reference when generating (product attributes, data sources, images, or web search)
+- **Required values** — which other attributes must have data before this attribute can be generated
+
+Attributes are managed from **Workspace → Attributes** in the sidebar. They can be scoped to different entity types: Products, Categories, Vendors, Images, or Sources.
+
+The Attributes page is the control center for enrichment quality. Every "why did the AI generate this?" question traces back to how the attribute was configured here.
+
+## Categories
+
+A **Category** is a product classification within your catalog — like "Sofas," "Rugs," or "Mirrors." Categories help organize your products and can have their own category-level attributes.
+
+Categories are managed from **Catalog → Categories** in the sidebar. Some channels (like Wayfair and Walmart) require specific category assignments because they have different attribute requirements per category.
+
+## Integrations
+
+An **Integration** is a connection to an external platform for importing and exporting data. Integrations are data pipes — they move product information between Merchkit and tools like Shopify, BigCommerce, Salsify, Akeneo, or WooCommerce.
+
+Each integration has:
+
+- **Import mapping** — how fields from the external platform map to Merchkit attributes (e.g., Shopify's "Title" field → Merchkit's "Title" attribute)
+- **Export mapping** — how Merchkit attributes map back to the platform's fields
+- **Import filters** — rules that let you import specific subsets of products (e.g., only products in a certain collection or category)
+
+A useful shortcut: when you import from a platform like Shopify, Merchkit automatically creates attributes from the platform's existing fields and metafields, giving you a head start on attribute setup.
+
+Integrations are managed from **Workspace → Integrations** in the sidebar.
+
+## Channels
+
+A **Channel** is a sales destination where your products are listed — like Wayfair, Amazon, Walmart, Google Merchant, Nordstrom Rack, or even AI shopping agents like ChatGPT.
+
+Channels are fundamentally different from Integrations. While Integrations move data in and out, Channels **generate** content. Each channel has:
+
+- **A dedicated grid view** with its own set of channel-specific attributes
+- **Pre-loaded attribute templates** with default AI prompts tailored to that channel's requirements
+- **Category-specific views** for channels that have different attribute requirements per product category (e.g., Wayfair's "305 – Sofas" view)
+
+When you open a channel, you see a purpose-built view showing only the attributes that channel cares about, with AI prompts already configured to generate values in the format that channel expects. You then select your products, click **Generate**, and Merchkit creates channel-ready content you can export for submission.
+
+Channels are listed in the **Channels** section of the sidebar.
+
+## How they all connect
+
+Here's the flow, from raw data to channel-ready content:
+
+1. You **import** your catalog (via CSV or an Integration) → this creates your **Products**
+2. You add **Sources** to products for additional AI context
+3. You configure **Attributes** with AI prompts, field types, and acceptable values
+4. You run **Generate** on your products → Merchkit's AI enriches your catalog attributes
+5. You review and refine the output
+6. You open a **Channel** view → Merchkit generates channel-specific content from your enriched catalog
+7. You **export** the channel data for submission
+
+**Categories** organize your products throughout this process, and **Integrations** let you sync data with your existing platforms at any stage.
+
+---
+
+**Next step:** Read [From Zero to Optimized Catalog in 7 Days](/product/getting-started/onboarding-roadmap) to see this flow as a step-by-step checklist for your first week.

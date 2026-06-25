@@ -1,0 +1,113 @@
+---
+title: "Writing Effective AI Prompts"
+description: "Master the Prompt field to get high-quality AI-generated attribute values. Learn best practices, formatting tips, and how to iterate with the Edit with AI button."
+---
+
+The Prompt field in the Configure Attribute panel is where you tell the AI exactly what you want it to generate. A well-written prompt dramatically improves output quality—vague instructions lead to vague results, while specific instructions lead to consistent, usable data.
+
+## The Power of Specificity
+
+Your prompt is the conversation between you and the AI. The more context and clarity you provide, the better the output.
+
+**Bad prompt:** "Write a description"
+
+**Good prompt:** "Write a 2-3 sentence product description for {{product_title}} by {{brand}}, highlighting the key material ({{material}}) and intended use. Keep the tone professional and avoid superlatives."
+
+The good prompt tells the AI:
+- Exactly how long (2-3 sentences)
+- What product (using {{product_title}})
+- Who makes it ({{brand}})
+- What to focus on (material and intended use)
+- What tone to adopt (professional)
+- What to avoid (superlatives)
+
+## Use {{ }} Tags to Inject Product Data
+
+The {{ }} syntax lets you reference other attributes in your prompt. When the AI processes your prompt, it substitutes the actual product values.
+
+Common tags:
+- `{{product_title}}` — the product name
+- `{{brand}}` — manufacturer or brand name
+- `{{material}}` — material composition
+- `{{color}}` — primary color
+- `{{size}}` — dimensions or size category
+- `{{price}}` — MSRP or list price
+- `{{description}}` — existing description
+
+**Example:** "Extract the warranty period from the source document for {{product_title}}. If no warranty is mentioned, respond with 'Not specified.'"
+
+**How to insert tags:**
+- Type `@` in the Prompt field to open the attribute selector, then choose the attribute you need
+- Or click the "Insert Value" button below the Prompt field and select from the list
+
+Using {{ }} tags ensures the AI has product-specific context and can tailor output to each product rather than generating generic text.
+
+## Tell the AI What NOT to Include
+
+Just as important as telling the AI what to do is telling it what to avoid.
+
+**Example prompt:** "Generate a short product description for {{product_title}}. Focus on material, durability, and use cases. Do not include price, warranty information, or marketing hype."
+
+Negative instructions help the AI stay focused and prevent common issues like:
+- Including irrelevant information
+- Being too promotional or vague
+- Repeating information already in other fields
+- Generating content that's too long or too short
+
+## Format and Tone Matter
+
+Be explicit about format expectations:
+
+- **Length:** "2-3 sentences," "under 100 characters," "bullet points"
+- **Tone:** "professional," "casual and friendly," "technical"
+- **Style:** "avoid superlatives," "use active voice," "include specific measurements"
+
+**Example:** "Create a bullet-point list of 3-4 key features for {{product_title}}. Use active voice and be specific about measurements or capabilities. Keep each point under 15 words."
+
+## Use the "Edit with AI" Button to Iterate
+
+Once you've written your first prompt, you don't have to get it perfect. Click the "Edit with AI" button to let Claude help you refine it.
+
+The Edit with AI workflow:
+1. Write your initial prompt
+2. Click "Edit with AI" below the Prompt field
+3. Claude suggests improvements—more specific language, added context, better structure
+4. Accept or modify the suggestion
+5. Run a test generation to see how the updated prompt performs
+
+This is especially useful when you're unsure about phrasing or want to add {{}} tags you might have missed.
+
+## Good vs. Bad Prompts: Examples
+
+| Scenario | Bad Prompt | Good Prompt |
+|----------|-----------|-------------|
+| Color detection | "What color is this?" | "Based on the product images and title {{product_title}}, identify the primary color. Return only the color name, nothing else." |
+| MSRP extraction | "Get the price" | "Extract the MSRP or list price for {{product_title}} from the source document. Return only the numeric value (e.g., 29.99). If not found, return 'Unknown.'" |
+| Category assignment | "What category?" | "Based on {{product_title}}, {{description}}, and product images, assign the primary product category. Choose from: Home & Garden, Sports & Outdoors, Electronics. Return only the category name." |
+| Material specs | "Describe the materials" | "List the primary materials used in {{product_title}} in the following format: Material Type: [name], Percentage: [%], Durability: [high/medium/low]. Be specific based on images and source docs." |
+
+## Common Mistakes to Avoid
+
+**1. Being too vague**
+- ❌ "Create a title"
+- ✅ "Create a search-friendly product title for {{product_title}} that includes the material and primary color. Keep it under 60 characters."
+
+**2. Forgetting {{ }} tags**
+- ❌ "Describe the product"
+- ✅ "Describe {{product_title}} by {{brand}} in 1-2 sentences, emphasizing {{material}} and durability."
+
+**3. Asking for too many things at once**
+- ❌ "Write descriptions, extract specs, find the category, and suggest keywords"
+- ✅ Create separate attributes, each with a focused prompt
+
+**4. Not setting expectations for edge cases**
+- ❌ "Extract the warranty period"
+- ✅ "Extract the warranty period from the source document. If no warranty is stated, respond with 'Limited Warranty (check with manufacturer).'"
+
+**5. Using subjective language**
+- ❌ "Make it sound nice and describe the quality"
+- ✅ "Write a 2-3 sentence description highlighting durability, material, and intended use. Use professional tone. Avoid marketing language."
+
+## Next Steps
+
+Once you've mastered prompt writing, the next step is to use **Acceptable Values** to constrain AI output to specific, approved values for categorical data. See [Using Acceptable Values to Constrain AI Output](/product/attributes-and-enrichment/acceptable-values).

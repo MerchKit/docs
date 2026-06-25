@@ -1,0 +1,232 @@
+---
+title: "Pre-Export Validation Checklist"
+description: "Verify your channel data is complete, accurate, and error-free before exporting to marketplaces."
+---
+
+# Pre-Export Validation Checklist
+
+Before you export channel content to a marketplace, you need to validate that your data is complete, accurate, and meets all marketplace requirements. A few minutes of validation now can save you hours of troubleshooting rejections later.
+
+## Why Validation Matters
+
+Marketplaces have strict data requirements. If your feed violates their rules:
+
+- **Feed rejection** — Your entire feed gets rejected; nothing uploads
+- **Partial uploads** — Some products upload; others are flagged as errors
+- **Suppressed listings** — Products upload but aren't visible to shoppers
+- **Account warnings** — Multiple rejections can lead to account restrictions
+
+Validation catches these issues before submission.
+
+## The Validation Process
+
+Validation happens in this order:
+
+1. **Required fields check** — All mandatory attributes are filled
+2. **Format validation** — Data is in the correct format (numbers are numeric, dates are valid, etc.)
+3. **Category assignment** — Products are assigned to the correct marketplace category
+4. **Completeness review** — Recommended (optional) attributes are filled where possible
+5. **Spot check** — Manual review of a sample of products
+
+## Required Fields Validation
+
+Every marketplace defines which attributes are **required**. Missing required fields = feed rejection.
+
+**Critical required fields by channel:**
+
+| Channel | Critical Required Fields |
+|---------|--------------------------|
+| **Wayfair** | Carton dimensions, Assembly info, Material composition, Category |
+| **Amazon** | Title, Description, Image, Category, Price, Availability |
+| **Walmart** | Title, Description, Category, UPC, Price |
+| **Google Merchant** | Title, Description, Image, Price, Availability, Category |
+| **Houzz** | Title, Images, Dimensions, Category/Room type |
+| **Nordstrom Rack** | Brand, Title, Category, Price, Images |
+
+## Format Validation
+
+Your data must match the marketplace's expected format.
+
+### Common Format Rules
+
+**Numeric attributes** (dimensions, weight, price):
+- Must be numbers, not text
+- Must use the correct unit (inches, pounds, dollars)
+- Example: `84` ✓ not `eighty-four` ✗
+
+**Date attributes** (assembly time, warranty expiration):
+- Must be in the correct format (usually YYYY-MM-DD or MM/DD/YYYY)
+- Must be valid dates (no February 30th)
+- Example: `2026-04-05` ✓ not `April 5th` ✗
+
+**Select/dropdown attributes** (color, size, style):
+- Must match exactly one of the marketplace's allowed values
+- No custom values or variations
+- Example: `Navy Blue` ✓ not `Navy` ✗ if "Navy Blue" is the exact option
+
+**Text attributes** (descriptions, titles):
+- Must not exceed character limits (varies by attribute)
+- Must not contain invalid characters (some marketplaces restrict HTML or special symbols)
+- Example: "Beautiful sofa" (15 chars) ✓ not "Beautiful sofa with wonderful features that your family will love" (67 chars) ✗ if limit is 50
+
+### How to Check Format
+
+1. **Use Merchkit's validation** — The system flags format errors in red
+2. **Review sample products** — Click individual products and check their attributes
+3. **Check the marketplace's documentation** — Each marketplace publishes format requirements
+
+[SCREENSHOT: Format error highlighted in red in channel grid]
+
+## Category Assignment Validation
+
+Products must be assigned to the marketplace's categories.
+
+### Category Importance
+
+- **Wayfair:** Different categories require different attributes; wrong category = missing required fields
+- **Amazon:** Products in wrong category won't be found by shoppers
+- **All marketplaces:** Category assignment affects visibility and searchability
+
+### How to Validate Categories
+
+1. **Open category view** (for category-specific channels like Wayfair)
+2. **Check that products are assigned to the right category**
+3. **For multi-category products,** verify they're in the primary category
+4. **Cross-reference with your source data** — Confirm category assignments match your internal taxonomy
+
+[SCREENSHOT: Category selector in Wayfair showing assigned categories]
+
+**Wayfair category examples:**
+- "305 – Sofas" for sofa products
+- "306 – Chairs" for chair products
+- Products in the wrong category won't have required attributes for that category
+
+## Completeness Review
+
+Beyond required fields, check that **recommended/optional attributes** are filled where possible. This improves conversion and visibility.
+
+### High-Impact Optional Attributes
+
+| Channel | Attribute | Impact |
+|---------|-----------|--------|
+| **Amazon** | Additional images (6-8) | 40%+ higher conversion with multiple images |
+| **All** | Detailed descriptions | Better SEO and shopper understanding |
+| **Wayfair** | Care instructions | Reduces returns |
+| **Google Merchant** | Size/color variants | Better filtering in search results |
+| **Houzz** | Lifestyle images | 3x higher engagement |
+
+### Optional Attribute Check
+
+1. **Filter to show "Recommended attributes"** — See which optional fields aren't filled
+2. **Prioritize high-impact attributes** — Focus on those that improve conversion
+3. **Decide per-product** — Some products might not need all optional attributes (e.g., warranty on low-cost items)
+
+[SCREENSHOT: Filter showing recommended (optional) attributes]
+
+## Spot Check: Manual Review
+
+Before export, manually review a sample of your products.
+
+### How to Spot Check
+
+1. **Select 5-10 random products** — Mix of different categories and price points
+2. **Click each product to view its detail**
+3. **Read through each attribute** — Ask: "Would a shopper understand this? Is it accurate? Does it look professional?"
+4. **Look for red flags:**
+   - Gibberish or nonsensical text (AI generation error)
+   - Missing data (empty required fields)
+   - Format inconsistencies (e.g., prices sometimes with $, sometimes without)
+   - Typos or grammatical errors
+
+[SCREENSHOT: Product detail view for spot checking]
+
+### Spot Check Checklist
+
+For each sampled product:
+
+- [ ] Title is clear and keyword-rich
+- [ ] Description is accurate and complete
+- [ ] Dimensions/specs are correct
+- [ ] Images are high-quality and relevant
+- [ ] Price is accurate and current
+- [ ] Category is correct
+- [ ] All required fields are filled
+- [ ] Optional fields that matter are filled
+- [ ] No typos or formatting errors
+- [ ] Attributes are marketplace-appropriate (not generic)
+
+## Common Validation Issues
+
+### Issue 1: Missing Required Field
+**Problem:** A required attribute is blank.
+
+**Fix:**
+- Manually enter the value, or
+- Edit the channel's AI prompt and regenerate that attribute, or
+- Check if the source data in Products view is missing (fix there first)
+
+### Issue 2: Format Error
+**Problem:** A number is entered as text, or a date format is wrong.
+
+**Fix:**
+- Click the cell and re-enter in the correct format
+- Use Merchkit's format helpers if available (date picker, number field)
+- Check marketplace documentation for exact format
+
+### Issue 3: Wrong Category Assignment
+**Problem:** Products are assigned to the wrong category.
+
+**Fix:**
+- In category-specific channels, move products to the correct category
+- Update your category mapping in the Products view
+- Regenerate with the correct category
+
+### Issue 4: Gibberish AI Generation
+**Problem:** AI generated text that doesn't make sense.
+
+**Fix:**
+- Manually edit and correct
+- Review your source data in Products view (is the source data also poor?)
+- Refine the AI prompt and regenerate
+- Train your team on data quality standards
+
+### Issue 5: Inconsistent Formatting
+**Problem:** Some attributes are formatted one way, others differently (e.g., "Navy Blue" vs. "navy blue").
+
+**Fix:**
+- Edit the channel prompt to specify exact formatting
+- Regenerate to apply consistent formatting
+- Manually edit any outliers
+
+## Pre-Export Checklist
+
+Before you click Export, confirm:
+
+- [ ] All required fields are filled for all products
+- [ ] All data is in the correct format (numbers, dates, selections)
+- [ ] All products are assigned to the correct category
+- [ ] High-impact optional attributes are filled
+- [ ] Spot check revealed no major issues
+- [ ] No red error indicators in the channel grid
+- [ ] Validation dashboard shows 0 critical errors
+- [ ] Product images are high-quality and relevant
+- [ ] Prices are current and accurate
+- [ ] Descriptions are clear and professional
+
+## Fixing Issues at Scale
+
+If you discover the same issue across many products:
+
+1. **Identify the pattern** — Is it missing an attribute? Wrong format? Wrong category?
+2. **Edit the prompt** — Fix the AI prompt that's causing the issue
+3. **Regenerate** — Select all affected SKUs and regenerate with the fixed prompt
+4. **Validate again** — Check results before export
+
+This is faster than manual editing each product.
+
+## Next Steps
+
+Once validation is complete and you've fixed all critical issues:
+
+- [Exporting Channel Data](/product/channels-and-content-generation/exporting-channel-data) — Download and submit your marketplace feed
+- [Feed Validation & Error Resolution](/product/channels-and-content-generation/feed-validation-errors) — If the marketplace rejects your feed, resolve the issues here

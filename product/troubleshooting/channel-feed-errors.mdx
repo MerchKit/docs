@@ -1,0 +1,288 @@
+---
+title: "Channel & Feed Errors"
+description: "Resolve marketplace channel rejections, feed validation failures, and submission errors for Walmart, Amazon, Google Merchant, and other channels."
+---
+
+# Channel & Feed Errors
+
+When you submit your enriched product data to marketplaces like Walmart, Amazon, or Google Merchant Center, those platforms validate your feed and may reject products that don't meet their requirements. This guide helps you understand and fix the most common channel errors.
+
+## Common Channel Rejection Reasons
+
+### Error: "Missing Required Attribute"
+
+**What it means:** The channel requires an attribute that isn't filled in for this product.
+
+**What causes it:**
+- Attribute is marked as "Required" by the channel but hasn't been enriched or filled in.
+- Different product categories require different attributes (e.g., "Size" is required for Clothing but not for Electronics).
+
+**How to fix it:**
+1. Check which attribute is missing in the error message (e.g., "Missing: Brand", "Missing: Image URL").
+2. Go to your **Catalog** and find the product.
+3. Fill in the missing attribute:
+   - Manually type a value, or
+   - Configure AI enrichment for that attribute and regenerate, or
+   - Link a source (product page, PDF) with that information.
+4. Save and re-submit to the channel.
+
+**To prevent this in future:**
+1. Go to **Attributes** and review the channel's required fields.
+2. For each required attribute, ensure you have enrichment rules configured (prompt, acceptable values, sources).
+3. Run a batch generation to fill in all required fields before submission.
+
+[SCREENSHOT: Channel requirements showing required attributes]
+
+### Error: "Invalid Attribute Value"
+
+**What it means:** The attribute value doesn't match the channel's format or acceptable list.
+
+**What causes it:**
+- Value is outside acceptable range (e.g., price is negative, weight is too large).
+- Value doesn't match channel's enumerated list (e.g., "Crimson" instead of "Red" for color).
+- Format is wrong (e.g., "12.99" when channel expects "$12.99" or "12,99" for European formatting).
+
+**How to fix it:**
+
+1. Check the error message to identify the problematic value.
+2. Go to the product in **Catalog** and find the attribute.
+3. Look up the channel's requirements (click **Channel Settings** to see the spec).
+4. Update the value to match:
+   - If it's an enum (predefined list), select from the allowed options.
+   - If it's a number, ensure it's in the correct range and format.
+   - If it's text, check for character limits and special character restrictions.
+5. Save and re-submit.
+
+[SCREENSHOT: Channel attribute specification showing allowed values]
+
+### Error: "Image Not Accessible" or "Invalid Image URL"
+
+**What it means:** The image URL you provided is broken, returns an error, or the image doesn't meet channel specifications.
+
+**What causes it:**
+- URL is incorrect or product image has been moved/deleted.
+- Image is too large (Walmart: 4 MB max, Amazon: 2000x2000 px max).
+- Image format unsupported (channel only accepts JPEG, not WebP).
+- URL is HTTP (not secure); channel requires HTTPS.
+
+**How to fix it:**
+1. Go to the product and check the **Image URL** field.
+2. Open the URL in your browser—does the image display?
+3. If broken, upload the image to your site and get the new URL.
+4. If the image exists but is too large:
+   - Compress it (use image tool like TinyPNG or ImageOptim).
+   - Resize to channel specs (usually 1200x1200 px or smaller).
+   - Re-upload.
+5. Ensure the URL is HTTPS (not HTTP).
+6. Update the attribute and re-submit.
+
+[SCREENSHOT: Image validation error with size and format specs]
+
+### Error: "Incomplete Product Information" or "Not Ready for Publishing"
+
+**What it means:** The product is missing multiple attributes or doesn't meet minimum data quality requirements for the channel.
+
+**What causes it:**
+- Too many empty or null fields.
+- Description is too short (channel may have minimum word count).
+- Missing key details (materials, dimensions, care instructions for apparel).
+
+**How to fix it:**
+1. Go to the product and review all attributes.
+2. Use your AI enrichment to fill in missing fields:
+   - Generate descriptions, care instructions, materials, etc.
+   - Use **Generate All Attributes** (⌘↵) to fill empty fields in bulk.
+3. Ensure minimum requirements are met:
+   - Description: Usually 50+ words.
+   - Images: At least 1 high-quality image.
+   - Key attributes: Brand, Category, Size/Dimensions (if applicable).
+4. Re-submit.
+
+[SCREENSHOT: Product completeness bar showing missing attributes]
+
+## Channel-Specific Errors
+
+### Walmart Errors
+
+#### "GTIN (Barcode) Not Provided"
+
+**What it means:** Walmart requires a Global Trade Item Number (barcode). Your product doesn't have one.
+
+**What causes it:**
+- Product is handmade or new; it doesn't have a commercial barcode.
+- GTIN field wasn't filled in during import.
+
+**How to fix it:**
+- **If the product has a UPC/EAN**: Fill in the GTIN field in your Merchkit catalog.
+- **If the product doesn't have a barcode**: Some Walmart categories allow "no barcode" with additional documentation. Check Walmart's category guidelines.
+- **Alternatively**: Apply for a GTIN from GS1 (costs money; typically for new brands).
+
+#### "Category Mismatch"
+
+**What it means:** Your product's category doesn't match Walmart's taxonomy.
+
+**What causes it:**
+- You assigned a non-standard category name.
+- Your category maps to multiple Walmart categories and Walmart rejected the ambiguity.
+
+**How to fix it:**
+1. Go to **Channels** > **Walmart** > **Category Mapping**.
+2. Find your product's category and check what Walmart category it maps to.
+3. If mapping is missing, add one: Click **Add Mapping** and select your category + the correct Walmart category.
+4. If mapping is ambiguous, pick the most specific Walmart category.
+5. Re-sync products and resubmit.
+
+[SCREENSHOT: Category mapping interface with Walmart taxonomy browser]
+
+### Amazon Errors
+
+#### "Product Does Not Comply with Guidelines"
+
+**What it means:** Your product description, images, or attributes violate Amazon's content policies.
+
+**What causes it:**
+- Description contains prohibited language or claims (medical, brand claims, pricing info).
+- Images are watermarked or contain text overlay.
+- Pricing information in description (Amazon doesn't allow "on sale for $X").
+
+**How to fix it:**
+1. Review Amazon's content guidelines (available in Seller Central).
+2. Edit the product:
+   - Remove prohibited language from descriptions.
+   - Regenerate description with a cleaner prompt (e.g., "Focus on features, not price or promotions").
+   - Replace watermarked images.
+3. Re-submit.
+
+#### "Duplicate ASIN"
+
+**What it means:** The product already exists on Amazon under a different ASIN (product ID), and Amazon won't allow duplicates.
+
+**What causes it:**
+- Variant of an existing product.
+- Product exists under multiple listings (different seller or region).
+
+**How to fix it:**
+1. Search Amazon for the product to find the existing ASIN.
+2. In Merchkit, merge the duplicate product into the existing Amazon listing (use **Sync to Existing**).
+3. Or, update the product's ASIN in Merchkit to match the existing Amazon listing.
+
+### Google Merchant Center Errors
+
+#### "Missing or Unsupported Value" for a Required Field
+
+**What it means:** Google Merchant Center rejected a specific field (e.g., `google_product_category`).
+
+**What causes it:**
+- Field uses wrong code or format.
+- Value is outside Google's allowed list.
+
+**How to fix it:**
+1. Identify the field in the error message.
+2. Check Google Merchant Center's spec sheet for that field.
+3. Update the attribute value to match Google's format/list.
+4. Resubmit your feed.
+
+[SCREENSHOT: Google Merchant Center feed diagnostics]
+
+#### "Item Disapproved: Size System Invalid"
+
+**What it means:** Your size value doesn't match Google's standard size system.
+
+**What causes it:**
+- You used a custom size format (e.g., "Small-Medium") instead of a standard (e.g., "XS").
+
+**How to fix it:**
+1. Go to the product and review the **Size** attribute.
+2. Choose from Google's standard size systems (US, EU, UK, etc.).
+3. Update the product and resubmit.
+
+## Format Compliance Failures
+
+### Error: "Invalid Feed Format" or "Malformed XML/CSV"
+
+**What it means:** Your feed file doesn't follow the channel's expected format.
+
+**What causes it:**
+- Missing required columns in CSV export.
+- XML tags are malformed or invalid.
+- Special characters in values breaking the format.
+
+**How to fix it:**
+1. Download your feed from Merchkit (**Channels** > [Channel] > **Download Feed**).
+2. Check the format against the channel's specification (usually a PDF or documentation).
+3. Validate the file using the channel's validator tool:
+   - **Google**: Feeds > Data > Validate Feed.
+   - **Amazon**: Inventory > Add Products > Validate File.
+   - **Walmart**: Content > Item Setup > Validate Content.
+4. Fix any structural errors and reupload.
+
+[SCREENSHOT: Feed validation error highlighting incorrect field]
+
+### Error: "Encoding Error" or "Character Set Issue"
+
+**What it means:** Special characters in your product data (accents, symbols, etc.) broke the feed format.
+
+**What causes it:**
+- Feed uses UTF-8 encoding but your data is in Latin-1 or another encoding.
+- Special characters like `&`, `<`, `>`, `"` aren't properly escaped.
+
+**How to fix it:**
+1. Download your feed from Merchkit.
+2. Open in a text editor (VS Code, Notepad++) and check encoding (should be UTF-8).
+3. If encoding is wrong, convert to UTF-8.
+4. Check for unescaped special characters and escape them:
+   - `&` → `&amp;`
+   - `<` → `&lt;`
+   - `>` → `&gt;`
+   - `"` → `&quot;`
+5. Re-upload.
+
+## Debugging Feed Submission
+
+When a feed is rejected, follow these steps:
+
+1. **Go to Channels**: Click the specific channel in Merchkit.
+2. **View Feed History**: See recent submissions and their status (Approved, Rejected, Pending).
+3. **Check Error Details**: Click a failed submission to see specific products and errors.
+4. **Download the Error Report**: The channel usually provides a CSV or list of rejected products with reasons.
+5. **Fix products**: Update attributes, validate format, re-map categories.
+6. **Resubmit**: Click **Submit Feed** or **Publish** to resend.
+
+[SCREENSHOT: Channel feed history with rejection details]
+
+## Prevention: Pre-Submission Validation
+
+Before submitting a feed:
+
+1. **Run validation**: In Merchkit, go to **Channels** > [Channel] > **Validate Feed**. This checks against the channel's spec before submission.
+2. **Check completeness**: Ensure all required attributes are filled in (use **Generate All Attributes** to fill gaps).
+3. **Preview feed**: Download a sample of your feed and manually inspect a few products.
+4. **Test with a small batch**: Submit 10-20 products first, review any errors, then submit the full feed.
+
+[SCREENSHOT: Pre-submission validation results]
+
+## Integration with Integrations
+
+Remember: Channels and Integrations are separate.
+- **Integrations** (Shopify, WooCommerce) sync data TO your e-commerce platform.
+- **Channels** (Walmart, Amazon) publish data TO marketplaces.
+
+If a channel error relates to missing data, the root cause might be:
+1. **Product wasn't imported yet** → Import via CSV or integration.
+2. **Attribute wasn't enriched** → Generate it with AI.
+3. **Attribute isn't mapped to channel field** → Map it in Channel Settings.
+
+[SCREENSHOT: Data flow diagram: Catalog → Integrations → Platform; Catalog → Channels → Marketplace]
+
+## Still Getting Errors?
+
+Contact Support with:
+- Screenshot of the channel error message.
+- The product ID or GTIN that failed.
+- Channel name and category.
+- Recent feed submission log (from **Channels** > **Feed History**).
+- The channel's error report (if available).
+
+---
+
+**Next:** Troubleshoot account access issues in [Account & Access Issues](/product/troubleshooting/account-access-issues).

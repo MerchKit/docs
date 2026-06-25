@@ -1,0 +1,88 @@
+---
+title: "Understanding Attributes in Merchkit"
+description: "Learn what attributes are, where to find them, and why they're central to both your data structure and AI enrichment setup."
+---
+
+# Understanding Attributes in Merchkit
+
+An **attribute** is both a column in your product table *and* the configuration that tells Merchkit's AI what to generate. This dual role is central to how Merchkit works: your data structure and your enrichment instructions are one and the same.
+
+## What Are Attributes?
+
+Think of attributes as the fields that describe your products. In Merchkit, each attribute can be:
+- A product property (title, description, price)
+- A data field you've created (brand, material, fit_type, care_instructions)
+- An AI-generated field (SEO title, short description, category recommendation)
+
+Every attribute has a name, a field type (Text, Number, Image, Formula, etc.), and optionally an AI instruction that tells Merchkit how to generate or enrich its value.
+
+## Where to Find Attributes
+
+Open **Workspace → Attributes** in your sidebar.
+
+[SCREENSHOT: Workspace menu with Attributes option highlighted]
+
+You'll see the Attributes page, which displays a table of all your configured attributes. At the top, you can switch between entity types: **Products**, **Categories**, **Vendors**, **Images**, and **Sources**. Each entity type has its own set of attributes.
+
+[SCREENSHOT: Attributes page with entity type dropdown showing Products selected]
+
+## Entity Types: Attributes Aren't Just for Products
+
+Merchkit lets you define attributes for multiple entity types:
+- **Products** — your main product data
+- **Categories** — hierarchy and metadata for your product categories
+- **Vendors** — supplier information and details
+- **Images** — metadata about product images
+- **Sources** — information about where your product data comes from
+
+You configure attributes for each entity type separately. This guide focuses on **Products**, but the same principles apply to the others.
+
+## How Attributes Control AI Enrichment
+
+Each attribute has several configuration settings that work together to tell the AI what to generate:
+
+**Field Type** — Determines what kind of data the attribute holds (text, number, image reference, etc.)
+
+**Use AI toggle** — Enables or disables AI generation for this specific attribute
+
+**Product Data** — Controls which product fields (title, description, price, etc.) the AI can see when generating this attribute's value
+
+**Image Source** — Tells the AI which product images to analyze (if the attribute requires image analysis)
+
+**Prompt** — Your custom instruction to the AI. This is how you specify exactly what to generate. Supports dynamic references to other attributes using `{{ }}` tags.
+
+**Acceptable Values** — A comma-separated list that constrains the AI's output to only those values
+
+Together, these settings define what the AI sees, what the AI does, and what the AI is allowed to return.
+
+## A Key Insight: The Attributes Page Is Your Enrichment Configuration
+
+Unlike many tools where data structure and enrichment are separate, in Merchkit they're unified. When you configure an attribute, you're simultaneously:
+- Defining a column in your product table
+- Setting up an enrichment instruction (if Use AI is enabled)
+- Specifying the AI context, constraints, and format
+
+**This means: attributes must be configured before running enrichment.** You can't enrich a field that doesn't exist yet.
+
+## Field Types (Brief Overview)
+
+Merchkit offers several field types for your attributes:
+- **Single Line Text** — Short text values (product name, SKU, color)
+- **Number** — Numeric values (price, inventory count)
+- **Image** — Product images or image URLs
+- **Formula** — Computed values (based on other fields)
+- **Reference Lookup** — Links to related records (e.g., category)
+- **Collection Reference** — Multiple linked records
+- **Record Reference** — Single linked record
+
+For detailed information about field types, see [Field Types](/product/attributes-and-enrichment/field-type-guide).
+
+## What You'll Do Next
+
+In the next articles, you'll:
+1. Learn how Merchkit auto-creates attributes when you import from Shopify or another platform
+2. Walk through the Configure Attribute panel step-by-step
+3. Write effective AI prompts
+4. Set up acceptable values to constrain AI output
+
+**Next:** [Quick Start: Auto-Created Attributes from Integrations](/product/attributes-and-enrichment/auto-created-attributes) or [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai)

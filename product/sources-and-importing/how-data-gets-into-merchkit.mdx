@@ -1,0 +1,54 @@
+---
+title: "How Data Gets Into Merchkit"
+description: "Understand the three ways to get data into Merchkit: CSV import, integration imports, and sources for AI enrichment."
+---
+
+# How Data Gets Into Merchkit
+
+There are three distinct ways to get data into Merchkit. Each serves a different purpose in your enrichment workflow:
+
+## 1. CSV Import — Populate Your Catalog
+
+The most common starting point. You upload a spreadsheet (CSV file) containing your product data — SKUs, titles, descriptions, prices, inventory, images, or any other product information. This brings product records into Merchkit's catalog.
+
+**When to use:** You're starting fresh and need to load your first catalog from an existing spreadsheet, PIM system, or ecommerce platform export.
+
+**Where to find it:** Products view → **Import** dropdown → **CSV Import**
+
+## 2. Integration Imports — Sync from Connected Platforms
+
+If you've connected Merchkit to a platform like Shopify, BigCommerce, or another ecommerce system, you can import product data directly from that integration. The platform acts as the source, and Merchkit syncs the data according to your field mapping configuration.
+
+**When to use:** Your products already live in a connected platform and you want to pull them into Merchkit for enrichment.
+
+**Where to find it:** Products view → **Import** dropdown → Look for your integration (e.g., "Shopify Import")
+
+**How field mapping works:** You configure which fields from the integration map to which Merchkit attributes under **Workspace → Integrations**. When you import, Merchkit uses these mappings automatically.
+
+## 3. Sources — Add Context for AI Enrichment
+
+Sources are reference material attached to individual products that help the AI understand context during enrichment. Unlike CSV and integration imports — which bring in product records themselves — sources provide supplementary information the AI uses to generate better descriptions, categories, tags, and other enriched data.
+
+Sources can be:
+- **URLs** (product pages, brand sites, vendor pages)
+- **Text** (paste in product specifications, marketing copy, or other content)
+- **Documents** (PDF, Excel, Word, ODT, or RTF files up to 25MB)
+
+When you add a URL or document as a Source, Merchkit doesn't just store the reference — it actively fetches the content, extracts the underlying text and structured data, pulls associated images and supporting documents, and holds the processed content locally so it's ready for prompt-driven enrichment. See [How Sources Work](/product/sources-and-importing/how-sources-work) for the full pipeline and supported source types.
+
+**When to use:** You want to give the AI richer context about a product before enriching it. For example, you might add a brand's style guide as a source, or paste in detailed spec sheets for a group of products.
+
+**Where to find it:** In the Products table, click the **Data Sources** cell for any product to open the sources panel.
+
+---
+
+## The Big Picture
+
+Think of it this way:
+
+- **CSV & Integration imports** = *How your products get into Merchkit*
+- **Sources** = *What context you give the AI to enrich those products better*
+
+Most customers start with a CSV import to load their existing catalog (Step 1), then optionally add sources for the products that need richer enrichment context (Step 3). Integration imports are useful if your products live in a connected platform and you want to keep them in sync.
+
+**Ready to import?** See [Importing Your First Catalog via CSV](/product/sources-and-importing/importing-first-catalog-csv) for a step-by-step walkthrough of the import flow.

@@ -1,0 +1,151 @@
+---
+title: "Using Acceptable Values to Constrain AI Output"
+description: "Lock AI-generated data to specific approved values for consistency. Learn when to use Acceptable Values, how to set them up, and how they improve data quality at scale."
+---
+
+Acceptable Values let you force the AI to return only specific, pre-approved values. Instead of letting the AI generate any text it wants, you give it a list of allowed answers and it must pick one (or the closest match).
+
+This is one of the most powerful ways to ensure data consistency across thousands of SKUs.
+
+## What Are Acceptable Values?
+
+Acceptable Values are a comma-separated list that you enter in the Configure Attribute panel. When you enable this constraint, the AI sees both your prompt and the list of acceptable values, and it must return a value from that list.
+
+**Example:**
+- Acceptable Values: `Red, Blue, Green, Black, White, Gray, Yellow, Orange, Purple, Pink, Brown, Gold, Silver, Bronze`
+- Prompt: "Based on {{product_title}} and product images, identify the primary color."
+- Result: The AI will only return one of the 14 colors listed, even if the product is a shade of red that's not on the list—it will return the closest match (e.g., "Red").
+
+## When to Use Acceptable Values
+
+Use Acceptable Values for **categorical data** where consistency matters:
+
+### Best Use Cases
+- **Colors:** `Red, Blue, Green, Black, White, Gray, Neutral, Multi-color`
+- **Materials:** `Cotton, Polyester, Leather, Wool, Nylon, Metal, Wood, Plastic`
+- **Sizes:** `XS, S, M, L, XL, XXL` or `Small, Medium, Large`
+- **Product Types:** `T-Shirt, Hoodie, Jacket, Sweater, Vest`
+- **Conditions:** `New, Refurbished, Used, Open Box`
+- **Yes/No fields:** `Yes, No, Not Specified`
+- **Compliance flags:** `Compliant, Non-Compliant, Review Required`
+- **Channel requirements:** Values that your sales channels demand (e.g., specific size codes for Amazon, Shopify, or marketplaces)
+
+### When NOT to Use Acceptable Values
+- **Freeform text:** Descriptions, titles, detailed specifications where you need creative variation
+- **Numeric values:** Prices, dimensions, weights (use the Number field type instead)
+- **Open-ended data:** Reviews, stories, marketing copy
+- **Any field requiring flexibility:** When you need the AI to generate unique, varied content
+
+## How Acceptable Values Work
+
+The AI's decision process:
+1. It reads your prompt
+2. It sees the list of Acceptable Values
+3. It generates output but constrains it to the list
+4. If the ideal answer isn't on the list, it picks the closest match
+
+**Example workflow:**
+
+| Prompt | Acceptable Values | Product | AI Output |
+|--------|-------------------|---------|-----------|
+| "Identify the primary color of {{product_title}}" | `Red, Blue, Green, Black, White` | A navy blue shirt | `Blue` |
+| "Identify the primary color of {{product_title}}" | `Red, Blue, Green, Black, White` | A maroon burgundy sweater | `Red` (closest match) |
+| "Identify the primary color of {{product_title}}" | `Red, Blue, Green, Black, White` | A gold-plated watch | `White` (closest match; no metallic option) |
+
+The AI doesn't struggle or return uncertain values—it always picks from the list.
+
+## How to Set Up Acceptable Values
+
+1. Open the Configure Attribute panel for your attribute
+2. Locate the "Acceptable Values" field (below the Prompt field)
+3. Enter values as a comma-separated list: `Value 1, Value 2, Value 3`
+4. Spaces around values are automatically trimmed
+5. Save your changes
+6. Run a test generation to verify the AI respects the constraints
+
+[SCREENSHOT: Configure Attribute panel showing Prompt field and Acceptable Values field below it]
+
+## Impact on Data Consistency
+
+Acceptable Values are the difference between scattered, inconsistent data and clean, queryable data.
+
+### Before (no Acceptable Values)
+- "Red"
+- "Crimson"
+- "Red - Bright"
+- "Hot Red"
+- "Deep Red"
+- "Scarlet"
+
+When you try to filter by color, you have 6 variations of red across 6 products. You can't query "all red products" effectively.
+
+### After (with Acceptable Values: `Red, Blue, Green, Black, White`)
+- "Red"
+- "Red"
+- "Red"
+- "Red"
+- "Red"
+- "Red"
+
+Now you can filter, segment, and report on color with confidence. All red products are tagged consistently.
+
+[SCREENSHOT: Before/after comparison showing scattered vs consistent values in the attribute view]
+
+## Common Issues and How to Avoid Them
+
+### Issue 1: Value Not in List
+**Problem:** The AI generates a value that's not on your Acceptable Values list.
+
+**Cause:** Your Acceptable Values list is incomplete, or you didn't define the prompt clearly enough.
+
+**Solution:**
+- Add the missing value to your list
+- Or rewrite the prompt to guide the AI toward values on the list
+- Example: Instead of "Identify the material," try "Identify the primary material from this list: Cotton, Polyester, Wool"
+
+### Issue 2: Misspellings in Your List
+**Problem:** Some SKUs get "Cotton" and others get "cotton" or "COTTON."
+
+**Cause:** Inconsistent casing or spacing in your Acceptable Values list.
+
+**Solution:**
+- Define your list once with a clear standard (Title Case, lowercase, UPPERCASE)
+- Copy-paste from that standard list rather than typing each time
+- Example (good): `Cotton, Polyester, Silk, Linen, Wool`
+- Example (bad): `cotton, Polyester, SILK, linen, Wool`
+
+### Issue 3: Too Many Values Defeats the Purpose
+**Problem:** You create a list with 500+ values, and it's essentially no constraint.
+
+**Cause:** You're using Acceptable Values like a hint rather than a real constraint.
+
+**Solution:**
+- Acceptable Values work best with 5-20 values
+- If you have 50+ acceptable values, consider whether you actually need a constraint
+- For very large option sets, focus on data quality in the prompt instead
+
+### Issue 4: Overly Specific Values Don't Match User Input
+**Problem:** Your Acceptable Values are `Small, Medium, Large` but your source documents say `S, M, L` or `Size S, Size M, Size L`.
+
+**Cause:** Mismatch between your value format and what the AI sees in source data.
+
+**Solution:**
+- Include the prompt instruction: "Return one of these exact values: Small, Medium, Large. Do not use abbreviations."
+- Or add both versions to your list: `Small, S, Medium, M, Large, L`
+- Or normalize in the prompt: "Convert S/M/L abbreviations to Small/Medium/Large"
+
+## Advanced: Using Acceptable Values with {{ }} Tags
+
+You can reference other attributes in your prompt and still use Acceptable Values:
+
+**Example prompt:** "Based on {{product_title}}, {{category}}, and images, identify the intended audience. Return only one value."
+
+**Acceptable Values:** `Men, Women, Unisex, Children, Infants`
+
+The AI reads the product context and picks from your list.
+
+## Next Steps
+
+With Acceptable Values configured, you now have a powerful way to ensure consistency. The next step is to explore **Creating Custom Attributes** where you'll build entirely new attributes tailored to your catalog. See [Creating Custom Attributes](/product/attributes-and-enrichment/creating-custom-attributes).
+
+For more on refining how the AI generates data, return to [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts) to iterate on your prompt strategy.

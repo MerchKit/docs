@@ -1,0 +1,164 @@
+---
+title: "Working with Categories"
+description: "Organize your products into a taxonomy using Merchkit's Categories page. Understand category-level attributes and why channel-specific categories matter for Wayfair, Walmart, and other platforms."
+---
+
+# Working with Categories
+
+Categories are how you organize your product universe. They create a taxonomy—a structured tree of product types—that makes your catalog navigable, searchable, and enrichable.
+
+In Merchkit, categories live in the **Catalog** section of the sidebar. They do three things: organize your products, enable channel-specific attributes, and determine how your data flows to marketplaces like Wayfair and Walmart.
+
+## What Categories Do
+
+A category is a label that groups products by type. Examples:
+
+- **Furniture**: Sofas, Chairs, Tables, Rugs
+- **Lighting**: Ceiling Lights, Table Lamps, Floor Lamps
+- **Decor**: Wall Art, Mirrors, Throw Pillows
+
+When you assign a product to a category, you're telling Merchkit what kind of product it is. This determines:
+
+1. **Which attributes apply** — A sofa category might require depth, width, and height. A rug category might require pile material and backing type.
+2. **Channel requirements** — Wayfair's "306 - Sofa" category expects 30+ attributes. Wayfair's "305 - Chair" category expects a different 30+. Assign the wrong category, and your enrichment won't match the channel's expectations.
+3. **Enrichment rules** — Some attributes only make sense for certain product types. Seat height matters for chairs; thread count matters for linens.
+
+[SCREENSHOT: Catalog sidebar showing Categories link]
+
+## Creating and Managing Categories
+
+### Navigate to Categories
+
+1. In the left sidebar, click **Catalog**.
+2. Click **Categories**.
+
+[SCREENSHOT: Catalog section with Categories link highlighted]
+
+You'll see a list of your existing categories (if any) or a prompt to create your first one.
+
+### Create a Category
+
+1. Click **+ New Category** or **Create Category**.
+2. Enter a **category name** (e.g., "Sofas", "Office Chairs", "Area Rugs").
+3. Optionally, set a **parent category** to create a hierarchy. E.g., "Sofas" is a child of "Furniture".
+
+[SCREENSHOT: New Category dialog with name field and parent category dropdown]
+
+4. Click **Create**.
+
+Your category now exists. You can edit its name, parent, or add category-level attributes (see below).
+
+### Assign Products to a Category
+
+Navigate to your products (usually in a data file or product list view) and assign each product to a category. This can be done:
+
+- Manually in the product detail view (click the product, set its category field).
+- In bulk via CSV import (include a category column).
+- Programmatically via API (if you're syncing from an external system).
+
+Once assigned, a product stays in its category until you move it. You can reassign anytime.
+
+## Category-Level Attributes
+
+Categories can have their own **category-level attributes**. These are fields that only apply to products in a specific category.
+
+**Example**: The "Sofas" category might have attributes like `seating_capacity` and `arm_style` that don't make sense for "Rugs" or "Lamps."
+
+### How to Add Category Attributes
+
+1. Open a category (click its name in the Categories list).
+2. Scroll to **Category Attributes** or **Attributes for this Category**.
+3. Click **+ Add Attribute**.
+4. Choose or create an attribute (same as the main attribute creation flow).
+5. Set it as required or optional for this category.
+6. Save.
+
+[SCREENSHOT: Category detail view with Category Attributes section and + Add Attribute button]
+
+Now, when you enrich products in this category, these attributes will appear in your enrichment workflow and prompt for data.
+
+### Why Category Attributes Matter
+
+Category attributes make your enrichment smarter and more efficient:
+
+- **No wasted fields** — You don't create a "thread count" attribute that only applies to linens. Instead, you add it to the "Linens" category.
+- **Channel alignment** — When syncing to Wayfair, you assign category-level attributes to match Wayfair's category requirements.
+- **Conditional enrichment** — An AI prompt can reference category attributes, and the prompt only runs for products in that category.
+
+## Categories and Channels
+
+This is critical: **different channels require different category structures**.
+
+Wayfair, for example, enforces a specific category taxonomy with many categories. Each category has different required attributes:
+
+- **306 - Sofa**: Requires seating capacity, arm style, back style, fabric care, dimensions, weight limit.
+- **305 - Chair**: Requires seat type, back style, arm style, dimensions, weight limit (note: no seating capacity).
+- **321 - Coffee Table**: Requires table shape, material, dimensions, leg style.
+
+If you assign a sofa to category "305 - Chair" in Wayfair, the enrichment workflow will expect the wrong attributes, and your data won't match the channel's requirements.
+
+### Category-Specific Views
+
+When you open a **channel view** (e.g., "Wayfair Export" view), you'll see a **category selector dropdown** at the top. This dropdown shows only the categories relevant to that channel.
+
+[SCREENSHOT: Channel view with category dropdown showing "306 - Sofa", "305 - Chair", "321 - Coffee Table", etc.]
+
+Selecting a category filters the product list to show only products in that category for this channel. This lets you enrich each category separately, ensuring all attributes are filled before sync.
+
+## Best Practices
+
+**1. Match your primary channel's taxonomy first**
+
+If Wayfair is your biggest channel, start with Wayfair's category structure. This makes category management simpler and reduces reassignments.
+
+**2. Keep your hierarchy shallow**
+
+A deep tree (e.g., Home > Furniture > Living Room > Seating > Sofas > Sectionals) is hard to navigate. Instead, use 2–3 levels:
+
+```
+Furniture
+├── Sofas
+├── Chairs
+└── Tables
+
+Lighting
+├── Ceiling Lights
+├── Table Lamps
+└── Floor Lamps
+```
+
+**3. Be consistent with naming**
+
+Use singular or plural consistently. "Sofas" and "Chairs", not "Sofas" and "Chair". Use clear, searchable names: "Area Rugs" not "Rugs" (which could mean bath rugs, door rugs, etc.).
+
+**4. Audit category assignments regularly**
+
+Every few months, check that products are in the right category. A sofa assigned to "Chairs" will get the wrong enrichment. Use bulk export or API queries to spot misassignments.
+
+**5. Align category attributes with channel requirements**
+
+Before syncing to a new channel, review that channel's category attribute requirements. Add missing attributes to your categories so enrichment is complete.
+
+## Common Questions
+
+**Q: Can a product be in multiple categories?**
+In most Merchkit setups, a product is in one primary category. Some channels allow secondary categories for broader discoverability, but primary category is what drives attribute expectations.
+
+**Q: What if I'm selling to multiple channels with different taxonomies?**
+Create a unified internal taxonomy first. Then, in each channel's configuration, map your internal categories to the channel's categories. For example:
+
+- Internal: "Sofas"
+- Maps to Wayfair: "306 - Sofa"
+- Maps to Walmart: "Living Room Sofas"
+
+**Q: Do I have to use categories?**
+Categories are optional for internal enrichment, but mandatory for channels like Wayfair. If you're not syncing to a channel, you can skip categories and manage attributes globally. But it's still recommended for organization and scalability.
+
+**Q: Can I change a product's category?**
+Yes, anytime. Click the product and change its category field. Note: If the new category has different required attributes, you may need to re-run enrichment to fill those fields.
+
+## Next Step
+
+Your catalog is organized, and categories are set up. Now it's time to run enrichment.
+
+Head to **4. Running Your First Enrichment** to learn how to execute an enrichment job, monitor its progress, and review the enriched data before syncing to your channels.

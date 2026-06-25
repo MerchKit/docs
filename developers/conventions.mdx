@@ -1,0 +1,202 @@
+---
+title: "Conventions"
+description: "Cross-cutting conventions: the pagination envelope, the filter DSL, the machine-recoverable error envelope, async jobs, and reference attributes."
+---
+
+These conventions apply across the entire `/api/v1` surface. They are deliberately agent-friendly:
+the same filtering engine and error shapes power the REST API and the MCP server, so semantics never
+diverge.
+
+<Note>
+  Examples use `https://app.merchkit.com` as the base URL. Treat this as a placeholder and confirm
+  your account's actual API host.
+</Note>
+
+## Pagination
+
+List endpoints return their results in an envelope: the rows under `data`, and the cursor metadata
+under `pagination`.
+
+```json
+{
+  "data": [ /* resources */ ],
+  "pagination": {
+    "total": 1234,
+    "limit": 50,
+    "offset": 0,
+    "has_more": true
+  }
+}
+```
+
+<ParamField path="limit" type="integer" default="50">
+  Page size. Defaults to **50**, with a maximum of **200**. Larger pages mean fewer round-trips,
+  which agents generally prefer.
+</ParamField>
+<ParamField path="offset" type="integer" default="0">
+  How many rows to skip. Combine with `limit` to page through results.
+</ParamField>
+<ParamField path="total" type="integer">
+  The total number of rows matching the query, across all pages.
+</ParamField>
+<ParamField path="has_more" type="boolean">
+  Whether more pages exist after this one. **Read `has_more`** rather than computing it yourself — it
+  is the canonical signal to stop paging.
+</ParamField>
+
+## Filtering and sorting
+
+Filter with the query-string DSL: `filter[<key>][<op>]=<value>`. Combine multiple filters with
+`filter_join`, and order results with `sort`.
+
+```http
+GET /api/v1/products
+  ?filter[vendor][contains]=Stressless
+  &filter[description][blank]=true
+  &filter[price][greaterThanOrEqual]=100
+  &filter_join=AND
+  &sort=-updated_at
+```
+
+<ParamField path="filter[<key>][<op>]" type="string">
+  One filter clause: an attribute key, an operator, and a value.
+</ParamField>
+<ParamField path="filter_join" type="AND | OR" default="AND">
+  How multiple filter clauses combine.
+</ParamField>
+<ParamField path="sort" type="string">
+  A comma-separated list of fields. Prefix a field with `-` for descending order (e.g.
+  `sort=-updated_at`).
+</ParamField>
+
+### Operators
+
+| Operator | Meaning |
+|---|---|
+| `contains` | Value contains the substring |
+| `notContains` | Value does not contain the substring |
+| `equals` | Exact match |
+| `notEquals` | Not an exact match |
+| `startsWith` | Value begins with |
+| `endsWith` | Value ends with |
+| `blank` | Attribute is empty / unset |
+| `notBlank` | Attribute is set |
+| `greaterThan` | Numeric / date greater than |
+| `lessThan` | Numeric / date less than |
+| `greaterThanOrEqual` | Numeric / date ≥ |
+| `lessThanOrEqual` | Numeric / date ≤ |
+
+<Callout type="info">
+  `blank` / `notBlank` answer the most common enrichment question — "which products are **missing** an
+  attribute?" For example, `filter[description][blank]=true` finds every product without a
+  description, and `notBlank` finds the inverse.
+</Callout>
+
+## Error envelope (machine-recoverable)
+
+Every non-2xx response uses one shape, designed so an agent can recover without a human in the loop.
+
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "The attribute 'color' is not one of the acceptable values for this channel.",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "documentation_url": "https://docs.merchkit.com/api/errors#validation_failed",
+    "alternative_action": "Set 'color' to one of the acceptable values, or update the attribute definition.",
+    "request_id": "req_8f2c…",
+    "field_errors": [
+      {
+        "field": "color",
+        "issue": "not_in_acceptable_values",
+        "acceptable_values": ["Navy", "Charcoal", "Olive"]
+      }
+    ]
+  }
+}
+```
+
+<ParamField path="code" type="string">
+  A stable machine code. Common codes: `unauthorized`, `insufficient_scope`, `not_found`,
+  `validation_failed`, `conflict`, `internal_error`.
+</ParamField>
+<ParamField path="message" type="string">
+  A human-readable explanation of what went wrong.
+</ParamField>
+<ParamField path="is_retriable" type="boolean">
+  Whether retrying the same request could succeed. If `true`, honor `retry_after_seconds`.
+</ParamField>
+<ParamField path="retry_after_seconds" type="integer | null">
+  How long to wait before retrying, when the error is retriable.
+</ParamField>
+<ParamField path="documentation_url" type="string">
+  A link to documentation for this specific error code.
+</ParamField>
+<ParamField path="alternative_action" type="string">
+  A suggested next step that may resolve the problem.
+</ParamField>
+<ParamField path="request_id" type="string">
+  An identifier echoed in logs — include it when contacting support.
+</ParamField>
+<ParamField path="field_errors[]" type="array">
+  Per-field details. Each entry has a `field`, an `issue`, and — critically —
+  `acceptable_values`: the exact set of values that would have passed validation.
+</ParamField>
+
+<Callout type="info">
+  `field_errors[].acceptable_values` is the strongest self-correction signal in the API. When a value
+  is rejected, the response tells you exactly which values are acceptable, so an agent can fix the
+  payload and retry without asking a human.
+</Callout>
+
+## Async jobs
+
+Long-running operations — bulk writes, imports, exports — do not block. They return **`202`** with a
+job handle, and you poll for completion.
+
+<Steps>
+  <Step title="Start the operation">
+    The operation returns `202 Accepted` with a `job_id`:
+
+    ```json
+    { "job_id": "job_…", "status": "queued" }
+    ```
+  </Step>
+  <Step title="Poll the job">
+    Call `GET /api/v1/jobs/{id}` until it reaches a terminal state. While running, it reports
+    progress; on completion, `result` carries the payload (for example, an export's file URL):
+
+    ```json
+    {
+      "id": "job_…",
+      "status": "running",
+      "progress": { "current": 320, "total": 1000 },
+      "result": null
+    }
+    ```
+  </Step>
+</Steps>
+
+<Callout type="info">
+  Poll the job rather than blocking on the original request. The job status endpoint is the source of
+  truth for both progress and the final result.
+</Callout>
+
+## Reference attributes
+
+Some attributes are **references** — they point at another entity (a product pointing at a vendor or
+an asset, for example). Instead of returning a raw UUID, a reference attribute returns a compact
+summary:
+
+```json
+{
+  "entityId": "…",
+  "entityType": "vendor",
+  "label": "Stressless"
+}
+```
+
+The `label` is enough to render or reason about the relationship inline. When you need the full
+record, fetch it with `GET /api/v1/products/{id}` (or the corresponding resource endpoint) using the
+`entityId`.

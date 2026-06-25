@@ -1,0 +1,154 @@
+---
+title: "Bulk Importing Sources"
+description: "Import sources in bulk via CSV from the Sources sidebar page, ideal for attaching URLs or documents to many products at once."
+---
+
+# Bulk Importing Sources
+
+When you have dozens of products and corresponding spec sheets or supplier URLs, adding sources one at a time via the per-product panel gets tedious fast. Use bulk import to attach sources to many products at once via a CSV file.
+
+## Understanding the Sources Sidebar
+
+The Sources sidebar page is your library of all sources across your entire catalog.
+
+**To access it:**
+1. Click **Catalog** in the sidebar.
+2. Click **Sources**.
+
+You'll see a flat list of all sources attached to any product, with metadata showing which products they're attached to, source type (URL, text, document), and when they were added.
+
+[SCREENSHOT: Sources sidebar page showing flat list of sources, with columns for Source, Type, Attached To, Date Added]
+
+## When to Use Bulk Import vs. Per-Product
+
+**Use bulk import when:**
+- You have a spreadsheet of supplier URLs or document links you need to attach to products.
+- You're setting up a new product catalog and want to import sources alongside or after your product data.
+- You have 20+ products that need sources—the CSV approach is much faster than clicking each one.
+- Your sources are organized by product SKU or ID in a structured way.
+
+**Use per-product (2.5) when:**
+- You're adding one source to one product as you work.
+- You're refining sources for a subset of products after an initial import.
+- You want to manually review and attach sources selectively.
+
+## The Sources CSV Format
+
+To bulk-import sources, you need a CSV file with the following columns:
+
+| Column | Required | Format | Example |
+|--------|----------|--------|---------|
+| **sku** or **product_id** | Yes | String or ID | `SKU-123` or `prod_abc123` |
+| **source_type** | Yes | `url`, `text`, or `document` | `url` |
+| **source_value** | Yes | URL, text content, or filename | `https://supplier.com/spec.pdf` |
+| **source_name** (optional) | No | Friendly label | `Supplier Spec Sheet` |
+
+### Example CSV:
+
+```
+sku,source_type,source_value,source_name
+SKU-101,url,https://supplier.com/product/101-specs,Supplier Spec Page
+SKU-101,text,Material: Aluminum Alloy 6061. Dimensions: 10x8x6 inches. Weight: 2.5 lbs.,Internal Specs
+SKU-102,url,https://manuals.company.com/guide-102.pdf,Product Manual
+SKU-103,document,spec_sheet_103.pdf,Technical Data Sheet
+```
+
+### Preparing Your CSV
+
+1. **List products by SKU or ID** — Use the same identifier Merchkit uses to match products.
+2. **One source per row** — If a product has multiple sources, create multiple rows with the same SKU.
+3. **Keep URLs complete** — Include the full URL with protocol (`https://`).
+4. **For documents**, list only the filename if you're uploading files alongside the CSV, or paste the URL if they're hosted online.
+5. **Keep text concise** — If source_value contains commas, wrap it in quotes: `"Material: Steel, dimensions: 12x8, weight: 3 lbs."`
+
+## Running the Bulk Import
+
+**Step 1: Prepare your CSV**
+
+Create a spreadsheet with the columns and format described above. Include all products and their sources. Save it as a `.csv` file.
+
+[SCREENSHOT: Excel/spreadsheet showing sample sources CSV with sku, source_type, source_value, source_name columns]
+
+**Step 2: Open the Sources sidebar**
+
+1. Click **Catalog** in the sidebar.
+2. Click **Sources**.
+
+**Step 3: Start the import**
+
+Look for an **Import Sources** button or **Upload CSV** option on the Sources page. Click it.
+
+[SCREENSHOT: Sources sidebar with Import button visible]
+
+**Step 4: Upload your CSV**
+
+1. Select your `.csv` file from your computer.
+2. Merchkit will preview the import and show you a summary of how many sources will be attached to which products.
+3. Review the preview for any errors or mismatches.
+
+[SCREENSHOT: Import preview showing number of sources to be imported, products matched, any errors]
+
+**Step 5: Confirm and import**
+
+1. If the preview looks correct, click **Confirm Import** or **Import**.
+2. Merchkit processes the import and attaches sources to products.
+3. You'll see a summary: "Imported 45 sources across 18 products."
+
+Once imported, you can view all sources in the Sources sidebar list, or open individual products and see the sources in their per-product Sources panel.
+
+## Handling Files in Bulk Import
+
+If your CSV references document files (e.g., `document_type: document, source_value: spec_sheet_101.pdf`), you have two options:
+
+**Option 1: Upload documents alongside CSV**
+
+When you import the CSV, Merchkit lets you upload a ZIP file or folder containing the referenced documents. Make sure filenames in your CSV exactly match the filenames in your folder.
+
+**Option 2: Use hosted URLs**
+
+Instead of local files, provide direct URLs to documents hosted on a server or cloud storage:
+
+```
+sku,source_type,source_value,source_name
+SKU-101,document,https://s3.bucket.com/docs/spec_101.pdf,Spec Sheet
+```
+
+This approach is simpler if your documents are already online.
+
+## Validating the Import
+
+After importing, spot-check a few products to ensure sources were attached correctly:
+
+1. Go to **Products** in the sidebar.
+2. Double-click the Data Sources cell for a product you imported sources for.
+3. Verify that the expected sources appear in the Sources view.
+
+If something looks wrong, you can remove incorrect sources and re-import a corrected CSV.
+
+## Common Issues
+
+**"Merchkit didn't match my SKUs"**
+- Ensure your CSV's `sku` column exactly matches the product SKU in Merchkit (case-sensitive, no extra spaces).
+- If your Merchkit product ID is numeric, make sure the CSV column is treated as text, not a number (Excel can strip leading zeros).
+
+**"The import said 'X sources found but Y attached'—what happened?"**
+- This usually means some SKUs didn't match any products in your catalog.
+- Check your CSV for typos or mismatches.
+- Re-upload a corrected CSV to import the missing sources.
+
+**"My document upload failed"**
+- File is too large (keep under 25MB per file).
+- Filename in CSV doesn't exactly match the file in your upload folder (case-sensitive).
+- File format isn't supported (check that PDFs, Word, Excel, ODT, or RTF).
+
+**"I imported URL sources but the AI can't read them"**
+- The URL might be behind a login or firewall.
+- If you're having trouble with a particular website, contact support — we can help with unique sites.
+
+**"I want to update sources for products I already imported"**
+- You can delete the old sources from the per-product panel and re-import a new CSV, or edit the CSV and re-upload it.
+- Merchkit will handle deduplication and updates based on the new import.
+
+## Next Steps
+
+After importing sources, your products are enriched with context. You're ready to run enrichment and generate better attribute values. Or, to learn about working with vendors and managing your supplier relationships, check out [**Working with Vendors**](/product/sources-and-importing/working-with-vendors).

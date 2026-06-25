@@ -1,0 +1,89 @@
+---
+title: "Connecting an Integration"
+description: "Step-by-step instructions for authenticating and connecting your first platform integration."
+---
+
+# Connecting an Integration
+
+Ready to link your first platform to Merchkit? This guide walks you through the authentication and connection process for any supported platform.
+
+## Supported Platforms
+
+Merchkit currently integrates with:
+
+- **Shopify** — Direct API connection
+- **BigCommerce** — OAuth authentication
+- **Salsify** — API key-based
+- **Akeneo** — API credentials
+- **WooCommerce** — REST API
+- **Walmart** — Vendor API
+- **Wayfair** — Partner API
+
+## The Connection Process
+
+### Step 1: Go to Integrations
+
+Navigate to **Workspace → Integrations**.
+
+[SCREENSHOT: Integrations page main view]
+
+### Step 2: Click "Add New Integration"
+
+In the **Add New Integrations** grid, find the platform you want to connect and click its card.
+
+[SCREENSHOT: Add New Integrations grid with platform options highlighted]
+
+### Step 3: Follow Platform-Specific Authentication
+
+Each platform has its own authentication flow. For most, you'll:
+
+1. Click **Connect** or **Authenticate**
+2. Log in to your account on that platform (you'll be sent to their login page)
+3. Approve Merchkit's access request
+4. Return to Merchkit—the connection is established
+
+### Step 4: Name Your Connection (Optional)
+
+If you have multiple accounts on the same platform, you can label them (e.g., "Shopify US" vs. "Shopify EU"). This helps you remember which is which.
+
+### Step 5: Review Permissions
+
+Merchkit will confirm which data it can access:
+
+- Product information
+- Variants and SKUs
+- Custom fields / metafields
+- Pricing
+- Inventory (if needed)
+
+All platform integrations are read-write, so Merchkit can both pull data in and push changes back out. The initial import is read-only until you set up export mapping.
+
+[SCREENSHOT: Authentication confirmation screen showing permissions]
+
+## Your Integration is Now Active
+
+Once authenticated, your integration appears in the **Active Integrations** list with:
+
+- Platform name
+- Connection status (Connected)
+- Last sync timestamp (will update after first import)
+
+You won't be able to import or export data until you've set up field mapping. That's next.
+
+## Troubleshooting Connection Issues
+
+**"Authentication failed"**
+- Verify your username and password on the platform
+- Check that the account has API or integration permissions enabled
+- Some platforms require you to generate an API key in your settings first—see platform-specific guides
+
+**"Permission denied"**
+- Return to the platform's app permissions settings and grant Merchkit full access to products and variants
+- Some platforms require you to whitelist Merchkit's IP or domain
+
+**"Already connected to this platform"**
+- You can only connect one account per platform in Merchkit. If you need to switch accounts, delete the integration and reconnect with the new account.
+
+---
+
+**Next step**: [Understanding Field Mapping](/product/integrations-and-field-mapping/understanding-field-mapping)

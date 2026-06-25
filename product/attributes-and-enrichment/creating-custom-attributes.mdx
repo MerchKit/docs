@@ -1,0 +1,141 @@
+---
+title: "Creating Custom Attributes"
+description: "Build new attributes from scratch to capture data that matters to your catalog. Learn the naming conventions, field types, and workflow for creating custom attributes."
+---
+
+Standard attributes like Title, Description, and MSRP are great, but every catalog is different. Custom attributes let you capture exactly what matters to your business—whether that's care instructions, warranty info, sustainability certifications, or unique specs your buyers need.
+
+## The Create Attribute Workflow
+
+Creating a custom attribute follows a consistent flow:
+
+1. **Click "+ Add Product Attribute"** (at the top of the Attributes panel)
+2. **Name your attribute** (follow naming conventions)
+3. **Choose the entity type** (usually Products, but can be Categories, Vendors, Images, Sources)
+4. **Select the field type** (Text, Number, Image, Formula, Reference Lookup, etc.)
+5. **Configure for AI** (if applicable: write a prompt, set acceptable values)
+6. **Save**
+
+[SCREENSHOT: "+ Add Product Attribute" button in the Attributes panel]
+
+## Naming Conventions and Best Practices
+
+Your attribute name should be:
+- **Clear and specific:** `Care Instructions` instead of `Care`
+- **Use Title Case:** `Care Instructions`, `Sustainability Certification`, `Lead Time`
+- **Descriptive but concise:** `Warranty Period (Months)` instead of `Warranty`
+- **Use standard terms:** If an industry standard exists, follow it
+- **Avoid abbreviations** unless universally understood: `MSRP` is fine, but `MFGDATE` should be `Manufacture Date`
+
+**Good examples:**
+- Product Weight (kg)
+- Expected Lead Time (Days)
+- Care Instructions
+- Sustainability Certification
+- Allergen Information
+- Assembly Required (Yes/No)
+
+**Examples to avoid:**
+- `attr_1` (meaningless)
+- `temp_field` (suggests impermanence)
+- `data` (too vague)
+- `x_custom_prop` (unnecessary prefix)
+
+## Choosing the Right Entity Type
+
+Most custom attributes you'll create are on the **Products** entity, but you can create attributes for other entities too:
+
+| Entity Type | When to Use | Example |
+|-------------|------------|---------|
+| **Products** | The vast majority of attributes. Captures data about each SKU or product. | `Warranty Period`, `Allergen Information`, `Lead Time` |
+| **Categories** | Data that applies to entire categories, not individual products. | `Category Commission Rate`, `Marketplace Category Code` |
+| **Vendors** | Information about suppliers and vendors. | `Preferred Vendor`, `Payment Terms`, `Support Email` |
+| **Images** | Metadata about product images. | `Image Alt Text`, `Image Usage Rights`, `Image Source` |
+| **Sources** | Metadata about data sources (where you pulled product info from). | `Source Reliability Score`, `Last Updated Date` |
+
+In most workflows, you'll choose **Products**. Only select a different entity if the data logically belongs at that level.
+
+## Choosing the Field Type
+
+The field type determines what kind of data the attribute holds and how it's processed. Here's a quick overview:
+
+| Field Type | Best For | AI Support | Example |
+|------------|----------|-----------|---------|
+| **Single Line Text** | Descriptions, titles, text-based specs | Yes | `Care Instructions`, `Product Description` |
+| **Number** | Numeric values, measurements, extracted data | Yes | `Weight (kg)`, `MSRP`, `Lead Time (Days)` |
+| **Image** | AI-generated visual assets | Yes (generates) | `Dimension Diagrams`, `Lifestyle Renders` |
+| **Formula** | Calculated fields, no AI | No | `Tax = MSRP × Tax Rate` |
+| **Reference Lookup** | Pull data from another entity | No | Look up a vendor's preferred shipping method |
+| **Collection Reference** | Link to multiple related records | No | Link products to multiple collections |
+| **Record Reference** | Link to a single related record | No | Link a product to its primary vendor |
+
+For a detailed breakdown of each type, including configuration examples, see [Field Type Guide](/product/attributes-and-enrichment/field-type-guide).
+
+## Common Custom Attributes by Industry
+
+### Apparel & Fashion
+- `Size Category` (XS, S, M, L, XL) — Acceptable Values
+- `Material Composition` (e.g., 100% Cotton, 80% Cotton / 20% Polyester) — Text
+- `Care Instructions` (e.g., Machine Wash Cold) — Text
+- `Fit Type` (e.g., Slim Fit, Regular Fit, Oversized) — Text with Acceptable Values
+
+### Electronics
+- `Warranty Period (Months)` — Number
+- `Weight (kg)` — Number
+- `Dimensions (L x W x H cm)` — Text
+- `Power Supply Type` (e.g., Battery, AC, USB-C) — Text with Acceptable Values
+- `Compatibility` — Text
+
+### Home & Garden
+- `Care Instructions` — Text
+- `Material` — Text with Acceptable Values
+- `Water Resistant` (Yes/No) — Text with Acceptable Values
+- `Indoor/Outdoor` — Text with Acceptable Values
+
+### General
+- `Lead Time (Days)` — Number
+- `Allergen Information` — Text
+- `Sustainability Certification` (e.g., Fair Trade, Organic, Eco-Friendly) — Text with Acceptable Values
+- `Assembly Required` (Yes/No) — Text with Acceptable Values
+- `Warranty Period (Months)` — Number
+
+## When to Create a Custom Attribute vs. Use an Auto-Created One
+
+**Create a new custom attribute when:**
+- You have specific data needs that standard attributes don't cover (e.g., `Lead Time`, `Allergen Info`)
+- You want consistency across thousands of SKUs (use Acceptable Values)
+- You want AI to extract or generate data specific to your business logic
+- The data is important for your sales, compliance, or analytics processes
+
+**Use an auto-created attribute when:**
+- Merchkit automatically detects and creates attributes from your source data
+- The auto-created attribute already captures what you need
+- You're satisfied with the structure and don't need customization
+
+You can always create a custom attribute in parallel with an auto-created one if you need more control.
+
+## Step-by-Step: Create Your First Custom Attribute
+
+Let's say you want to create a `Care Instructions` attribute for apparel products.
+
+1. Open the **Attributes panel** in your catalog
+2. Click **"+ Add Product Attribute"**
+3. Enter name: `Care Instructions`
+4. Choose entity type: `Products` (default)
+5. Choose field type: `Single Line Text` (you want flexible text instructions)
+6. Click **"Configure for AI"** (optional, but recommended)
+7. In the Configure panel:
+   - Write prompt: `"Based on {{product_title}}, {{material}}, and source documents, extract or generate care instructions. Provide 2-3 specific steps (e.g., 'Machine wash cold with like colors'). Be concise and actionable."`
+   - Leave Acceptable Values empty (care instructions need flexibility)
+8. Click **"Edit with AI"** to refine your prompt if needed
+9. Click **Save**
+
+[SCREENSHOT: Configure Attribute panel for Care Instructions]
+
+Test your new attribute on a few products to see how the AI performs, then refine the prompt if needed.
+
+## Next Steps
+
+Now that you understand how to create custom attributes, the next step is to dive into **Field Types** in detail. Each field type has its own configuration options and strengths. See [Field Type Guide](/product/attributes-and-enrichment/field-type-guide).
+
+For refreshers on writing strong prompts and setting Acceptable Values, return to [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts) and [Using Acceptable Values](/product/attributes-and-enrichment/acceptable-values).

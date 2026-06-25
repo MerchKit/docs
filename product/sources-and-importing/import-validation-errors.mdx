@@ -1,0 +1,173 @@
+---
+title: "Import Validation: Understanding Errors & Warnings"
+description: "Diagnose and fix common import errors and warnings"
+---
+
+# Import Validation: Understanding Errors & Warnings
+
+When you import data into Merchkit, the system validates your file before processing. If issues are detected, you'll see errors and warnings that explain what went wrong and how to fix it. This guide covers the most common validation issues and how to resolve them.
+
+## How Import Validation Works
+
+During the import flow, Merchkit checks your file for:
+
+1. **File integrity** — Is the file readable? Is it the right format?
+2. **Structure** — Does it have headers? Are there duplicate column names?
+3. **Data quality** — Do values match the expected field types?
+4. **Conflicts** — Are there duplicate product identifiers?
+
+If validation fails, you'll see a detailed error message before your import completes. You can then fix the issue and re-attempt the import.
+
+[SCREENSHOT: Import validation error screen]
+
+## Common Error Types
+
+### Encoding Errors
+
+**What it means:** Merchkit detected non-UTF-8 characters in your file.
+
+**Common causes:**
+- Your CSV was saved in a different encoding (e.g., Latin-1, Windows-1252)
+- Special characters like accents, emojis, or non-ASCII symbols weren't properly encoded
+
+**How to fix:**
+1. Open your CSV in a text editor or spreadsheet application
+2. Save it with **UTF-8 encoding** (often called "UTF-8 without BOM")
+3. Re-import the file
+
+**Excel users:** In Excel, use File → Save As → choose CSV (Comma delimited), then click **Tools** → **Web Options** → **Encoding** → select **UTF-8**.
+
+### Missing Headers
+
+**What it means:** Your CSV file doesn't have a header row, or Merchkit couldn't identify column names.
+
+**How to fix:**
+1. Make sure the first row of your CSV contains column names
+2. Use clear, unique names for each column (e.g., "SKU", "Product Name", "Price")
+3. Re-import the file
+
+### Duplicate Column Names
+
+**What it means:** Two or more columns have the same name.
+
+**Example:** You have two columns both named "Price" — Merchkit can't tell them apart.
+
+**How to fix:**
+1. Rename duplicate columns to be unique (e.g., "List Price" and "Wholesale Price")
+2. Re-import the file
+
+### Data Type Mismatches
+
+**What it means:** A value in your CSV doesn't match the field type it's being mapped to.
+
+**Examples:**
+- Mapping a text value like "N/A" to a numeric Price field
+- Mapping "2024-13-45" (invalid date) to a Date field
+- Mapping a non-number to a whole number field
+
+**How to fix:**
+1. Check the field types you're mapping to during the preview step
+2. Clean your source data so values match expected types
+3. If a field is optional, you can leave it blank instead of mapping a mismatched value
+4. Re-import the file
+
+### File Too Large
+
+**What it means:** Your CSV file exceeds Merchkit's size limit (typically 100 MB).
+
+**How to fix:**
+1. Split your CSV into multiple files
+2. Import them separately
+3. Or, contact support if you need help with a large dataset
+
+## Common Warning Types
+
+### Unmatched Columns
+
+**What it means:** Your CSV contains columns that you didn't map to any product attributes during the import preview.
+
+**Impact:** These columns will be skipped during import — their data won't be added to your products.
+
+**Example:** Your CSV has a "Warehouse Location" column, but you didn't map it to any attribute, so that data is ignored.
+
+**How to fix:**
+- If you want to import this data, cancel the import, create the corresponding attribute in Merchkit, and then re-import
+- If you don't need this column, you can safely proceed with the import
+
+### Duplicate Product Identifiers
+
+**What it means:** Your CSV contains two or more rows with the same SKU or matching identifier field.
+
+**Impact:** Merchkit might update the same product twice, or create unexpected duplicates.
+
+**How to fix:**
+1. Review your CSV for duplicate SKUs
+2. Remove duplicates or give them unique identifiers
+3. Re-import the file
+
+### Empty Rows
+
+**What it means:** Your CSV contains blank rows with no product data.
+
+**Impact:** These rows will be skipped — they won't create or update any products.
+
+**How to fix:**
+- If you notice empty rows, you can remove them from your CSV to clean it up
+- Or, proceed with the import and ignore the warning
+
+## How to Read Import Error Messages
+
+When validation fails, you'll see:
+
+1. **Error type** — what kind of problem was detected
+2. **Affected rows/columns** — which specific cells or columns have the issue
+3. **Details** — what the actual value is and what was expected
+
+[SCREENSHOT: Detailed error message with row/column callouts]
+
+## Preventing Import Errors
+
+### Prepare Your Data First
+
+Before importing, take time to prepare your CSV:
+
+1. **Check encoding** — Save your file as UTF-8
+2. **Add headers** — Make sure the first row contains column names
+3. **Remove duplicates** — Check for duplicate SKUs or identifiers
+4. **Validate data types** — Numbers should be numbers, dates should be valid dates
+5. **Clean special characters** — Review any non-ASCII characters
+6. **Remove empty rows** — Delete any blank rows in your CSV
+
+For a detailed walkthrough, see [Preparing Your Data for Import](/product/sources-and-importing/preparing-your-data-for-import).
+
+### Preview Before Importing
+
+Always preview your data before clicking Import:
+
+1. In the import flow, review the preview screen
+2. Check that columns are mapped correctly
+3. Spot-check a few rows to ensure data looks right
+4. Look for warnings and address them before proceeding
+
+## Fixing Errors and Re-importing
+
+If your import fails:
+
+1. **Note the specific errors** from the validation message
+2. **Fix your CSV** according to the error details
+3. **Re-import the corrected file** — start from the beginning of the import flow
+4. **Preview again** before confirming
+
+There's no penalty for re-importing — you can try as many times as needed.
+
+## Getting Help
+
+If you're stuck on an error:
+
+- Check the [Troubleshooting](/product/troubleshooting/troubleshooting) section for your specific error type
+- Review [Preparing Your Data for Import](/product/sources-and-importing/preparing-your-data-for-import) for best practices
+- Reach out to support with a screenshot of the error and a sample of your CSV file
+
+## Next Steps
+
+Once your imports are validated and successful, you're ready to learn how to update existing products. Head to [Re-importing & Updating Existing Products](/product/sources-and-importing/reimporting-updating-products).

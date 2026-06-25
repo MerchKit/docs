@@ -1,0 +1,269 @@
+---
+title: "Integration & Field Mapping Errors"
+description: "Debug Shopify, WooCommerce, BigCommerce, and other integration connection failures, sync errors, and field mapping issues."
+---
+
+# Integration & Field Mapping Errors
+
+When you connect Merchkit to your e-commerce platform (Shopify, WooCommerce, BigCommerce, etc.), data flows back and forth. Connection failures, sync errors, and field mapping mismatches can interrupt this flow. This guide helps you diagnose and fix them.
+
+## Integration Connection Errors
+
+### Error: "Authentication Failed" or "Invalid API Key"
+
+**What it means:** Merchkit can't verify your credentials with your e-commerce platform.
+
+**What causes it:**
+- API key or access token is incorrect or expired.
+- Authentication scope is too narrow (missing required permissions).
+- API credentials have been revoked.
+
+**How to fix it:**
+
+**For Shopify:**
+1. Log into your Shopify admin.
+2. Go to **Settings** > **Apps and Integrations** > **API Credentials**.
+3. Check if your API token is still active (they expire after 6-12 months).
+4. If expired, generate a new token.
+5. In Merchkit, go to **Integrations** > **Shopify**.
+6. Click **Reconnect** or **Re-authenticate**.
+7. Paste the new token and click **Save**.
+
+[SCREENSHOT: Shopify API credentials page]
+
+**For WooCommerce:**
+1. Log into your WooCommerce admin.
+2. Go to **Settings** > **Advanced** > **REST API**.
+3. Find the Merchkit consumer key and secret.
+4. Verify they're set to **Read/Write** access.
+5. If expired, delete and create new credentials.
+6. In Merchkit, go to **Integrations** > **WooCommerce** > **Settings**.
+7. Update the consumer key and secret, click **Save**.
+
+**For BigCommerce:**
+1. Log into your BigCommerce dashboard.
+2. Go to **Apps** > **My Apps** > **API Accounts**.
+3. Find Merchkit and check its scope (should include "Products: Read/Write").
+4. If scope is limited, edit it or create a new token with full scope.
+5. In Merchkit, go to **Integrations** > **BigCommerce**.
+6. Click **Reconnect** and paste the new token.
+
+[SCREENSHOT: BigCommerce API account creation form]
+
+### Error: "Connection Timeout" or "Unable to Connect"
+
+**What it means:** Merchkit tried to reach your platform but got no response or the connection took too long.
+
+**What causes it:**
+- Your e-commerce platform is temporarily down or slow.
+- Network firewall is blocking Merchkit's requests.
+- DNS resolution is failing.
+
+**How to fix it:**
+1. **Verify your platform is up**: Log into your Shopify/WooCommerce admin directly to confirm it's accessible.
+2. **Check Merchkit's IP allowlist**: Some platforms require you to allowlist Merchkit's IP addresses. Ask Support for the current IP list and add them to your firewall.
+3. **Retry the connection**: In Merchkit, click **Reconnect** on the integration. Wait a few moments and retry.
+4. **Check your internet connection**: Confirm you have stable internet; try a different network if possible.
+
+### Error: "Insufficient Permissions"
+
+**What it means:** Your API token is valid, but it doesn't have permission to read/write the data Merchkit needs.
+
+**What causes it:**
+- API scope was set too narrow during token creation.
+- Your user role in the platform has limited permissions.
+
+**How to fix it:**
+1. Check the API scope for your token:
+   - **Shopify**: Should include `write_products`, `read_products`.
+   - **WooCommerce**: Should include `Product: Read/Write`.
+   - **BigCommerce**: Should include `Products: Read/Write`.
+2. If scope is limited, regenerate the token with the correct scope.
+3. In Merchkit, update the token and retry.
+
+[SCREENSHOT: API scope permissions checkboxes]
+
+## Sync Errors
+
+### Error: "Sync Failed: Timeout" or "Rate Limit Exceeded"
+
+**What it means:** Merchkit's sync with your platform was interrupted due to timeout or rate limiting.
+
+**What causes it:**
+- Syncing a very large catalog (10,000+ products).
+- Your platform is rate-limiting API requests (common during peak hours).
+- Network interruption during sync.
+
+**How to fix it:**
+1. **Retry the sync**: Go to **Integrations** > [Your Integration] > **Sync Now**. Most timeouts resolve on retry.
+2. **Sync smaller batches**: If syncing your entire catalog times out, sync product by product or in batches of 100-500.
+3. **Sync during off-peak hours**: Try syncing at night or early morning when your platform is less busy.
+4. **Contact your platform's support**: If rate limiting persists, ask if they can temporarily increase your API limits.
+
+[SCREENSHOT: Sync history log with retry button]
+
+### Error: "Sync Partial: X products failed"
+
+**What it means:** Some products synced successfully, but others failed.
+
+**What causes it:**
+- Mismatched product IDs between Merchkit and your platform.
+- Product data validation errors (missing required fields on platform side).
+- Platform rejected updated data (field format mismatch).
+
+**How to fix it:**
+1. **Check the error log**: Click **View Details** next to the failed sync to see which products failed and why.
+2. **Verify product IDs**: Ensure Merchkit has the correct product IDs from your platform. If IDs don't match, re-map them.
+3. **Review product data**: Go to the failed product in Merchkit's Catalog and check:
+   - Are all required fields filled?
+   - Do field values match the platform's format expectations?
+4. **Check platform validation**: Log into your e-commerce platform and manually check one of the failed products. Is there a validation error on the platform side?
+
+[SCREENSHOT: Sync error details showing failed products and reasons]
+
+### Error: "Sync Conflict: Upstream Changes Detected"
+
+**What it means:** Your platform data changed after Merchkit last synced, and now there's a conflict.
+
+**What causes it:**
+- Someone manually edited a product on your platform after Merchkit synced it.
+- Another integration or app modified the same product.
+
+**How to fix it:**
+1. Decide which version you want to keep: Merchkit's enriched data or your platform's current data.
+2. If you want Merchkit's data: **Force Sync** to overwrite the platform's version.
+3. If you want the platform's data: **Skip Sync** and manually pull the latest data from your platform into Merchkit.
+4. In the future, use **Sync Direction** settings to control whether Merchkit pushes to the platform or pulls from it.
+
+[SCREENSHOT: Sync conflict dialog with "Keep Merchkit Version" and "Keep Platform Version" buttons]
+
+## Field Mapping Errors
+
+### Error: "Unmapped Fields" Warning
+
+**What it means:** Some of your Merchkit attributes don't have a corresponding field on your e-commerce platform.
+
+**What causes it:**
+- You created custom attributes in Merchkit that don't exist on the platform.
+- You're trying to sync to a platform that doesn't support custom fields.
+- Platform field names changed or were removed.
+
+**How to fix it:**
+1. Go to **Integrations** > [Your Integration] > **Field Mapping**.
+2. You'll see a list of unmapped Merchkit attributes (highlighted in yellow or red).
+3. For each unmapped attribute, either:
+   - **Map it to an existing platform field** (select a field from the platform dropdown).
+   - **Skip it** (toggle off the attribute so it doesn't sync).
+   - **Create a custom field** on your platform first, then map it.
+
+[SCREENSHOT: Field mapping page with unmapped attributes highlighted]
+
+### Error: "Field Format Mismatch"
+
+**What it means:** A Merchkit attribute and platform field have incompatible data types or formats.
+
+**What causes it:**
+- Merchkit attribute is "Text" (multiple values) but platform field only accepts single values.
+- Merchkit has a date field (MM/DD/YYYY) but platform expects ISO format (YYYY-MM-DD).
+- Merchkit attribute is a number, but platform field is text.
+
+**How to fix it:**
+1. Identify which attribute and platform field are mismatched (check the error message).
+2. In Merchkit, edit the attribute's **Field Type**:
+   - Change from "Text (Multi)" to "Text (Single)" if platform only accepts one value.
+   - Change date format to match platform expectations.
+   - Change number fields to match platform's number type (integer, decimal, etc.).
+3. In the platform, check if the field has formatting rules and adjust if possible.
+4. Re-run the sync.
+
+[SCREENSHOT: Attribute field type dropdown]
+
+## Metafield and Custom Field Issues
+
+### Error: "Metafield Namespace Conflict" (Shopify)
+
+**What it means:** You're trying to create a Shopify metafield with a namespace that already exists with different settings.
+
+**What causes it:**
+- Another app created a metafield with the same namespace but different value type.
+- You're using a reserved namespace.
+
+**How to fix it:**
+1. In Shopify, go to **Settings** > **Custom Data** > **Metafields**.
+2. Find the conflicting namespace and note its current settings.
+3. In Merchkit, either:
+   - Use a different namespace (e.g., `merchkit_enriched` instead of `enriched`).
+   - Align your field type to match the existing metafield type.
+4. Re-map the field and retry sync.
+
+[SCREENSHOT: Shopify metafield namespace settings]
+
+### Error: "Cannot Create Custom Field" (WooCommerce/BigCommerce)
+
+**What it means:** The platform didn't allow Merchkit to create a custom field for your attribute.
+
+**What causes it:**
+- You're on a plan that doesn't support custom fields.
+- Custom field name violates platform naming rules.
+
+**How to fix it:**
+1. Check your platform plan. If you need custom fields, you may need to upgrade.
+2. Try renaming the field to a simpler name (avoid special characters, spaces, etc.).
+3. Alternatively, map the attribute to an existing platform field instead of creating a new one.
+
+## Shopify-Specific Errors
+
+### Error: "Product Not Found" (Shopify)
+
+**What it means:** Merchkit tried to sync to a product ID that doesn't exist on your Shopify store.
+
+**What causes it:**
+- Product was deleted from Shopify after Merchkit last synced.
+- Product ID mismatch between systems.
+
+**How to fix it:**
+1. In Merchkit Catalog, find the product and check its Shopify ID (in the product details).
+2. Log into Shopify and search for that product by ID.
+3. If the product doesn't exist, delete it from Merchkit or update its ID.
+4. Re-sync.
+
+### Error: "Invalid Variant Selection" (Shopify)
+
+**What it means:** Merchkit couldn't match Merchkit's product variants to Shopify variants.
+
+**What causes it:**
+- Variant IDs are mismatched.
+- Variant attributes (size, color) don't match Shopify's variant options.
+
+**How to fix it:**
+1. In Merchkit, go to the product and review variant mappings under **Shopify Sync Settings**.
+2. Manually re-map variants to ensure correct matching.
+3. Re-sync.
+
+[SCREENSHOT: Variant mapping interface]
+
+## Debugging Sync Issues
+
+When a sync fails, follow these steps:
+
+1. **Check the error log**: Go to **Integrations** > [Your Integration] > **Sync History**. Click the failed sync to see details.
+2. **Identify the product**: The log shows which product(s) failed.
+3. **Check the reason**: Look for the specific error (timeout, validation, format mismatch, etc.).
+4. **Test one product**: Manually try syncing just that one product to isolate the issue.
+5. **Check both sides**: Verify the data in both Merchkit and your platform.
+6. **Re-sync after fixing**: Once you've resolved the issue, click **Retry** or **Sync Again**.
+
+[SCREENSHOT: Detailed sync error breakdown]
+
+## Still Having Issues?
+
+Contact Support with:
+- Screenshot of the error message.
+- Your integration type and platform version.
+- The product ID or attribute name that's failing.
+- Your recent sync history (from **Integrations** > **Sync History**).
+- Any error logs or details you've collected.
+
+---
+
+**Next:** Troubleshoot channel feed rejections and marketplace submission errors in [Channel & Feed Errors](/product/troubleshooting/channel-feed-errors).

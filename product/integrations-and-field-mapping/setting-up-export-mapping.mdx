@@ -1,0 +1,186 @@
+---
+title: "Setting Up Export Mapping"
+description: "Configure which Merchkit columns map to platform fields when exporting your enriched data."
+---
+
+# Setting Up Export Mapping
+
+Export mapping is the reverse of import mapping. It tells Merchkit which columns you want to push back to your platform, and where those columns should land on the platform side.
+
+Export mapping is especially important because it controls what your enhancements look like when they sync back to your live store.
+
+## Access Export Mapping
+
+1. Go to **Workspace → Integrations**
+2. Find your connected integration in the **Active Integrations** list
+3. Click the integration name → **Configure Fields**
+4. Click the **Export Mapping** tab
+
+[SCREENSHOT: Configure Field Mapping modal with Export Mapping tab active]
+
+## The Export Mapping Interface
+
+You'll see:
+
+- **Mapping Profile Dropdown**: "Default Export (Default)" or custom profiles
+- **Export configuration sections**
+- **Product Fields**: Merchkit column → Platform field pairs (reversed from import)
+- **Expandable sections**: Product Structured Metafields, Variant Fields, Variant Structured Metafields
+- **Unmapped field warnings** (gold/warning highlight)
+
+The layout is similar to Import Mapping, but the arrow points the opposite direction: Merchkit → Platform.
+
+## The Two-Column Layout
+
+On **Import**, you saw: Platform Field → Merchkit Column
+
+On **Export**, it's reversed: Merchkit Column → Platform Field
+
+For example:
+
+| Merchkit Column       | Platform Field   |
+|-----------------------|------------------|
+| Product Name          | Title            |
+| Description           | Body HTML        |
+| Category              | Product Type     |
+| Retail Price          | Price            |
+
+## Mapping Merchkit Columns to Platform Fields
+
+### Step 1: Review Default Mappings
+
+If you already set up import mapping, export mapping might be auto-populated with the reverse of those mappings. Merchkit will intelligently swap import → export.
+
+[SCREENSHOT: Export Mapping grid with auto-suggested field pairs]
+
+### Step 2: Edit Fields as Needed
+
+Not every column needs to export. You might have:
+
+- **Columns that enriched data**: These should export (e.g., SEO Description, Keywords, Brand)
+- **Internal Merchkit columns**: These can skip export (e.g., "Internal Notes")
+- **Platform fields you don't want to overwrite**: Remove their mappings (e.g., "Original Price")
+
+To edit a mapping:
+1. Click the platform field dropdown
+2. Choose the correct platform field or **None** to remove the mapping
+
+To remove a mapping entirely, click the **✕** button.
+
+[SCREENSHOT: Export Mapping grid showing edited mappings and removed mappings]
+
+### Step 3: Add Missing Mappings
+
+If a Merchkit column doesn't have a platform counterpart, you can:
+
+1. Click **+ Add Field Pair**
+2. Select the Merchkit column
+3. Select the platform field it should map to
+4. Save
+
+For example, if you created a "Keywords" column in Merchkit but your Shopify store has a "Tags" field, you'd add that mapping:
+
+| Merchkit Column | Platform Field |
+|-----------------|----------------|
+| Keywords        | Tags           |
+
+## Understanding Unmapped Field Warnings
+
+When you see a Merchkit column highlighted in **gold/warning color**, it means:
+
+- You've added or updated this column in Merchkit
+- It doesn't have a mapping to any platform field
+- On the next export, data in this column **will not sync** to the platform
+
+[SCREENSHOT: Export Mapping with gold-highlighted unmapped fields]
+
+**This is intentional.** You decide what goes out. Unmapped columns are safe—they stay in Merchkit, they don't accidentally overwrite platform data.
+
+If a gold-highlighted field should export, click the mapping pair and choose a platform field.
+
+If a gold-highlighted field shouldn't export (e.g., internal notes), you can ignore it. Leave it unmapped.
+
+## Metafields and Variant Exports
+
+Just like import, export mapping has expandable sections for metafields and variants.
+
+### Product Structured Metafields
+
+If your platform supports custom metafields and you want to sync them back:
+
+1. Expand **Product Structured Metafields**
+2. Map each Merchkit metafield to its platform equivalent
+
+[SCREENSHOT: Product Structured Metafields expanded in Export Mapping]
+
+### Variant Fields and Variant Structured Metafields
+
+If you've enriched variant-level data (e.g., variant-specific descriptions or prices):
+
+1. Expand **Variant Fields**
+2. Map variant columns to platform variant fields (e.g., Variant Price → Price)
+
+[SCREENSHOT: Variant Fields expanded in Export Mapping]
+
+## Export Mapping Profiles
+
+Like import mapping, you can create multiple export profiles. This is useful if:
+
+- You want to export different data to different platforms (e.g., Shopify gets descriptions, Walmart gets titles)
+- You have separate enrichment workflows (e.g., "Premium Export" vs. "Basic Export")
+
+To create a new profile:
+1. In the **Mapping Profile** dropdown, click **+ Create New Profile**
+2. Name it (e.g., "Shopify Premium")
+3. Set up the mappings you want for that profile
+4. When you trigger an export, select which profile to use
+
+## Saving Your Export Mapping
+
+Once you're satisfied with your mappings:
+
+1. Click **Save Mapping** at the bottom of the modal
+2. Your mapping is now the active export profile
+
+The next time you trigger an export, it will use this configuration.
+
+## Example: Setting Up a Shopify Export
+
+Here's a typical Shopify export mapping for enriched data:
+
+| Merchkit Column       | Shopify Field       |
+|-----------------------|---------------------|
+| Product Name          | Title               |
+| Description           | Body HTML           |
+| Category              | Product Type        |
+| Brand                 | Vendor              |
+| SEO Title             | (Metafield)         |
+| SEO Description       | (Metafield)         |
+| Keywords              | Tags                |
+
+Variant Price would map to Variant Price, and so on.
+
+## What Happens on Export?
+
+When you trigger an export:
+
+1. Merchkit reads all products in your database
+2. Looks at the active export mapping
+3. For each mapped column, it sends the Merchkit value to the corresponding platform field
+4. Unmapped columns are ignored (they don't send anything)
+5. The platform updates with your enriched data
+
+If a field on the platform already has data, the export will **overwrite it** with the Merchkit data (or clear it if the Merchkit column is empty). Be careful not to accidentally overwrite important platform data with incomplete Merchkit data.
+
+## Preventing Accidental Overwrites
+
+To avoid overwriting critical platform fields:
+
+1. **Don't map fields you don't want to overwrite** (e.g., if Shopify's "Price" has accurate data you don't want Merchkit touching, don't map "Retail Price" to "Price")
+2. **Verify your mapping** before the first export
+3. **Test with a small subset** first (use export filters or export just one product manually)
+4. **Create a backup** on the platform before running a large export
+
+---
+
+**Next step**: [Working with Metafields and Variants](/product/integrations-and-field-mapping/metafields-and-variants)

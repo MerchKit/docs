@@ -1,0 +1,122 @@
+---
+title: "MCP Server"
+description: "Operate your Merchkit catalog from Claude and other agents over the remote MCP server, authenticated with the same mk_live_ API key."
+---
+
+Merchkit exposes a **remote MCP server** so you can operate your catalog directly from Claude and
+other MCP-capable agents. The MCP layer is a thin shim over the same REST API, so its tools never
+drift from the documented surface.
+
+<Note>
+  Examples use `https://app.merchkit.com` as the base URL. Treat this as a placeholder and confirm
+  your account's actual API host.
+</Note>
+
+## Endpoint and auth
+
+<ParamField path="MCP endpoint" type="string">
+  `https://app.merchkit.com/api/mcp` — a remote MCP server over **Streamable HTTP**.
+</ParamField>
+
+Authenticate with the **same workspace API key** you use for REST — a bearer `mk_live_` token:
+
+```http
+Authorization: Bearer mk_live_...
+```
+
+The key's scopes apply identically here: a read-only key can call the read tools but not the write
+tools. See [Authentication](/developers/authentication) for the scope model.
+
+## Connect from Claude Desktop
+
+Claude Desktop connects to remote MCP servers through the `mcp-remote` bridge. Add Merchkit to your
+`claude_desktop_config.json`:
+
+<Steps>
+  <Step title="Open your config file">
+    On macOS this is `~/Library/Application Support/Claude/claude_desktop_config.json`. Create it if
+    it does not exist.
+  </Step>
+  <Step title="Add the Merchkit server">
+    ```json
+    {
+      "mcpServers": {
+        "merchkit": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://app.merchkit.com/api/mcp",
+            "--header",
+            "Authorization: Bearer mk_live_..."
+          ]
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Restart Claude Desktop">
+    Restart the app. The Merchkit tools appear in the tools menu, and you can ask Claude to search,
+    inspect, and enrich your catalog.
+  </Step>
+</Steps>
+
+<Callout type="warning">
+  Your API key is a secret. Anyone with this config file can act on your workspace with the key's
+  scopes — protect it accordingly.
+</Callout>
+
+## Write tools require confirmation
+
+Every **write** tool takes a `confirm` flag so the agent can preview a change before applying it.
+
+<Steps>
+  <Step title="Preview">
+    Call the tool with `confirm` omitted or `false`. The tool returns a **diff** describing exactly
+    what would change — and makes no change.
+  </Step>
+  <Step title="Apply">
+    Call the same tool again with `confirm: true` to apply the change.
+  </Step>
+</Steps>
+
+<Callout type="info">
+  This two-step flow lets an agent show you the intended change and get your sign-off before anything
+  is written.
+</Callout>
+
+## Tools
+
+The MCP tools mirror the REST API.
+
+### Read tools
+
+| Tool | What it does |
+|---|---|
+| `search_products` | List and search products with the [filter DSL](/developers/conventions#filtering-and-sorting), sort, and pagination |
+| `get_product` | Fetch a single product's full detail |
+| `list_attributes` | List attribute definitions for an entity type / channel |
+| `get_completeness` | Check per-channel completeness for a product |
+| `get_references` | Read a product's **references** (related entities) |
+| `get_history` | Read an entity's change history |
+| `list_channels` | List the available channel catalog |
+| `get_job` | Poll an async [job](/developers/conventions#async-jobs) |
+
+### Write tools
+
+| Tool | What it does |
+|---|---|
+| `create_product` | Create a product (optionally as a variant via a parent) |
+| `set_attribute_values` | Set attribute values on a product (enrichment) |
+| `set_parent` | Set a product's parent entity |
+
+<Callout type="info">
+  The relationship resource is called **references** — use `get_references` to read related entities.
+  (There is no "connections" tool.)
+</Callout>
+
+<Callout type="warning">
+  **There is no delete tool in the beta.** Destructive operations are disabled across both REST and
+  MCP and will be enabled in a later release. See
+  [Authentication](/developers/authentication#beta-limitation-deletes-are-disabled).
+</Callout>
