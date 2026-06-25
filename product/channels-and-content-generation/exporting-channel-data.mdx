@@ -1,0 +1,201 @@
+---
+title: "Exporting Channel Data"
+description: "Download channel-formatted output and submit your marketplace feeds. Learn export formats and submission workflows."
+---
+
+# Exporting Channel Data
+
+Once your channel content is generated and validated, you're ready to export and submit to the marketplace. Merchkit handles the formatting automatically—you just download and upload.
+
+## Export Overview
+
+Exporting is simple:
+
+1. **Open your channel** and verify your data is ready
+2. **Select your products** and click Export
+3. **Download the CSV** — Save to your computer
+4. **Submit to marketplace** — Upload to the marketplace's feed management system
+
+Merchkit formats everything according to the marketplace's specifications as a CSV, so you don't have to worry about format compliance.
+
+## Step 1: Prepare for Export
+
+Before exporting, confirm:
+
+- [ ] All required fields are filled
+- [ ] Validation shows no critical errors
+- [ ] You've spot-checked a sample of products
+- [ ] You're exporting the right products (filtered/selected correctly)
+
+If not, go back to [Pre-Export Validation Checklist](/product/channels-and-content-generation/pre-export-validation) and fix issues first.
+
+[SCREENSHOT: Channel grid with data ready for export]
+
+## Step 2: Select Products to Export
+
+You can export:
+
+### Option 1: Export All Products in Channel
+All products currently in the channel grid will be included in the export.
+
+### Option 2: Export Selected Products
+If you've selected specific SKUs (using checkboxes), only those products export.
+
+**Use this when:**
+- You're doing an incremental update (only new products)
+- You want to test with a small batch before full export
+- You're updating a specific category
+
+### Option 3: Export Filtered Products
+If you've applied filters (e.g., "Show only products in Sofas category"), only filtered products export.
+
+[SCREENSHOT: Selected products highlighted in channel grid]
+
+## Step 3: Click the Export Button
+
+In the channel grid, look for the **Export** button. It's usually:
+
+- In the top-right corner of the grid
+- In the action bar if you've selected specific products
+
+Click **Export**. Merchkit generates a CSV file formatted to the channel's specifications.
+
+[SCREENSHOT: Export button in channel grid]
+
+## Step 4: Download the File
+
+Click **Download** or **Export Now**. Your file downloads to your computer's Downloads folder.
+
+**File naming:** Merchkit typically names the file `[Channel]_export_[Date].csv` (e.g., `Wayfair_export_2026-04-05.csv`).
+
+[SCREENSHOT: Download complete notification]
+
+## Step 5: Verify the Download
+
+Before uploading to the marketplace:
+
+1. **Open the file locally** — Use Excel, a text editor, or JSON viewer
+2. **Spot check a few rows** — Make sure products look correct
+3. **Check row count** — Does the number of rows match your expected product count?
+4. **Look for encoding issues** — Special characters should display correctly (not garbled)
+
+[SCREENSHOT: CSV file open in Excel showing product data]
+
+## Step 6: Submit to the Marketplace
+
+Now you upload the file to your marketplace's feed management system.
+
+### Submission Process by Marketplace
+
+**Wayfair:**
+1. Log in to Wayfair's seller center
+2. Go to **Catalog → Feed Management**
+3. Click **Upload New Feed**
+4. Select your CSV file
+5. Wayfair validates and imports
+6. Monitor for errors via email
+
+[SCREENSHOT: Wayfair feed upload dialog]
+
+**Amazon:**
+1. Log in to Seller Central
+2. Go to **Inventory → Uploads**
+3. Choose **Feed Type** (Inventory, Product, etc.)
+4. Upload your file
+5. Amazon processes and confirms
+6. Check **Performance → Listings** for any issues
+
+**Walmart:**
+1. Log in to Walmart Seller Center
+2. Go to **Catalog → Item Setup**
+3. Upload your feed
+4. Walmart validates and returns any errors
+5. Confirm items in your Dashboard
+
+**Google Merchant:**
+1. Log in to Google Merchant Center
+2. Go to **Feeds**
+3. Create or update your product feed
+4. Upload CSV
+5. Google validates; check **Diagnostics** for errors
+
+**Shopify:**
+1. In Merchkit, the channel can auto-sync if connected via API
+2. Or manually upload CSV via Shopify Admin → **Products**
+3. Shopify imports and matches to existing products
+
+**Mirakl (custom marketplaces):**
+1. Access the specific marketplace's seller portal
+2. Look for **Product Feed** or **Catalog Upload**
+3. Upload your file
+4. Marketplace validates and confirms
+
+Different marketplaces have different processes. Check their documentation for specific steps.
+
+## File Storage and Version Control
+
+After exporting, consider:
+
+1. **Keep exports organized** — Save by date and channel
+   - `exports/Wayfair_2026-04-05.csv`
+   - `exports/Amazon_2026-04-05.csv`
+
+2. **Version your files** — If you make multiple attempts, version them
+   - `Wayfair_v1.csv`, `Wayfair_v2.csv` (if issues found)
+
+3. **Archive old exports** — Keep successful exports for record-keeping
+   - Useful if you need to revert or compare versions
+
+## Export Frequency
+
+How often should you export?
+
+- **Initial launch** — Export immediately to populate the marketplace
+- **Weekly/monthly** — Regular updates to keep listings fresh
+- **After product changes** — When you update descriptions, prices, or images in Products view
+- **Seasonal changes** — Before peak seasons, update availability and inventory
+- **Continuous** — If you set up automation via APIs, exports happen automatically
+
+## Automating Exports (API)
+
+If your marketplace supports API connections, you can:
+
+1. **Set up a connection** in Merchkit's Integrations
+2. **Enable automatic sync** — Merchkit pushes updates automatically
+3. **No manual export needed** — Changes in your channel grid sync directly to the marketplace
+
+This is ideal for high-frequency updates or large catalogs.
+
+## Troubleshooting Export Issues
+
+### Issue 1: File Won't Download
+- Check your browser's download settings
+- Try a different format (CSV instead of XML)
+- Clear your browser cache and try again
+- Check file size—very large exports may time out
+
+### Issue 2: Special Characters Look Wrong
+- This is usually an encoding issue
+- Try exporting as CSV with UTF-8 encoding (Merchkit's default)
+- Open in a text editor (not Excel) to verify encoding
+
+### Issue 3: File Format Doesn't Match Marketplace Requirements
+- Confirm you've selected the correct format for that marketplace
+- Check the marketplace's documentation for required format
+- Contact Merchkit support if the format isn't available
+
+### Issue 4: Rows or Columns Missing from Export
+- Make sure you've selected the right export options (all columns, all categories, etc.)
+- If specific products aren't exporting, check if they've been filtered out
+- Verify that the channel grid actually contains those products
+
+## Next Steps
+
+After you've submitted your feed to the marketplace:
+
+1. **Monitor for acceptance** — Most marketplaces email confirmation or errors within hours to days
+2. **Check your marketplace dashboard** — View your live listings
+3. **Address any rejections** — If the marketplace rejects the feed, see [Feed Validation & Error Resolution](/product/channels-and-content-generation/feed-validation-errors)
+4. **Optimize continuously** — See [Continuous Optimization](/product/channels-and-content-generation/continuous-optimization) to improve listing performance
+
+Congratulations—your products are now live on the marketplace!

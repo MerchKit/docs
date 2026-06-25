@@ -1,0 +1,162 @@
+---
+title: "Using Import Filters"
+description: "Control which products import from your platform using filtering rules."
+---
+
+# Using Import Filters
+
+Import filters let you choose exactly which products from your platform actually come into Merchkit. Instead of importing your entire catalog at once, you can work category-by-category, test with a small subset, or exclude products you don't need.
+
+## Why Use Import Filters?
+
+**Scenario 1: You have a huge catalog**
+- 50,000+ SKUs across multiple product lines
+- You want to enrich them in Merchkit, but need to tackle them in phases
+- Import by category: First run kitchen products, then furniture, then decor
+
+**Scenario 2: You're testing Merchkit**
+- Import a small subset (e.g., one collection) to test the workflow
+- Verify that mappings are correct before running a full import
+- Expand gradually once you're confident
+
+**Scenario 3: You don't need all products**
+- Some products are archived, discontinued, or don't need enrichment
+- Filter out products with certain tags (e.g., "no-sync") to keep Merchkit lean
+- Sync only products marked "ready-for-enrichment"
+
+## How Import Filters Work
+
+Filters are **AND rules**: All conditions must match for a product to be imported.
+
+If you set:
+- Category = "Kitchen" AND
+- Tag = "Active"
+
+Only kitchen products tagged "Active" will import. Everything else is skipped.
+
+## Setting Up Import Filters
+
+### Step 1: Open Import Mapping
+
+Go to **Workspace → Integrations** → Your Integration → **Configure Fields** → **Import Mapping** tab
+
+[SCREENSHOT: Configure Field Mapping modal, Import Mapping tab]
+
+### Step 2: Expand "Import Filters"
+
+At the top of the modal, find the **Import Filters** section (usually shows "Import Filters (Expandable, 1 rule)" or similar). Click to expand.
+
+[SCREENSHOT: Import Filters section in the Import Mapping tab, showing 0-1 existing rules]
+
+### Step 3: Add a Filter Rule
+
+Click **+ Add Filter** to create a new rule.
+
+You'll see options like:
+
+- **Category** — Filter by product category
+- **Collection** — Filter by collection (Shopify-specific)
+- **Tag** — Filter by assigned tag
+- **Vendor** — Filter by brand/vendor
+- **Status** — Filter by product status (active, draft, archived)
+- **Text Pattern** — Filter by SKU or name matching a text search
+
+[SCREENSHOT: Filter rule creation dialog showing dropdown options]
+
+### Step 4: Set the Condition
+
+Select the attribute and the value(s):
+
+- Category **is** "Apparel"
+- Collection **contains** "New Arrivals"
+- Tag **equals** "Enriched"
+- SKU **starts with** "PROD-"
+- Status **is not** "archived"
+
+### Step 5: Add More Rules (Optional)
+
+Click **+ Add Filter** again to add another rule. All rules must match for a product to import.
+
+Example multi-rule filter:
+- Category **is** "Electronics"
+- AND Tag **equals** "Active"
+- AND Status **is not** "archived"
+
+[SCREENSHOT: Import Filters with 3 rules displayed]
+
+### Step 6: Preview and Save
+
+Some integrations let you **Preview Matching Products** to see how many items will be imported with your filter rules. Review the count to make sure you're capturing the right set.
+
+Once satisfied, click **Save Mapping** to apply the filters and field mappings together.
+
+## Common Filter Patterns
+
+### Pattern 1: Phased Rollout (Category-by-Category)
+
+Create one import with filters for each category:
+
+**Import 1**
+- Category = "Furniture"
+
+**Import 2** (run this later)
+- Category = "Decor"
+
+**Import 3** (run this later)
+- Category = "Accessories"
+
+Each import brings in one category, so you can enrich and export them on your own timeline.
+
+### Pattern 2: Test and Expand
+
+First import (narrow):
+- Collection **contains** "Test Products"
+- Status **is** "active"
+
+This might be 50 items. Test the enrichment workflow, verify the data looks good, then remove the filter and import the rest.
+
+### Pattern 3: Active Products Only
+
+Filter out archived or hidden products:
+- Status **is not** "archived"
+- Status **is not** "draft"
+
+### Pattern 4: Specific Vendors or Brands
+
+If you work with multiple vendors:
+- Vendor **equals** "Acme Corp"
+
+Separate imports can bring in products from different vendors into different Merchkit collections.
+
+## Editing Filters After Import
+
+You can change your filters and re-import the same integration. The new filter will apply to the next import.
+
+However, **products already in Merchkit will not be deleted** if they no longer match the filter. Filters only control what comes in going forward. If you want to remove products, you'll need to delete them manually from Merchkit.
+
+## Removing All Filters (Import Everything)
+
+If you've set filters but want to import your full catalog:
+
+1. Go back to **Import Mapping**
+2. Expand **Import Filters**
+3. Delete any existing rules (click **✕** on each)
+4. Save the mapping
+
+On your next import, every product from the platform will come in.
+
+## No Filters vs. Empty Filters
+
+- **No filters**: All products import (default behavior)
+- **Filters present**: Only products matching all filter rules import
+- **No matching products**: If your filter rules match 0 items, the import will complete but bring in no data
+
+## Combining Filters with Export Mapping
+
+Filters only affect **imports** (platform → Merchkit). When you **export** (Merchkit → platform), all products in Merchkit are eligible unless you manually exclude them at sync time.
+
+This means you might import only "Kitchen" products, enrich them, then export all of them back to Shopify (not just kitchen). Export mappings don't have filters—they're all-or-nothing per sync.
+
+---
+
+**Next step**: [Setting Up Export Mapping](/product/integrations-and-field-mapping/setting-up-export-mapping)

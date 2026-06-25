@@ -1,0 +1,224 @@
+---
+title: "Working with Metafields and Variants"
+description: "Configure import and export mapping for product metafields and variants."
+---
+
+# Working with Metafields and Variants
+
+Beyond basic product fields like Title and Description, your platforms often have metafields (custom fields) and variants (product options). This guide shows you how to map both.
+
+## Understanding Metafields
+
+**Metafields** are custom data fields that your platform stores alongside standard fields. Examples:
+
+- Shopify: Custom metafields for warranty info, installation instructions, color codes
+- BigCommerce: Custom fields for materials, dimensions, certifications
+- Akeneo: Custom attributes for product specifications
+
+Metafields let you store extra product information without cluttering the standard fields.
+
+## Metafield Categories in Merchkit
+
+The Configure Field Mapping modal has separate sections for:
+
+1. **Product Structured Metafields** — Custom fields attached to the product as a whole
+2. **Variant Structured Metafields** — Custom fields attached to specific variants
+
+Both can be mapped on import and export.
+
+## Mapping Product Structured Metafields
+
+### Step 1: Open Import or Export Mapping
+
+Go to **Workspace → Integrations** → Your Integration → **Configure Fields**
+
+Choose either the **Import Mapping** or **Export Mapping** tab (metafields exist in both).
+
+[SCREENSHOT: Configure Field Mapping modal with Import Mapping tab active]
+
+### Step 2: Expand "Product Structured Metafields"
+
+Scroll down past the main **Product Fields** section. You'll see **Product Structured Metafields** (usually collapsed). Click to expand.
+
+[SCREENSHOT: Product Structured Metafields section expanded, showing available metafield mappings]
+
+### Step 3: Map Each Metafield
+
+You'll see a list of metafields your platform provides. For each one:
+
+**On Import:**
+- Platform Metafield (left) → Merchkit Column (right)
+- Example: "Warranty Info" (Shopify) → "Product Warranty" (Merchkit)
+
+**On Export:**
+- Merchkit Column (left) → Platform Metafield (right)
+- Example: "Product Warranty" (Merchkit) → "Warranty Info" (Shopify)
+
+Click the dropdown to:
+- Select a Merchkit column (or create a new one if the + button appears)
+- Or click **✕** to remove the mapping
+
+[SCREENSHOT: Metafield mapping with dropdowns for selecting Merchkit columns]
+
+### Step 4: Create New Columns for New Metafields
+
+If a platform metafield doesn't match an existing Merchkit column, the **auto-mapping button** in the main Product Fields section will create new columns for any unmatched metafields.
+
+Alternatively, you can manually create a new column by:
+1. Clicking the mapping dropdown
+2. Typing the new column name
+3. Pressing Enter to create it
+
+## Understanding Variants
+
+A **variant** is a specific version of a product with its own SKU, price, or inventory. Examples:
+
+- A shirt that comes in sizes S, M, L, XL (four variants)
+- A paint color available in matte or gloss finish (two variants)
+- A phone in black, silver, or gold (three variants)
+
+Variants have their own:
+- **SKU** (stock keeping unit)
+- **Price** (can differ from parent product)
+- **Inventory** (quantity available)
+- **Metafields** (custom data specific to that variant)
+
+In Merchkit, variants are linked to their parent product. When you import, variants and their data come in together. When you export, variant changes sync back to the platform.
+
+## Mapping Variant Fields
+
+### Step 1: Expand "Variant Fields"
+
+In **Import Mapping** or **Export Mapping**, scroll down and find **Variant Fields**. Click to expand.
+
+[SCREENSHOT: Variant Fields section expanded, showing variant-specific field mappings]
+
+### Step 2: Map Variant-Specific Columns
+
+You'll see fields like:
+
+- Variant Title (the variant's display name)
+- Variant SKU
+- Variant Price
+- Variant Cost
+- Variant Inventory / Stock Quantity
+- Variant Barcode
+- Variant Weight
+
+For each variant field, map it just like product fields:
+
+**On Import:**
+- Platform Variant Field → Merchkit Variant Column
+
+**On Export:**
+- Merchkit Variant Column → Platform Variant Field
+
+[SCREENSHOT: Variant Field mappings showing typical variant attributes]
+
+### Step 3: Variant Pricing Considerations
+
+A common mapping pattern:
+
+| Merchkit Column | Platform Variant Field |
+|-----------------|------------------------|
+| Variant SKU     | SKU                    |
+| Variant Price   | Price                  |
+| Variant Cost    | Cost / COGS            |
+| Variant Weight  | Weight                 |
+
+If your platform allows variant-specific pricing, make sure to map **Variant Price** (not Product Price) to the platform variant price field.
+
+## Mapping Variant Structured Metafields
+
+Just like products have metafields, variants can too.
+
+### Step 1: Expand "Variant Structured Metafields"
+
+In **Import Mapping** or **Export Mapping**, scroll down to **Variant Structured Metafields**. Click to expand.
+
+[SCREENSHOT: Variant Structured Metafields expanded]
+
+### Step 2: Map Variant-Level Custom Data
+
+Examples of variant metafields:
+
+- "Color Code" (hexadecimal color for that variant)
+- "Fit Guide" (size chart specific to that variant)
+- "Production Lead Time" (how long that variant takes to manufacture)
+- "Supplier ID" (which supplier provides that variant)
+
+Map each one to a Merchkit column, just like product metafields.
+
+[SCREENSHOT: Variant metafield mappings with examples]
+
+## How Variants Work During Import and Export
+
+### On Import
+
+When you import a product with variants:
+
+1. The parent product is imported with its core data (name, description, category, etc.)
+2. Each variant is imported as a child of that parent
+3. Variant-specific fields (SKU, price, metafields) land in variant rows
+4. Variant metafields are attached to each variant record
+
+Result: In Merchkit, you see one product with multiple variant rows underneath it.
+
+[SCREENSHOT: Merchkit product view showing parent product with multiple variant rows]
+
+### On Export
+
+When you export a product with variants:
+
+1. The parent product's mapped columns sync to the platform
+2. Each variant's mapped columns sync to the corresponding platform variant
+3. Variant metafields update the platform's variant-level custom fields
+4. Pricing, inventory, and SKU at the variant level override parent-level data
+
+Result: Your platform has the enriched product and variant data from Merchkit.
+
+## Important: Parent vs. Variant Scope
+
+When mapping, pay attention to **what level the field belongs to**:
+
+| Field Type | Belongs To | Examples |
+|-----------|-----------|----------|
+| Product Fields | Parent product | Title, Description, Category |
+| Variant Fields | Specific variants | SKU, Price, Size, Color |
+| Product Metafields | Parent product | Warranty, Care Instructions |
+| Variant Metafields | Specific variants | Size-specific dimensions, Color code |
+
+Don't accidentally map a product-level field to a variant column, or vice versa. The mapping modal keeps them in separate sections to prevent this.
+
+## Example: Apparel Product with Size Variants
+
+Here's what a typical apparel mapping might look like:
+
+**Product Fields (Parent)**
+
+| Merchkit | Platform |
+|----------|----------|
+| Product Name | Title |
+| Description | Body HTML |
+| Brand | Vendor |
+| Material | (Product Metafield) |
+
+**Variant Fields**
+
+| Merchkit | Platform |
+|----------|----------|
+| Variant SKU | SKU |
+| Variant Price | Price |
+| Variant Weight | Weight |
+| Size | (Variant Metafield) |
+| Fit Chart | (Variant Metafield) |
+
+When you import a shirt with size variants (S, M, L, XL), Merchkit creates four variant rows, each with its own SKU, price, and size data.
+
+## Collapsing Sections to Save Space
+
+The Configure Field Mapping modal can get long. You can collapse any section by clicking on its header. This doesn't affect your mappings—it just hides them from view.
+
+---
+
+**Next step**: [Platform-Specific Integration Guides](/product/integrations-and-field-mapping/platform-specific-guides)

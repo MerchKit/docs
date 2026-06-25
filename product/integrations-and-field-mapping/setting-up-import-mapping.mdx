@@ -1,0 +1,149 @@
+---
+title: "Setting Up Import Mapping"
+description: "Configure which platform fields map to Merchkit columns when importing product data."
+---
+
+# Setting Up Import Mapping
+
+Import mapping tells Merchkit where to place incoming data from your platform. This guide walks you through configuring it, including the powerful auto-mapping feature.
+
+## Access Import Mapping
+
+1. Go to **Workspace → Integrations**
+2. Find your connected integration in the **Active Integrations** list
+3. Click the integration name → **Configure Fields**
+4. Click the **Import Mapping** tab
+
+[SCREENSHOT: Configure Field Mapping modal with Import Mapping tab active]
+
+## The Import Mapping Interface
+
+You'll see:
+
+- **Mapping Profile Dropdown**: "Default Import (Default)" or any custom profiles you've created
+- **Import Filters** (expandable): Rules for which SKUs to import
+- **Create Missing Columns and Auto Map Them** button (green): AI-powered field matching
+- **Product Fields**: Manually mapped fields with platform field → Merchkit column pairs
+- **Expandable sections**: Product Structured Metafields, Variant Fields, Variant Structured Metafields
+
+## Quick Setup: Auto-Mapping
+
+The fastest way to get started is **auto-mapping**. Merchkit analyzes your platform fields and intelligently guesses which Merchkit columns they belong in.
+
+### Step 1: Click "Create Missing Columns and Auto Map Them"
+
+This green button does two things:
+
+1. **Creates new columns** in Merchkit for any platform fields that don't have obvious matches
+2. **Auto-maps common fields** (Title → Product Name, Description → Description, etc.)
+
+[SCREENSHOT: Auto-mapping button highlighted, showing the list of fields being auto-mapped]
+
+After clicking, you'll see the mapping grid populated with suggestions.
+
+### Step 2: Review Auto-Mapped Fields
+
+Merchkit's AI isn't perfect. Look through the suggested mappings:
+
+- **Good matches**: ✓ Title → Product Name, Price → Retail Price
+- **Questionable matches**: ⚠️ Review and adjust if needed
+- **Missed matches**: Look for platform fields that should map somewhere but don't
+
+### Step 3: Adjust and Add Missing Mappings
+
+For any field that auto-mapping got wrong or skipped:
+
+1. **To edit**: Click the Merchkit column dropdown and select the correct column
+2. **To remove**: Click the **✕** button next to the mapping pair
+3. **To add a new mapping**: Click **+ Add Field Pair** and manually select both the platform field and Merchkit column
+
+[SCREENSHOT: Import Mapping grid showing manually edited and added field pairs]
+
+## Manual Mapping (If You Prefer)
+
+If you'd rather not use auto-mapping, you can manually build the entire mapping:
+
+1. Start with **Product Fields** (core product data)
+2. Map obvious ones first: Title, Description, Price, SKU, Inventory
+3. Work through platform-specific fields (e.g., Shopify has "Product Type", BigCommerce has "Brand")
+4. Leave unmapped platform fields alone—they just won't come into Merchkit
+
+## Understanding Metafields and Variants
+
+### Product Structured Metafields
+
+If your platform stores extra data in metafields (custom Shopify metafields, BigCommerce custom fields, etc.), expand **Product Structured Metafields** to see them. These are optional, but valuable if you store SKU-specific customization data.
+
+[SCREENSHOT: Product Structured Metafields section expanded, showing custom field mappings]
+
+### Variant Fields and Variant Structured Metafields
+
+Products often have variants (size, color). Expand **Variant Fields** to map variant-specific attributes like:
+
+- Variant Title
+- Variant SKU
+- Variant Price
+- Variant Inventory
+
+If variants have their own metafields, **Variant Structured Metafields** lets you map those too.
+
+[SCREENSHOT: Variant Fields section expanded]
+
+## Creating New Merchkit Columns on Import
+
+When you click **Create Missing Columns and Auto Map Them**, Merchkit creates new Merchkit columns for platform fields that don't fit existing columns.
+
+For example: If Shopify sends a "Brand" field but you don't have a Brand column in Merchkit, the auto-mapping button will create one and map the data there.
+
+These new columns appear in your Merchkit database and can be used in future imports and exports.
+
+## Import Filters: Choosing Which SKUs to Import
+
+Above the field mappings, expand **Import Filters** to limit which products you import.
+
+For large catalogs, you might:
+
+- Import only products in certain **categories**
+- Import only items from specific **collections**
+- Import only products with certain **tags** or properties
+- Import SKUs that match a **text pattern**
+
+Each rule narrows the data set. Multiple rules are combined with AND logic (all rules must match).
+
+[SCREENSHOT: Import Filters section with 1 rule example]
+
+This is especially useful when:
+
+- You're rolling out Merchkit to one product line at a time
+- You want to test the import on a small subset first
+- You don't need all products in Merchkit (e.g., archived or discontinued items)
+
+## Saving Your Import Mapping
+
+Once you're happy with your mappings and filters:
+
+1. Click **Save Mapping** at the bottom of the modal
+2. Your mapping is now the active import profile
+
+The next time you trigger an import (from the Products toolbar), it will use this mapping.
+
+## Example: Setting Up a Shopify Import
+
+Here's what a typical Shopify import mapping looks like:
+
+| Shopify Field       | Merchkit Column       |
+|---------------------|-----------------------|
+| Title               | Product Name          |
+| Body HTML           | Description           |
+| Product Type        | Category              |
+| Vendor              | Brand                 |
+| sku (from variant)  | SKU                   |
+| price (from variant)| Retail Price          |
+| cost (from variant) | Cost                  |
+| quantity            | Stock Quantity        |
+
+Metafields and variant-specific data map to their respective sections.
+
+---
+
+**Next step**: [Using Import Filters](/product/integrations-and-field-mapping/using-import-filters)

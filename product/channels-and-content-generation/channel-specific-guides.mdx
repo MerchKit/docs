@@ -1,0 +1,364 @@
+---
+title: "Channel-Specific Guides"
+description: "Deep-dive guides for major channels including Wayfair, Walmart, Amazon, Google Merchant, ChatGPT/GEO, Houzz, Mirakl, and Nordstrom Rack. Channel-specific requirements and tips."
+---
+
+# Channel-Specific Guides
+
+Each marketplace has unique requirements, strengths, and best practices. This guide covers the major channels Merchkit supports, with specific tips and strategies for each.
+
+## Wayfair
+
+**Category:** Traditional marketplace (furniture and home goods)
+
+**Key Stats:**
+- Extensive channel-specific attributes across many categories
+- Category-specific attribute sets
+- Strict validation and data quality requirements
+
+### Wayfair Requirements
+
+Wayfair enforces strict formatting and content standards:
+
+- **Packaging dimensions** — Exact Carton Width, Carton Height, Carton Depth, Carton Weight (required for all products)
+- **Material composition** — List all materials with percentages (required)
+- **Assembly information** — Assembly required (yes/no) and assembly time in minutes
+- **Care instructions** — Detailed maintenance and cleaning guidance
+- **Product categories** — Must match Wayfair's exact category taxonomy
+
+### Wayfair Best Practices
+
+1. **Use category views** — Generate attributes per category to ensure category-specific fields are filled
+2. **Focus on packaging** — Wayfair's packaging attributes are critical; ensure your product data includes carton dimensions
+3. **Material precision** — Break down complex materials (e.g., "Upholstery: 100% Polyester, Frame: Hardwood") rather than generic descriptions
+4. **Assembly realism** — Provide honest assembly times and clear instructions
+5. **Image quality** — Wayfair requires multiple high-quality images; use Merchkit's image enrichment before generating
+6. **Validate category mapping** — Confirm your products are assigned to correct Wayfair categories before generating
+
+### Wayfair Channel-Specific Attributes to Prioritize
+
+- Carton Width 1, Carton Height 1, Carton Depth 1, Carton Weight 1
+- Assembly Required, Assembly Time Minutes
+- Care Instructions
+- Material Composition
+- Warranty
+- Color, Size (if applicable)
+
+[SCREENSHOT: Wayfair channel grid with category selector and key attributes]
+
+## Amazon
+
+**Category:** E-commerce marketplace (universal retail)
+
+**Key Stats:**
+- Extensive bullet points and description fields
+- A+ Content (enhanced content) for brand-registered sellers
+- Multiple image requirements
+- Category-specific attributes
+
+### Amazon Requirements
+
+Amazon emphasizes product clarity and compelling content:
+
+- **Title** — 200 characters max, keywords-focused but readable
+- **Bullet points** — 5 key features/benefits, 1-2 sentences each
+- **Description** — Detailed product overview
+- **Images** — Main image, plus 6-8 additional angles/lifestyle images
+- **A+ Content** — Enhanced content with brand messaging (if brand-registered)
+- **Technical specifications** — Exact dimensions, weight, materials
+- **Warnings/Compliance** — Safety warnings, age requirements, etc.
+
+### Amazon Best Practices
+
+1. **Keyword research first** — Use Amazon's search bar to identify high-volume keywords for your category
+2. **Front-load titles** — Put key keywords in the first 50 characters (most visible on mobile)
+3. **Bullet point specificity** — Focus on what makes your product different, not generic features
+4. **Image optimization** — Use lifestyle images showing the product in use, not just flat lays
+5. **A+ Content for premium positioning** — If you're brand-registered, invest in A+ modules for higher conversion
+6. **Review variation attributes** — Amazon users often search by color, size, material—ensure these are filled correctly
+
+### Amazon Channel-Specific Attributes to Prioritize
+
+- Title (with keywords)
+- Bullet Points (5 persuasive bullets)
+- Product Description
+- Main Image Link
+- Other Image Links (6-8 additional images)
+- Technical Specifications (dimensions, weight, materials)
+- Warnings/Compliance
+
+[SCREENSHOT: Amazon channel with bullet points and image links]
+
+## Walmart
+
+**Category:** Traditional marketplace (general retail)
+
+**Key Stats:**
+- Similar to Amazon but with different validation rules
+- Focus on product feed accuracy
+- Strict title and description formatting
+
+### Walmart Requirements
+
+Walmart's requirements are generally simpler than Amazon's but with specific formatting:
+
+- **Title** — Clear, brand + product type + key attribute
+- **Description** — 100-500 characters, highlight key benefits
+- **Category** — Exact Walmart category match
+- **Price** — Current retail price
+- **SKU** — Internal tracking
+- **UPC** — Universal product code (required for most products)
+
+### Walmart Best Practices
+
+1. **Include UPC** — This is critical; Walmart uses UPC for deduplication across sellers
+2. **Clear titles** — "[Brand] [Product Type] [Color/Size]" format works well
+3. **Concise descriptions** — Walmart shoppers scan quickly; get key benefits upfront
+4. **Accurate categorization** — Wrong category = your product won't be found
+5. **Competitive pricing** — Walmart's algorithm favors competitive prices
+6. **Regular inventory updates** — Keep stock levels current to avoid suppression
+
+### Walmart Channel-Specific Attributes to Prioritize
+
+- Title
+- Description
+- Category
+- UPC
+- Price
+- SKU
+- Inventory/Stock
+
+[SCREENSHOT: Walmart channel with title, description, and category fields]
+
+## Google Merchant
+
+**Category:** Search feed (Google Shopping and Google Search)
+
+**Key Stats:**
+- 15-20 core attributes
+- Used for Google Shopping and Google Search results
+- Critical for conversion (shopping ads)
+
+### Google Merchant Requirements
+
+Google Merchant feeds power Google Shopping and shopping ads. Requirements are simpler but strict:
+
+- **Title** — 150 characters max, keyword-rich
+- **Description** — 5,000 characters max, detailed overview
+- **Image Link** — High-quality product image
+- **Price** — Current price
+- **Availability** — In stock, out of stock, preorder
+- **Category** — Google's product taxonomy
+- **Condition** — New, refurbished, used
+- **Brand** — Product brand
+
+### Google Merchant Best Practices
+
+1. **Keyword-optimize titles** — Google Shopping matches on title keywords; include relevant search terms
+2. **Use dynamic pricing** — Feed price should match your website; use integrations to keep it synced
+3. **Complete availability** — Mark products as in stock only if they're actually available
+4. **High-resolution images** — Minimum 1000x1000 pixels recommended
+5. **Category accuracy** — Use Google's taxonomy, not custom categories
+6. **Include rich attributes** — Size, color, material help shoppers filter and find your products
+
+### Google Merchant Channel-Specific Attributes to Prioritize
+
+- Title (with keywords)
+- Description
+- Image Link
+- Price
+- Availability
+- Category
+- Brand
+- Condition
+
+[SCREENSHOT: Google Merchant channel with essential feed attributes]
+
+## ChatGPT & GEO (AI Assistant Channels)
+
+**Category:** Emerging AI/voice channels
+
+**Key Stats:**
+- Growing importance for voice commerce
+- Simplified attribute set (product essence)
+- Conversation-friendly formatting
+
+### ChatGPT/GEO Requirements
+
+These channels optimize products for AI assistant discovery and recommendation:
+
+- **Product name** — Clear, conversational (not keyword-stuffed)
+- **Description** — Summarize key benefits in 1-2 sentences, AI-friendly
+- **Category tags** — How a shopper would describe this to an AI assistant
+- **Use cases** — "Best for..." statements aligned with assistant queries
+- **Key specs** — Only the essentials (dimensions, color, material)
+- **Comparison info** — How this compares to similar products
+
+### ChatGPT/GEO Best Practices
+
+1. **Conversational tone** — Write for voice: "Perfect for a small living room" not "Compact dimensions"
+2. **Use case focus** — Emphasize what problems this solves, not just features
+3. **Simplify specs** — Only include specs a voice shopper would ask about
+4. **Include comparisons** — Position your product relative to competitors
+5. **Optimize for questions** — Think about how an AI assistant's users might ask about this product
+6. **Focus on sentiment** — These channels reward products that help shoppers feel good about purchases
+
+### ChatGPT/GEO Channel-Specific Attributes to Prioritize
+
+- Product Name (conversational)
+- Description (benefits-focused)
+- Use Cases (problem-solving)
+- Key Specs
+- Comparison Info
+- Category Tags
+
+[SCREENSHOT: ChatGPT channel with conversational product descriptions]
+
+## Houzz
+
+**Category:** Design and home marketplace
+
+**Key Stats:**
+- Visual-first marketplace
+- Design-focused attributes
+- Style and aesthetic emphasis
+
+### Houzz Requirements
+
+Houzz shoppers are design-conscious and aesthetic-focused:
+
+- **Title** — Style + product type (e.g., "Mid-Century Modern Dining Chair")
+- **Description** — Design story and aesthetic benefits, not just specs
+- **Images** — Lifestyle images showing product in designed spaces (not just product shots)
+- **Dimensions** — Exact measurements
+- **Materials** — Material focus on aesthetics and durability
+- **Style tags** — Design style (Contemporary, Traditional, Rustic, etc.)
+- **Room type** — Where does this fit (Living Room, Bedroom, Kitchen, etc.)
+
+### Houzz Best Practices
+
+1. **Hire a photographer** — Houzz rewards beautiful lifestyle images; invest in professional photography
+2. **Style-first positioning** — Lead with design style, then specs
+3. **Designer-friendly language** — Use terms designers use: "transitional," "statement piece," "accent color"
+4. **Room inspiration** — Show products in styled rooms, not isolation
+5. **Material storytelling** — Emphasize craftsmanship, sustainability, durability over generic specs
+6. **Color and texture** — Houzz shoppers filter by color; ensure accurate color descriptions
+
+### Houzz Channel-Specific Attributes to Prioritize
+
+- Title (with design style)
+- Description (design-focused)
+- Images (lifestyle shots)
+- Dimensions
+- Materials
+- Style Tags
+- Room Type
+
+[SCREENSHOT: Houzz channel with lifestyle images and design-focused descriptions]
+
+## Mirakl (Marketplace Platforms)
+
+**Category:** White-label marketplace platform
+
+**Key Stats:**
+- Varies by implementation
+- Mathis, Mine, Rue La La use Mirakl
+- Flexible attribute mapping
+
+### Mirakl Requirements
+
+Mirakl-based marketplaces vary in their specific requirements because they're customized. Common attributes include:
+
+- **Brand** — Seller brand or product brand
+- **Category** — Marketplace's category taxonomy
+- **Title** — Product name/title
+- **Description** — Detailed overview
+- **Price** — Current price
+- **Images** — Product images
+- **Shipping** — Shipping weight and dimensions
+- **Custom attributes** — Marketplace-specific fields (varies by implementation)
+
+### Mirakl Best Practices
+
+1. **Confirm attribute requirements** — Each Mirakl instance is different; check with the specific marketplace
+2. **Understand category taxonomy** — Each marketplace has its own categories and required attributes per category
+3. **Test with a small batch** — Before uploading 1,000 products, validate with 10-20
+4. **Review feedback loops** — These marketplaces often provide rejection reasons; act on them quickly
+5. **Build relationships with marketplaces** — Direct contact with Mirakl marketplace teams can clarify requirements
+
+### Mirakl Channel-Specific Attributes to Prioritize
+
+- Brand
+- Category
+- Title
+- Description
+- Price
+- Images
+- Shipping Weight/Dimensions
+- (Custom attributes per marketplace)
+
+[SCREENSHOT: Mirakl channel with standard and custom attributes]
+
+## Nordstrom Rack
+
+**Category:** Luxury goods marketplace
+
+**Key Stats:**
+- Premium positioning
+- Quality and brand emphasis
+- Curated assortment
+
+### Nordstrom Rack Requirements
+
+Nordstrom Rack positions itself as a curated, premium destination:
+
+- **Brand** — Brand name (prominent)
+- **Title** — Product name with key attributes (style, color)
+- **Description** — Emphasize luxury, quality, exclusivity
+- **Category** — Nordstrom Rack's assortment taxonomy
+- **Price** — Regular price and sale price (if applicable)
+- **Images** — Professional, high-quality images
+- **Material & Care** — Detailed material composition and care instructions
+- **Fit details** — For apparel, detailed sizing and fit information
+- **Quality certifications** — Sustainability, fair trade, etc. (if applicable)
+
+### Nordstrom Rack Best Practices
+
+1. **Emphasize quality** — Nordstrom Rack shoppers expect luxury and curated assortment
+2. **Professional imagery** — Investment-quality product photography
+3. **Detailed care instructions** — Premium customers care about longevity
+4. **Brand storytelling** — If you're an emerging luxury brand, tell your story
+5. **Sustainability angles** — Nordstrom Rack customers value eco-friendly options
+6. **Accurate sizing** — Premium customers return items if fit is wrong; be precise in size descriptions
+
+### Nordstrom Rack Channel-Specific Attributes to Prioritize
+
+- Brand
+- Title (with style/color)
+- Description (luxury-focused)
+- Category
+- Price (regular + sale)
+- Images (professional)
+- Material & Care
+- Fit Details (for apparel)
+
+[SCREENSHOT: Nordstrom Rack channel with premium positioning attributes]
+
+## Cross-Channel Strategy
+
+Some tips that apply across channels:
+
+1. **Master your source data** — Every channel is only as good as your Products view data. Invest in data quality first.
+2. **Start with one channel** — Perfect one marketplace before expanding to others.
+3. **Monitor channel performance** — Track sales, reviews, and returns by channel to understand what's working.
+4. **Iterate on prompts** — After first generation, review results and refine prompts for better outputs.
+5. **Schedule regular updates** — Regenerate content quarterly or when you make major product changes.
+6. **Leverage variations** — Different channels can emphasize different product attributes for their unique audiences.
+
+## Next Steps
+
+Now that you understand channel-specific requirements:
+
+- [Pre-Export Validation Checklist](/product/channels-and-content-generation/pre-export-validation) — Ensure your channel data meets requirements
+- [Exporting Channel Data](/product/channels-and-content-generation/exporting-channel-data) — Download and submit your marketplace feeds
+- [Feed Validation & Error Resolution](/product/channels-and-content-generation/feed-validation-errors) — Fix rejection issues

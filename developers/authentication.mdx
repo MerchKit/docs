@@ -1,0 +1,90 @@
+---
+title: "Authentication"
+description: "Authenticate with workspace API keys: bearer mk_live_ tokens, one key per workspace, and per-resource read/write scopes."
+---
+
+The Merchkit API and MCP server authenticate with **workspace API keys**. You create a key from your
+workspace settings, then send it as a bearer token on every request.
+
+<Note>
+  The examples use `https://www.merchkit.com` as the base URL.
+</Note>
+
+## API keys
+
+Send your key in the `Authorization` header:
+
+```http
+Authorization: Bearer mk_live_...
+```
+
+<CodeGroup>
+```bash cURL
+curl https://www.merchkit.com/api/v1/products \
+  -H "Authorization: Bearer mk_live_..."
+```
+
+```ts fetch
+const res = await fetch("https://www.merchkit.com/api/v1/products", {
+  headers: { Authorization: "Bearer mk_live_..." },
+});
+```
+</CodeGroup>
+
+<Callout type="warning">
+  A key is a secret with workspace access. Store it in a secret manager or environment variable —
+  never commit it to source control or expose it to a browser client.
+</Callout>
+
+### One key, one workspace
+
+Each API key maps to **exactly one workspace**. There is no account-level key that spans workspaces —
+to operate across multiple workspaces, create one key per workspace and select the right key per
+request. The same key authenticates both the REST API and the [MCP server](/developers/mcp).
+
+## Scopes
+
+Keys carry **scopes** that grant least-privilege access. Each operation declares the scope(s) it
+requires, and the key must hold all of them — otherwise the request fails with `insufficient_scope`.
+Scopes are granted per resource and split into **read** and **write** granularity.
+
+| Resource | Read scope | Write scope(s) |
+|---|---|---|
+| Products | `read:products` | `write:products` |
+| Attribute definitions | `read:attributes` | `write:attributes` |
+| Attribute values | — | `write:attribute_values` |
+| Grid views | `read:views` | `write:views` |
+| Vendors | `read:vendors` | `write:vendors` |
+| Categories | `read:categories` | `write:categories` |
+| Channels | `read:channels` | — |
+| Completeness | `read:completeness` | — |
+| History | `read:history` | — |
+| Jobs | `read:jobs` | — |
+| Import / export | — | `data:import`, `data:export` |
+
+<Callout type="info">
+  Scopes mirror Merchkit's internal permission model, so an API key and a human team member reason
+  about access the same way. The OpenAPI spec documents the required scope for every operation in its
+  `securitySchemes`, so an agent can determine up front whether a key can perform an action.
+</Callout>
+
+### Read-only vs write keys
+
+Because scopes are per-resource and split read/write, you can mint keys for different jobs:
+
+- **Read-only key** — grant only `read:*` scopes. It can list and read every resource you authorize
+  but cannot mutate anything. Use it for dashboards, analytics, sync-out jobs, or pointing an agent
+  at your catalog for inspection.
+- **Write key** — grant the `write:*` (and `data:*`) scopes the integration needs, in addition to the
+  reads. Use it for enrichment, imports, and any agent that mutates data.
+
+A read-only key **cannot perform writes** — this is enforced by scope on both the REST API and the
+MCP write tools.
+
+## Beta limitation: deletes are disabled
+
+<Callout type="warning">
+  **During the beta, destructive operations are disabled.** `DELETE` endpoints return **`403`**, and
+  there is no delete tool in MCP, even if a key holds a `delete:*` scope. Destructive actions are
+  enabled in a later release. Build your integrations against create and update for now.
+</Callout>

@@ -1,0 +1,79 @@
+---
+title: "From Zero to Optimized Catalog in 7 Days"
+description: "A step-by-step checklist for your first week in Merchkit — from importing your catalog to having a fully enriched product database ready for channel publishing."
+---
+
+This roadmap walks you through the recommended path from your first login to a fully enriched catalog. Most customers reach the core milestone — an AI-enriched and reviewed catalog — within their first week.
+
+You don't have to follow this order rigidly. The steps are listed in the sequence that works best for most teams, but if you already have some steps covered (like an integration already connected), skip ahead to where you need to pick up.
+
+## Days 1–2: Get your data in
+
+**Goal:** Your product catalog is in Merchkit with basic data populated.
+
+**Step 1. Learn the interface** — Spend 10 minutes getting oriented. Know where to find Products, Attributes, Integrations, and Channels in the sidebar.
+→ Read: [Navigating the Merchkit Interface](/product/getting-started/navigating-the-interface)
+
+**Step 2. Import your catalog** — This is your first real action. Most customers start by uploading a CSV export from their existing system (spreadsheet, PIM, or commerce platform). If you have a Shopify or BigCommerce store, you can also connect it as an integration and import directly.
+→ Read: [Importing Your First Catalog via CSV](/product/sources-and-importing/importing-first-catalog-csv)
+→ Or: [Connecting an Integration](/product/integrations-and-field-mapping/connecting-an-integration)
+
+**Step 3. Add sources to key products** — For a subset of your products (start with 10-20), add URLs, documents, or text that gives the AI more context. Supplier spec sheets, product page URLs, and detailed descriptions all work well.
+→ Read: [Adding Sources to a Product](/product/sources-and-importing/adding-sources-to-product)
+
+> **Checkpoint:** You should be able to see your products in the Products table, with basic attributes populated from your import.
+
+## Days 3–4: Configure your attributes and run enrichment
+
+**Goal:** Your catalog attributes are configured and AI enrichment has been run.
+
+**Step 4. Review your attributes** — Go to Workspace → Attributes and review what's there. If you imported from a platform like Shopify, many attributes were auto-created from your existing fields and metafields. Decide which attributes need AI enrichment and which are already complete.
+→ Read: [Understanding Attributes in Merchkit](/product/attributes-and-enrichment/understanding-attributes)
+
+**Step 5. Configure AI on key attributes** — For the attributes you want the AI to generate (descriptions, SEO titles, colors, materials, etc.), open the Configure Attribute panel and set up the prompt, field type, context sources, and acceptable values.
+→ Read: [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai)
+
+**Step 6. Run your first enrichment and review** — Select a small batch of products (start with 5-10), click Generate, and choose "Generate Empty Attributes Only." Review the output carefully. Are the descriptions accurate? Are the attribute values correct? This review step is how you calibrate before scaling up.
+→ Read: [Running Your First Enrichment](/product/attributes-and-enrichment/running-first-enrichment)
+
+**Step 7. Iterate on your prompts** — Based on your review, refine your attribute prompts. Use the "Edit with AI" function — it prompt-engineers your request for you and writes it into the prompt field, so you don't need to be an expert at writing AI prompts. Adjust acceptable values as needed, then re-run on the same batch to compare.
+→ Read: [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts)
+
+> **Checkpoint:** You have a batch of products with AI-generated attributes that you've reviewed, iterated on, and are satisfied with.
+
+## Days 5–6: Scale enrichment and connect channels
+
+**Goal:** Your entire catalog is enriched and you're ready to publish.
+
+**Step 8. Run enrichment at scale** — Select your full catalog (or large segments of it) and run Generate. For large catalogs (10K+ SKUs), this may take some time to process.
+→ Read: [Bulk Enrichment for Large Catalogs](/product/attributes-and-enrichment/bulk-enrichment)
+
+**Step 9. Set up dependent attributes** — If you have attributes that reference other attributes (like an SEO Description that pulls from Title, Brand, and Category), configure those using the Insert Value (`{{ }}`) syntax.
+→ Read: [Building Dependent Attributes with Insert Value](/product/attributes-and-enrichment/building-dependent-attributes)
+
+**Step 10. Connect an integration** (if not done in Days 1–2) — Set up field mapping so you can push enriched data back to your commerce platform.
+→ Read: [Setting Up Import Mapping](/product/integrations-and-field-mapping/setting-up-import-mapping)
+
+> **Core milestone reached:** If you've enriched your catalog and reviewed the output, congratulations — you've completed the primary onboarding goal. Your catalog data is now richer, more structured, and ready for channel publishing.
+
+## Day 7: Generate channel content and go live
+
+**Goal:** Start generating channel-specific content and exporting to sales channels.
+
+**Step 11. Open a channel and generate content** — Click on a channel (like Wayfair) in the sidebar, select your products, and click Generate. Merchkit creates content formatted to that channel's specific requirements.
+→ Read: [Generating Channel Content](/product/channels-and-content-generation/generating-channel-content)
+
+**Step 12. Export your channel data** — Download or push your channel-formatted data for submission.
+→ Read: [Exporting Channel Data](/product/channels-and-content-generation/exporting-channel-data)
+
+## Getting help along the way
+
+If you get stuck at any point, your options are:
+
+- **This Knowledge Base** — search for your question or browse by section
+- **Your Merchkit CS contact** — your onboarding is supported by our team, and they can walk you through any step
+- **Troubleshooting section** — if you hit an error, check [Troubleshooting](/product/troubleshooting/troubleshooting) for common issues and fixes
+
+---
+
+**Next step:** Read [Navigating the Merchkit Interface](/product/getting-started/navigating-the-interface) to get oriented before your first import.

@@ -1,0 +1,229 @@
+---
+title: "Attribute & Enrichment Issues"
+description: "Debug AI generation problems by checking your prompt, acceptable values, source data, and dependencies."
+---
+
+# Attribute & Enrichment Issues
+
+Sometimes the AI doesn't generate the output you expect. Use this guide to systematically trace back to the root cause: your prompt, acceptable values, source data, required fields, or dependencies.
+
+## When AI Generation Fails or Produces Unexpected Results
+
+Follow this debugging checklist in order:
+
+### 1. Check Your Prompt
+
+Your attribute prompt tells the AI what to generate. An unclear or vague prompt leads to unexpected results.
+
+**Go to:**
+1. Click **Attributes** in the sidebar.
+2. Find the problematic attribute and click **Edit**.
+3. Review the **Prompt** field (or **AI Instructions**).
+
+**Common prompt issues:**
+
+| Problem | Example | Fix |
+|---------|---------|-----|
+| Too vague | "Generate a description" | Be specific: "Generate a 1-2 sentence product feature highlight suitable for product listings" |
+| Conflicting instructions | "Be concise but include all details" | Choose one: "Keep to under 100 characters" or "Include all key features" |
+| Missing context | "Fill this field" | Provide context: "Based on the product type and materials, generate appropriate care instructions" |
+| Poor examples | Generic examples | Add examples showing the exact tone, length, and format you want |
+
+**To improve your prompt:**
+1. Edit the prompt to be more specific.
+2. Add examples of good output.
+3. Specify tone and length.
+4. Click **Save** and re-run generation.
+
+[SCREENSHOT: Attribute settings with prompt field highlighted]
+
+### 2. Check Your Acceptable Values
+
+If you set **Acceptable Values** (constraints), the AI must choose from your list. If a value doesn't match, generation fails or the field stays empty.
+
+**Go to:**
+1. Click **Attributes** and open your attribute.
+2. Scroll to **Acceptable Values** (if enabled).
+3. Review the list.
+
+**Common acceptable value issues:**
+
+| Problem | Example | What happens | Fix |
+|---------|---------|--------------|-----|
+| Too restrictive | Only "Red", "Blue", "Green" for a multi-color product | AI can't pick a single value; field stays empty | Add more options: "Red", "Blue", "Green", "Multi-Color", "Other" |
+| Typos in values | "Small ", "medium", "LARGE" (inconsistent spacing/case) | AI can't match generated value to list | Standardize: all lowercase, no extra spaces |
+| Value mismatch | Attribute is "Size" but acceptable values are "XL", "XXL" (no standard sizes) | AI generates "Large" but it's not in acceptable values; field rejected | Align acceptable values with your product data |
+
+**To debug acceptable values:**
+1. Look at a product where generation failed.
+2. Check what the AI tried to generate (visible in logs or error messages).
+3. If the AI's choice wasn't in your acceptable values list, add it or expand the list.
+4. Re-run generation.
+
+[SCREENSHOT: Acceptable values list with validation message]
+
+### 3. Check Your Source Data
+
+The AI uses your product data (name, current attributes, sources) to generate new attributes. If source data is missing or vague, output suffers.
+
+**Inspect the product's data:**
+1. Go to your **Catalog**.
+2. Click on the product that generated poorly.
+3. Review all existing attributes and data in the product record.
+4. Scroll to **Sources** (if enabled) to see what documents/URLs you've linked.
+
+**Common source data issues:**
+
+| Issue | Impact | Fix |
+|-------|--------|-----|
+| Missing product description | AI can't infer features, materials, or use case | Add detailed description or link a source (product page, PDF) |
+| Vague product name | AI generates generic output | Improve product name with key details (e.g., "Cotton T-Shirt - Navy, Size M" instead of "Item #12345") |
+| No linked sources | AI only uses existing attributes to infer new ones | Link URLs, upload PDFs, or paste text in product's Sources section |
+| Incomplete data | Many attributes empty or null | Fill in key fields first; let AI use them as context |
+
+**To add sources to a product:**
+1. Open the product.
+2. Scroll to **Sources** (or **Enrichment Data**).
+3. Click **Add Source**.
+4. Paste a URL or upload a document.
+5. Save and re-run generation.
+
+[SCREENSHOT: Product detail page with sources section]
+
+### 4. Check for Required Value Dependencies
+
+If your attribute has a **Required Values** dependency, generation may be blocked if the dependency isn't met.
+
+**What is a Required Values dependency?**
+
+You can configure an attribute to only generate IF another attribute has a specific value. For example:
+- "Generate Size Chart only if Product Type = Clothing"
+- "Generate Care Instructions only if Material = Fabric"
+
+**Go to:**
+1. Click **Attributes** and open your attribute.
+2. Scroll to **Dependencies** (or **Conditional Generation**).
+3. Check if there's a rule like "Only generate if [Other Attribute] = [Value]".
+
+**Common dependency issues:**
+
+| Problem | Example | What happens | Fix |
+|---------|---------|--------------|-----|
+| Dependency field is empty | "Only generate if Product Type is set" but Product Type is blank | Generation is skipped; attribute stays empty | Fill in the parent attribute (Product Type) first |
+| Dependency value doesn't match | Dependency: "Only if Color = Red" but product Color = "Crimson" | Generation is skipped | Update the dependency to match actual values or adjust product data |
+| Reverse logic misunderstood | You want "Generate UNLESS Material = Plastic" | You set "Only generate if Material = Plastic" | Flip the dependency: choose "Exclude when" instead of "Only when" |
+
+**To fix a dependency:**
+1. Edit the attribute.
+2. Review and adjust the **Dependencies** rule.
+3. Fill in the parent attribute for the product.
+4. Re-run generation.
+
+[SCREENSHOT: Dependency configuration dropdown]
+
+### 5. Check Product Data Context
+
+Attributes can reference other attributes in their prompts using placeholders. If those referenced attributes are empty, the AI doesn't have the data it needs.
+
+**Example prompt with placeholder:**
+```
+Generate a 1-2 sentence product highlight using the product name {product_name}
+and its primary use case {primary_use_case}.
+```
+
+If `{primary_use_case}` is empty for that product, the AI works with missing context.
+
+**To debug:**
+1. Open your attribute prompt.
+2. Look for `{field_names}` or similar placeholders.
+3. Check the product to see if those fields are filled in.
+4. If empty, fill them in and re-run generation.
+
+[SCREENSHOT: Prompt editor with placeholder reference highlighted]
+
+## Common "Why Did the AI Generate X?" Scenarios
+
+### Scenario: AI Generated "Unknown" or "Not Available"
+
+**Causes:**
+- Prompt too vague or unclear.
+- No source data or linked documents.
+- Product missing required context fields.
+- Acceptable values list empty or missing correct options.
+
+**Fix:**
+1. Improve the prompt with examples.
+2. Add sources (URLs, documents) to the product.
+3. Fill in related product attributes.
+4. Ensure acceptable values are comprehensive.
+
+### Scenario: AI Generated Something Off-Topic
+
+**Causes:**
+- Prompt conflicts with source data.
+- Source documents are irrelevant or from wrong product.
+- AI is misinterpreting placeholder fields.
+
+**Fix:**
+1. Review the prompt for clarity.
+2. Check linked sources—are they for the correct product?
+3. Remove or replace irrelevant sources.
+4. Re-run generation.
+
+### Scenario: Generation Completed But Field is Still Empty
+
+**Causes:**
+- Generated value didn't match acceptable values.
+- Dependency condition not met.
+- AI generated null or empty value (couldn't infer).
+
+**Fix:**
+1. Check acceptable values—did AI try something not on the list?
+2. Check dependencies—is the parent attribute filled in?
+3. Improve the prompt and source data.
+4. Try manual generation to see error details.
+
+[SCREENSHOT: Empty attribute field with error icon and tooltip]
+
+## Using Manual Generation to Debug
+
+When auto-generation isn't working, use **Manual Generation** to see more details:
+
+1. Go to your **Catalog** and select products.
+2. Click the **Generate** button (or right-click > Generate for Selection).
+3. Choose the specific attribute to generate.
+4. Merchkit processes and shows a **preview** of results before applying.
+5. If generation fails, you'll see an error message with clues.
+6. Adjust settings (prompt, sources, etc.) and retry.
+
+[SCREENSHOT: Manual generation preview with error message]
+
+## Performance & Rate Limits
+
+If generation is slow or times out:
+
+- **Large batch**: Generating for 10,000+ products takes time (usually minutes to hours depending on batch size).
+- **Long prompts**: Very detailed prompts with lots of placeholders slow down processing.
+- **Rate limits**: On free or low-tier plans, you may queue longer during peak hours.
+
+**To speed up:**
+1. Generate for smaller batches first (100 products).
+2. Simplify the prompt if possible.
+3. Upgrade your plan for priority processing.
+4. Avoid peak hours (usually 9 AM–5 PM EST).
+
+## Still Stuck?
+
+If your attribute is still not generating correctly:
+
+1. **Export a sample**: Go to Catalog > Select a few products > Export to CSV. Include the problematic attribute.
+2. **Check the generation log**: Click the attribute, then "View Generation History" to see attempts and errors.
+3. **Contact Support**: Email support@merchkit.com with:
+   - Your attribute name and prompt.
+   - A sample product that failed.
+   - Screenshot of the attribute settings.
+   - Expected vs. actual output.
+
+---
+
+**Next:** Troubleshoot integration connection and sync issues in [Integration & Field Mapping Errors](/product/troubleshooting/integration-mapping-errors).

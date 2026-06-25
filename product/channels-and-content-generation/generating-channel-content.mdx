@@ -1,0 +1,217 @@
+---
+title: "Generating Channel Content"
+description: "Select SKUs and generate marketplace-ready content for your channels using Merchkit's AI-powered generation engine."
+---
+
+# Generating Channel Content
+
+Generating channel content is how you fill marketplace-specific attributes with AI-powered data. Select your SKUs, choose your generation options, and Merchkit's AI handles the rest.
+
+## The Generate Flow
+
+Here's how channel generation works:
+
+1. **Navigate to your channel** — Click the channel in your sidebar
+2. **Select SKUs** — Choose which products to generate for
+3. **Open the action bar** — Click the "Generate" menu
+4. **Choose your generation option** — Generate empty fields only or regenerate everything
+5. **Wait for processing** — Merchkit generates your attributes in the background
+6. **Review and export** — Validate the results and export to the marketplace
+
+## Step 1: Open Your Channel
+
+In your Merchkit sidebar, click the channel you want to work with (Wayfair, Amazon, Google Merchant, etc.).
+
+The channel grid opens, showing all channel-specific attributes for that channel.
+
+[SCREENSHOT: Wayfair channel grid view]
+
+## Step 2: Select SKUs to Generate
+
+You can select SKUs in several ways:
+
+### Method 1: Select All
+Click the **checkbox in the column header** to select all visible products in the current view.
+
+[SCREENSHOT: Select all checkbox in channel grid header]
+
+### Method 2: Select by Filter
+Use the filter bar to show only products you want to generate for, then select all:
+
+- Select by **completion status** — "Show empty attributes only"
+- Select by **category** — "Show Sofas only"
+- Select by **SKU range** — "Show SKUs starting with SOFA-"
+
+Then click **Select All** to select the filtered products.
+
+[SCREENSHOT: Filter bar in channel grid]
+
+### Method 3: Select Individual SKUs
+Click the checkbox next to individual product names to select specific SKUs.
+
+[SCREENSHOT: Individual SKU checkboxes]
+
+### Method 4: Select by Range
+Click the first SKU's checkbox, hold Shift, and click the last SKU to select a range.
+
+## Step 3: Open the Generate Menu
+
+Once you've selected your SKUs, an **action bar** appears at the bottom of the screen (or at the top, depending on your view).
+
+Look for the **Generate** dropdown button.
+
+[SCREENSHOT: Action bar with Generate dropdown at bottom of screen]
+
+## Step 4: Choose Your Generation Option
+
+Click the **Generate** dropdown to see your options:
+
+### Option 1: Generate Empty Attributes Only
+**Keyboard shortcut: Cmd+Return (Mac) or Ctrl+Return (Windows)**
+
+Merchkit fills only attributes that are currently blank. If an attribute already has a value, it skips it.
+
+**Use this when:**
+- You're filling in missing data on existing products
+- You want to preserve manually edited values
+- You're doing incremental updates
+
+### Option 2: Generate All Attributes
+Merchkit regenerates **every channel attribute**, overwriting any existing values (including manually edited ones).
+
+**Use this when:**
+- You're updating product data in your main Products view and want to refresh all channel attributes
+- You want to re-apply an updated prompt to all SKUs
+- You're fixing an attribute that was filled incorrectly
+
+[SCREENSHOT: Generate dropdown menu with two options]
+
+## Step 5: Wait for Processing
+
+After you click Generate, Merchkit:
+
+1. **Queues the generation job** — Shows a progress indicator
+2. **Processes in the background** — You can navigate away or continue working
+3. **Generates attributes** — Uses your channel's prompts (default or custom) to fill each attribute
+4. **Completes** — Notifies you when finished
+
+A progress bar shows:
+- Number of SKUs being processed
+- Estimated time remaining
+- Percentage complete
+
+[SCREENSHOT: Generation progress indicator]
+
+### Generation Time
+
+Generation speed depends on:
+- **Number of SKUs** — Generating 10 products takes seconds; 1,000 takes a few minutes
+- **Number of attributes** — Channels with many attributes (like Wayfair) take longer than simpler ones (like Google Merchant)
+- **Complexity of prompts** — Simple text extraction is faster; complex analysis takes longer
+
+Most generations complete within **minutes**, even for large batches.
+
+## Step 6: Review the Results
+
+Once generation completes, the channel grid updates with new values.
+
+[SCREENSHOT: Channel grid with newly generated attributes]
+
+### What to Look For
+
+- **Green checkmarks** — Attributes successfully generated and valid
+- **Red warnings** — Attributes with errors (format issue, invalid selection)
+- **Empty cells** — Attributes the AI couldn't fill (usually means missing source data)
+
+### Spot Check Your Results
+
+Before exporting, review a few random products:
+
+1. Click a product name to view its detail
+2. Check that generated attributes make sense
+3. Manually edit any that look wrong
+4. Close and check another product
+
+[SCREENSHOT: Product detail view with generated attributes]
+
+## Editing After Generation
+
+You can always edit attributes manually after generation:
+
+1. Click a cell in the channel grid to edit inline
+2. Or click a product name to open its detail view
+3. Edit the value and save
+
+This is useful when:
+- The AI generated close-but-not-perfect results
+- You want to make category-specific adjustments
+- You want to emphasize certain attributes
+
+## Regenerating Specific Attributes
+
+You don't have to regenerate everything. You can:
+
+1. **Select a single attribute column**
+2. **Select only the SKUs that need it**
+3. **Generate just that attribute**
+
+For example, if you only want to regenerate "Care Instructions" because you updated your custom prompt, select only that column and hit Generate.
+
+## Common Generation Scenarios
+
+### Scenario 1: New Products Added
+1. Open your channel
+2. Filter to show only products with empty attributes
+3. Select all filtered products
+4. Click Generate → **Generate Empty Attributes Only**
+5. Review results and export
+
+### Scenario 2: Marketplace Requires New Attributes
+1. The channel adds new required attributes
+2. Open your channel (it loads the new attributes automatically)
+3. Select all products
+4. Click Generate → **Generate Empty Attributes Only**
+5. Review and export the updated feed
+
+### Scenario 3: You Updated Prompts
+1. You customized one or more channel prompts
+2. Select all products
+3. Click Generate → **Generate All Attributes** (to apply new prompts)
+4. Review results
+5. Export the refreshed feed
+
+### Scenario 4: Partial Update
+1. You've manually fixed some products
+2. You have new products that need generating
+3. Filter to show only products with empty attributes
+4. Select the filtered products
+5. Click Generate → **Generate Empty Attributes Only**
+6. Leave manually edited products untouched
+
+## Troubleshooting Generation Issues
+
+### Generation Failed
+- Check your internet connection
+- Ensure your channel is still connected and authenticated
+- Try again with a smaller batch
+- Contact Merchkit support if errors persist
+
+### Generated Values Look Wrong
+- The AI might not have enough source data in your Products view
+- Your custom prompt might be unclear
+- Check your product description and specs for missing information
+
+### Generation Took Too Long
+- Large batches (1,000+ SKUs) can take several minutes
+- Complex channels (Wayfair) take longer than simple ones (Google Merchant)
+- Generation happens in the background—you can navigate away and come back
+
+## Next Steps
+
+Your channel content is generated. Now review and prepare it for export:
+
+- [Pre-Export Validation Checklist](/product/channels-and-content-generation/pre-export-validation) — Check for errors before exporting
+- [Exporting Channel Data](/product/channels-and-content-generation/exporting-channel-data) — Download and submit your marketplace feed
+
+Or, if you want to refine your approach:
+- [Customizing Channel Attribute Prompts](/product/channels-and-content-generation/customizing-channel-prompts) — Improve your generation results

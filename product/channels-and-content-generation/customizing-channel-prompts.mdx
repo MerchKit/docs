@@ -1,0 +1,175 @@
+---
+title: "Customizing Channel Attribute Prompts"
+description: "Learn how to modify default AI prompts for channel attributes. Understand when to customize versus when to use defaults."
+---
+
+# Customizing Channel Attribute Prompts
+
+Merchkit's default channel prompts are smart and well-tested. But sometimes you need to customize them to match your specific products, data structure, or marketplace requirements.
+
+## Why Customize a Prompt?
+
+You might customize a default prompt when:
+
+- **Your products have unique data** — Your specs are formatted differently than the default prompt expects
+- **Category-specific rules** — Sofas need different logic than chairs, even within the same channel
+- **Marketplace nuances** — A marketplace has specific formatting requirements the default doesn't capture
+- **Brand standards** — You want to emphasize certain attributes consistently
+- **Learned insights** — After generating content once, you see what works and refine
+
+## How to Customize a Prompt
+
+### Step 1: Open the Channel and Locate the Attribute
+
+In your channel grid, find the attribute you want to customize. For example, "Care Instructions" in Wayfair.
+
+[SCREENSHOT: Channel grid with Care Instructions attribute column]
+
+### Step 2: Access the Prompt Editor
+
+Click on the **attribute header or a small gear/settings icon** next to the attribute name. This opens the prompt editor.
+
+Alternatively, some channels show a **prompt tooltip** when you hover over an attribute—click "Edit Prompt" to open the editor.
+
+[SCREENSHOT: Attribute header with settings icon]
+
+### Step 3: View the Default Prompt
+
+The prompt editor shows:
+
+- **Default prompt** — The out-of-the-box prompt Merchkit uses
+- **Your custom prompt** (if you've already edited it)
+- **Prompt description** — What this attribute is for
+
+[SCREENSHOT: Prompt editor showing default Care Instructions prompt]
+
+### Step 4: Edit the Prompt
+
+Click in the prompt text area and modify it. You can:
+
+- **Rewrite it completely** — Throw out the default and write something new
+- **Edit specific lines** — Adjust instructions while keeping the core logic
+- **Add context** — Include category-specific or brand-specific guidance
+- **Clarify output format** — Specify how the output should be structured
+
+**Example: Default Care Instructions Prompt**
+> "Extract care and maintenance instructions from the product description. If not available, infer reasonable care instructions based on the product's material composition."
+
+**Your custom prompt**
+> "Extract care and maintenance instructions for furniture from the product description. Format as a comma-separated list of actions (e.g., 'Vacuum weekly, Spot clean with mild soap, Avoid direct sunlight'). If care instructions are not in the description, return 'Professional cleaning recommended'."
+
+This custom prompt is much more specific to your needs.
+
+### Step 5: Save the Prompt
+
+Click **Save** or **Apply**. Your custom prompt is now the default for this attribute when you generate content.
+
+[SCREENSHOT: Save button in prompt editor]
+
+### Step 6: Regenerate the Attribute
+
+Once you've saved a custom prompt, you can:
+
+1. Select the products you want to regenerate
+2. Use the **Generate** action to fill the attribute using your new prompt
+
+Merchkit applies the custom prompt to your selected SKUs.
+
+## Customization Examples
+
+### Example 1: Dimension Attributes for Different Categories
+
+**Default prompt for Width:**
+> "Extract the width from the product specifications in inches."
+
+**Custom prompt for sofas:**
+> "For sofas, extract the width measurement in inches. If only a range is given, use the largest dimension. Round to the nearest 0.5 inch."
+
+**Custom prompt for chairs:**
+> "For chairs, extract the seat width in inches, not the overall frame width. Round to the nearest 0.5 inch."
+
+By creating category-specific prompts, you ensure consistency within each category.
+
+### Example 2: Bullet Points for Amazon
+
+**Default prompt:**
+> "Create 5 engaging bullet points for this product's key features and benefits."
+
+**Your custom prompt:**
+> "Create exactly 5 bullet points for this product. Each bullet should be 1-2 sentences. Focus on: 1) Material quality, 2) Dimensions/fit, 3) Durability, 4) Ease of care, 5) Style versatility. Use action words like 'features', 'includes', 'offers'."
+
+This ensures consistency in Amazon listings.
+
+### Example 3: Handling Missing Data
+
+**Default prompt:**
+> "Extract assembly time in minutes from the product description."
+
+**Your custom prompt:**
+> "Extract assembly time in minutes. If not in the description, check specifications. If still not found, return 'No assembly required' if it's a soft good, or '30-45 minutes' if it's a furniture piece. Add a note: '(estimated)' if you're inferring."
+
+This handles missing data gracefully.
+
+## Best Practices for Custom Prompts
+
+### Be Specific About Format
+
+Instead of: "Extract color"
+
+Write: "Extract the primary color name only (one word). If multiple colors, use the dominant color. Return in Title Case (e.g., 'Navy Blue')."
+
+### Include Examples
+
+If your attribute needs to follow a specific format:
+
+> "List all dimensions as: Width x Depth x Height in inches. Example: '84 x 36 x 32'. If the product is soft goods without fixed dimensions, return 'N/A'."
+
+### Specify Fallbacks
+
+Tell the AI what to do if data is missing:
+
+> "If dimensions are unavailable in the description or specifications, skip this field (leave blank) rather than guessing. Do not infer or estimate."
+
+### Test Before Rolling Out
+
+Before applying a custom prompt to 500 products, test it on a small batch:
+
+1. Select 5-10 representative SKUs
+2. Generate with the custom prompt
+3. Review the results
+4. Refine the prompt if needed
+5. Roll out to the full catalog
+
+### Document Why You Customized
+
+In your team's notes, record:
+- What prompted the customization
+- How it differs from the default
+- Which categories or SKU ranges use this custom prompt
+
+This helps team members understand the logic later.
+
+## When NOT to Customize
+
+You might be tempted to customize too much. Here's when to stick with defaults:
+
+- **Your products match the default logic** — If the default prompt produces good results, leave it
+- **Data is sparse** — If many of your products are missing the underlying data, a custom prompt won't help
+- **You're unsure of requirements** — Check the marketplace guidelines first before customizing
+- **Testing would take too long** — If you're on a deadline, use defaults and refine later
+
+## Rolling Back a Customization
+
+If you customize a prompt and later want to go back to the default:
+
+1. Open the prompt editor
+2. Look for a **"Restore Default"** or **"Reset"** button
+3. Click it to revert to Merchkit's original prompt
+
+Your previously generated values remain unchanged—only future generations use the restored prompt.
+
+## Next Steps
+
+Ready to put your custom prompts to work? Head to [Generating Channel Content](/product/channels-and-content-generation/generating-channel-content) to learn how to select SKUs and generate channel content with your custom prompts.
+
+For more on effective prompt writing, review [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts).

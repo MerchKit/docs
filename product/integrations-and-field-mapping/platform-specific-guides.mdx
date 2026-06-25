@@ -1,0 +1,316 @@
+---
+title: "Platform-Specific Integration Guides"
+description: "Platform quirks, auto-mapping behavior, and common gotchas for each supported integration."
+---
+
+# Platform-Specific Integration Guides
+
+Each platform has its own quirks and field structures. This guide covers the essentials for each supported integration.
+
+## Shopify
+
+### Authentication
+
+1. Go to your Shopify admin → **Settings → Apps and Integrations → Develop Apps**
+2. Create a new app (or use an existing one)
+3. Generate an API token in the app settings
+4. In Merchkit, paste the token and your Shopify store URL
+
+### Key Fields
+
+| Shopify Field | Notes |
+|---------------|-------|
+| Title | Maps to Product Name |
+| Body HTML | Full description with HTML support |
+| Product Type | Maps to Category |
+| Vendor | Maps to Brand |
+| SKU (variant) | Each variant has its own SKU |
+| Price (variant) | Price is variant-level, not product-level |
+| Cost (variant) | Import as variant cost or COGS |
+| Quantity (inventory) | Tracked per variant |
+| Handle | URL slug (usually read-only for export) |
+| Tags | Comma-separated, maps well to keywords |
+| Metafields | Custom Shopify metafields sync via Structured Metafields section |
+
+### Auto-Mapping Behavior
+
+Merchkit's auto-mapper recognizes Shopify's standard field names and maps them reliably:
+- Title → Product Name ✓
+- Body HTML → Description ✓
+- Product Type → Category ✓
+- Vendor → Brand ✓
+
+### Common Gotchas
+
+**Body HTML contains tags**: If you plan to export descriptions with HTML formatting, test carefully. Shopify preserves HTML, so make sure Merchkit is sending properly formatted HTML.
+
+**Price is variant-level**: Don't try to map a single "Price" to all variants. Map Variant Price instead, or manually set variant-specific prices in Shopify.
+
+**Metafields need namespaces**: Shopify metafields are stored with a namespace (e.g., `custom.warranty_info`). When mapping, ensure you're pointing to the full metafield path, not just the key.
+
+**Tags are truncated**: Shopify has a tag length limit. If you're exporting long keyword strings to Tags, they may be cut off.
+
+**Inventory is per-location**: If you have multiple Shopify locations, Merchkit syncs the primary location's inventory. Multi-location inventory management requires custom setup.
+
+### Export Considerations
+
+When exporting back to Shopify:
+- Only mapped fields update
+- Unmapped fields (like Handle) remain unchanged
+- Published products stay published (exports don't change publish status)
+- Collections are not updated—manage those separately
+
+---
+
+## BigCommerce
+
+### Authentication
+
+1. Go to your BigCommerce store → **Settings → API Accounts**
+2. Create a new API account or get an existing token
+3. Provide the access token and store URL to Merchkit
+
+### Key Fields
+
+| BigCommerce Field | Notes |
+|-------------------|-------|
+| Name | Maps to Product Name |
+| Description | Full HTML description |
+| Brand ID / Brand | Maps to Brand |
+| Category | Maps to Category |
+| SKU | Variant-level SKU |
+| Price | Variant-level pricing |
+| Cost | Variant cost |
+| Weight | Variant weight |
+| UPC / Barcode | Unique identifier per variant |
+| Custom Fields | Appear in Structured Metafields section |
+| Search Keywords | Useful for SEO keyword mapping |
+
+### Auto-Mapping Behavior
+
+BigCommerce's auto-mapper handles standard fields well:
+- Name → Product Name ✓
+- Description → Description ✓
+- Brand → Brand ✓
+
+Custom fields may not auto-map; you'll likely need to manually set those up.
+
+### Common Gotchas
+
+**Custom fields are nested**: BigCommerce custom fields require you to know their field ID and name. The mapping modal will show them, but verify you're mapping the right ones.
+
+**No built-in metafields**: Unlike Shopify, BigCommerce uses "Custom Fields" instead of metafields. These appear in the Structured Metafields section but behave differently.
+
+**Search Keywords are export-only**: You can export keywords to BigCommerce's search keyword field, but you can't import them back.
+
+**Variant images**: Variants can have their own images, but Merchkit doesn't currently sync variant images. Manage those separately.
+
+**Inventory is global**: BigCommerce doesn't have native multi-location inventory, so all quantity syncs to the main inventory pool.
+
+### Export Considerations
+
+- BigCommerce publishes products automatically upon export; draft products may go live
+- Custom field exports require exact field IDs
+- Existing product data is overwritten for mapped fields
+
+---
+
+## Salsify
+
+### Authentication
+
+1. Log into your Salsify admin → **User Settings → API Credentials**
+2. Generate an API key
+3. Provide the API key and org ID to Merchkit
+
+### Key Fields
+
+Salsify is a PIM (Product Information Management) system, so it's more flexible than ecommerce platforms. Common fields:
+
+| Salsify Asset | Notes |
+|---------------|-------|
+| Product ID | Unique identifier (read-only) |
+| Asset Name / Title | Maps to Product Name |
+| Asset Description | Maps to Description |
+| Attributes (custom) | Sync via Structured Metafields |
+| Digital Assets | Images and files (limited support) |
+| Relationships | Links between products (not synced) |
+
+### Auto-Mapping Behavior
+
+Salsify's structure is highly customizable, so auto-mapping is conservative:
+- Product ID recognized as SKU
+- Basic name/description fields auto-map
+- Custom attributes require manual mapping
+
+Expect to do more manual configuration with Salsify than with ecommerce platforms.
+
+### Common Gotchas
+
+**Attribute naming is custom**: Salsify lets admins define custom attribute names. Merchkit can't guess which attribute is "brand" if it's called "Manufacturer" in your Salsify instance. Verify attribute names before mapping.
+
+**No standard variant structure**: Salsify doesn't have "variants" like Shopify does. If you need variant-like behavior, you'll model it as related products or custom attributes.
+
+**Assets (images) are complex**: Salsify digital assets don't sync smoothly. Manage images separately or use the API directly.
+
+**Relationships aren't synced**: Parent/child or variant relationships in Salsify don't import as variants in Merchkit.
+
+### Export Considerations
+
+- Salsify syncs are slower than ecommerce platforms (it's more complex)
+- Attributes are upserted (updated or inserted as needed)
+- Deletes in Merchkit do not delete from Salsify (append-only for safety)
+
+---
+
+## Akeneo
+
+### Authentication
+
+1. Go to your Akeneo instance → **System → API Connections**
+2. Create a new connection and generate credentials
+3. Provide the API client ID, secret, and Akeneo URL to Merchkit
+
+### Key Fields
+
+Akeneo is a PIM with flexible attribute structures:
+
+| Akeneo Attribute | Notes |
+|------------------|-------|
+| Code / SKU | Unique product code |
+| Name | Attribute-based (maps to Product Name) |
+| Description | Localized attribute |
+| Attributes (all) | Sync via Structured Metafields |
+| Families | Product family/category grouping |
+| Associations | Links to other products (limited) |
+| Media | Attached files and images (complex) |
+| Channels | Akeneo channels ≠ Merchkit channels (different concept) |
+
+### Auto-Mapping Behavior
+
+Akeneo auto-mapping is conservative since everything is custom-defined:
+- Code → SKU ✓
+- Name attribute → Product Name (if named "name")
+- Everything else requires manual review
+
+### Common Gotchas
+
+**Localization complexity**: Akeneo attributes are locale-specific. If your attributes are "en_US only" or "multi-locale", verify Merchkit is syncing the right locales.
+
+**Families define structure**: In Akeneo, attributes belong to families. If two products have different families, they may have different available attributes. This can cause sync issues.
+
+**No variant support**: Like Salsify, Akeneo doesn't have true variants. Model variants as related products or use custom attributes.
+
+**Media assets are complex**: Images and files in Akeneo don't sync automatically. Manage separately.
+
+**Channel confusion**: Akeneo has "channels" for locale/currency variants. Don't confuse with Merchkit's Channels feature (they're unrelated).
+
+### Export Considerations
+
+- Akeneo syncs are slower (heavily customized)
+- Attributes must exist in Akeneo before mapping (you can't create new ones from Merchkit)
+- Locales must match what you've configured in Akeneo
+
+---
+
+## WooCommerce
+
+### Authentication
+
+1. Go to your WooCommerce store → **WooCommerce → Extensions → API / Settings**
+2. Create a new REST API key
+3. Provide the consumer key and consumer secret to Merchkit
+
+### Key Fields
+
+| WooCommerce Field | Notes |
+|-------------------|-------|
+| Name | Maps to Product Name |
+| Description | Full HTML description |
+| Short Description | Excerpt/summary |
+| Categories | Product categories |
+| Tags | Comma-separated tags |
+| Price | Simple product or variable product base price |
+| Sale Price | Discounted price |
+| SKU (variant) | Each product variant has a SKU |
+| Attributes (variant) | Size, color, etc. (complex) |
+| Meta | Custom fields via WooCommerce meta |
+
+### Auto-Mapping Behavior
+
+WooCommerce auto-mapping recognizes standard fields:
+- Name → Product Name ✓
+- Description → Description ✓
+- Short Description → Summary (if available)
+- Categories → Category ✓
+
+### Common Gotchas
+
+**Variants are "variable products"**: In WooCommerce, a shirt with sizes is a "variable product" with "variation" children. Merchkit maps these to variants, but the structure is different from Shopify.
+
+**Attributes define variations**: WooCommerce attributes (like "Size" or "Color") are separate from variant data. Make sure you're mapping the right attributes to variant fields.
+
+**Meta is flexible but messy**: WooCommerce meta (custom fields) work, but they're unstructured. Know your meta keys before mapping.
+
+**Stock is global**: WooCommerce doesn't natively support multi-location inventory (without extensions), so all stock is pooled.
+
+**Images are per-product and per-variation**: Variant images are possible but complex to sync.
+
+### Export Considerations
+
+- Published products stay published (exports don't change status)
+- Draft products remain draft
+- Custom meta values can be exported, but key must exist in WooCommerce
+
+---
+
+## Walmart & Wayfair
+
+### Authentication
+
+**Walmart**:
+1. Register for Walmart Marketplace API access
+2. Get your client ID and client secret
+3. Provide credentials to Merchkit
+
+**Wayfair**:
+1. Contact Wayfair integration support
+2. Get your API key
+3. Provide to Merchkit
+
+### Key Differences from Direct Platforms
+
+Walmart and Wayfair are **marketplaces**, not your own platform. Integration works differently:
+
+- **Import**: You pull product data you've uploaded to the marketplace
+- **Export**: You push updated data back to the marketplace for your listings
+- **Inventory**: Inventory management is critical (affects live availability)
+- **Pricing**: Price updates sync immediately to the live marketplace
+
+### Common Gotchas
+
+**Marketplace rules apply**: Both platforms have strict product data requirements. Incompletely mapped or invalid data may be rejected.
+
+**Inventory sync is critical**: A price export sync is optional; an inventory sync affects your live listings immediately. Be careful.
+
+**Feeds take time**: Marketplace syncs often queue as "feeds" that process asynchronously, taking minutes to hours.
+
+**Field requirements vary by category**: Different product categories have different required fields.
+
+### See Also
+
+For detailed Walmart and Wayfair setup, see the Channels documentation—that's where marketplace-specific optimizations live.
+
+---
+
+## General Tips Across All Platforms
+
+1. **Test with a small subset first**: Use import filters to import 10-50 products, verify the mapping looks good, then expand.
+2. **Verify field names**: Platform field names can be unexpected. Double-check the mapping grid before saving.
+3. **Check data types**: Some fields expect specific formats (numbers, dates, enums). Mismatches can cause sync failures.
+4. **Metafields vary widely**: Each platform's metafield structure is different. Refer to the platform's API docs if stuck.
+5. **Exports are powerful and risky**: A bad export mapping can overwrite good data. Test carefully.
+
+---
+
+**Next step**: [Triggering an Integration Import or Export](/product/integrations-and-field-mapping/triggering-integration-sync)

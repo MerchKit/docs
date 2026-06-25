@@ -1,0 +1,158 @@
+---
+title: "Preparing Your Data for Import"
+description: "File format requirements, data structure best practices, and platform-specific export instructions for CSV import preparation."
+---
+
+# Preparing Your Data for Import
+
+A little preparation before import goes a long way. This guide covers file format requirements, what makes a "good" import file, and how to export cleanly from common platforms.
+
+---
+
+## File Format Requirements
+
+**Format:** CSV (Comma-Separated Values)
+
+Your file must be saved as a `.csv` file. If you're working in Excel or Google Sheets, you can export as CSV without losing data.
+
+**Encoding:** UTF-8
+
+UTF-8 is the standard character encoding for CSV files and ensures special characters, accents, and international text display correctly in Merchkit.
+
+- **In Excel:** File → Save As → Format: "CSV (Comma delimited)" → Tools → Web Options → Encoding: UTF-8
+- **In Google Sheets:** File → Download → Comma Separated Values (.csv)
+- **In LibreOffice/OpenOffice:** File → Save As → Format: "Text CSV"
+
+---
+
+## CSV Structure Requirements
+
+### Header Row (Required)
+
+Your CSV must have a header row as the first line. The header names become column names during mapping. Without headers, Merchkit can't map your columns.
+
+### One Product Per Row
+
+Each row represents one product. Do not merge cells, add blank rows between products, or put multiple products in a single row.
+
+### Clean, Consistent Values
+
+- **No extra spaces** at the beginning or end of values
+- **Consistent formatting** across the same column (all prices in the same format, all dates in the same format)
+- **No leading/trailing commas** in cells (they can confuse the CSV parser)
+
+---
+
+## Quick Checklist
+
+Before importing, make sure your file has: a header row with clear column names, one product per row, consistent value formatting, UTF-8 encoding, no merged cells, and a unique SKU for each product.
+
+---
+
+## Exporting from Common Platforms
+
+### Shopify
+
+1. Log into your Shopify admin
+2. Products → All Products
+3. Click the **Export** button (top right)
+4. Choose your export settings (what columns to include)
+5. Download the CSV file
+
+The resulting file is UTF-8 encoded and ready to import into Merchkit. No additional prep needed.
+
+### BigCommerce
+
+1. Log into your BigCommerce store admin
+2. Products → Export
+3. Select the products you want to export
+4. Choose your export format (CSV)
+5. Download the file
+
+BigCommerce exports include product IDs, SKUs, names, descriptions, and prices by default. Check the encoding in your platform settings if you encounter issues.
+
+### Other PIM Systems or Spreadsheets
+
+Most platforms offer a "Export to CSV" option. Before importing into Merchkit:
+
+1. Verify the file has a header row
+2. Make sure it's saved as UTF-8 (check your platform's export settings)
+3. Open the file in a text editor or spreadsheet app to visually inspect it for the issues listed above
+4. Delete any rows or columns you don't need
+
+---
+
+## Field Type Detection
+
+When you import, Merchkit automatically detects whether each column should be treated as **text** or **number** based on the values in that column.
+
+- **Text fields** are best for: titles, descriptions, categories, SKUs, URLs, brand names, tags
+- **Number fields** are best for: prices, quantities, dimensions, weights, ratings
+
+Merchkit's auto-detection is usually accurate, but you can override it during the mapping step (Step 3) if needed.
+
+---
+
+## Columns You Can Skip During Import
+
+You don't have to import every column in your CSV. During the mapping step (Step 3 of the import flow), you can click the **✕** button to skip any columns you don't need.
+
+**Common columns to skip:**
+- Internal notes or legacy IDs
+- Confidential pricing or supplier information
+- Test data or temporary columns
+- Columns with incomplete or inconsistent data
+
+Skipped columns won't be imported into Merchkit, so feel free to include extra data in your CSV and selectively choose what to import.
+
+---
+
+## Common Data Prep Issues
+
+### Duplicate SKUs
+
+If your CSV contains duplicate SKUs, Merchkit will warn you during import. Each SKU should be unique. Decide:
+- Keep one SKU and remove the duplicate row
+- Rename the duplicate SKU to be unique
+- Create separate product records if they're genuinely different products
+
+### Missing or Null Values
+
+Empty cells in your CSV are fine — Merchkit treats them as missing values and doesn't import them. This is normal and expected.
+
+**Example:**
+```
+SKU,Title,Price,Brand
+SKU001,Blue Shirt,29.99,Acme
+SKU002,Red Shirt,,Acme
+```
+
+Here, SKU002 has no price — the price cell is left empty, which is okay.
+
+### Special Characters and Encoding Issues
+
+If your CSV contains accented characters (é, ñ, ü) or other special characters, make sure it's saved as **UTF-8**. Other encodings may display garbled text.
+
+**Example of correct UTF-8:**
+```
+SKU,Title
+SKU001,Café Espresso Mug
+SKU002,Piñata Decorations
+```
+
+### Merged Cells from Excel
+
+If you exported from Excel and see merged cells, they can cause import issues. Open the file and unmerge all cells:
+
+1. Select all cells (Ctrl+A)
+2. Right-click → Format Cells → Alignment
+3. Uncheck "Merge cells"
+4. Save as CSV
+
+---
+
+## Ready to Import?
+
+Once your CSV is prepared, head to [Importing Your First Catalog via CSV](/product/sources-and-importing/importing-first-catalog-csv) for the step-by-step import walkthrough.
+
+**Questions about a specific platform or format?** Check our [How Data Gets Into Merchkit](/product/sources-and-importing/how-data-gets-into-merchkit) overview article for links to integration-specific guides.

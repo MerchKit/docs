@@ -1,0 +1,213 @@
+---
+title: "Configuring an Attribute for AI Enrichment"
+description: "Walk through the Configure Attribute panel step-by-step. Learn how to set up each field—from Product Data to Prompts to Acceptable Values—so your AI enrichment works the way you want."
+---
+
+# Configuring an Attribute for AI Enrichment
+
+This is the core article for setting up attributes in Merchkit. You'll walk through the Configure Attribute panel, which is where you tell Merchkit's AI exactly what to generate.
+
+## Opening the Configure Attribute Panel
+
+1. Go to **Workspace → Attributes**
+2. In the attributes table, click any attribute name (or the row)
+3. The **Configure Attribute panel** slides open on the right side
+
+[SCREENSHOT: Attributes table with one attribute row highlighted, Configure Attribute panel visible on the right side]
+
+## Understanding the Configure Attribute Panel
+
+The panel contains all the settings you need to configure an attribute. Let's walk through each one:
+
+### Use AI Toggle
+
+Located at the top of the panel, the **Use AI** toggle controls whether Merchkit's AI will generate or enrich values for this attribute.
+
+- **Toggle ON** — The AI will generate or enrich this attribute when you run enrichment
+- **Toggle OFF** — This attribute is a reference field only; the AI ignores it
+
+For attributes you want the AI to fill in, turn this on.
+
+[SCREENSHOT: Configure Attribute panel showing Use AI toggle in the ON position]
+
+### Attribute Name
+
+The name of your attribute (e.g., `short_description`, `brand`, `care_instructions`). You can edit this if needed.
+
+### Field Type
+
+The data type that this attribute stores. Options include:
+
+- **Single Line Text** — Short text values (names, SKUs, colors)
+- **Number** — Numeric values (prices, inventory counts)
+- **Image** — Product images or image references
+- **Formula** — Computed values based on other fields
+- **Reference Lookup** — Links to a single related record
+- **Collection Reference** — Links to multiple related records
+- **Record Reference** — Links to a single record in another entity type
+
+For AI enrichment, you'll most commonly use **Single Line Text** or **Number**. For a detailed breakdown of each field type, see [Field Types](/product/attributes-and-enrichment/field-type-guide).
+
+### Product Data: Tell the AI What to See
+
+The **Product Data** section shows you which product fields the AI can access when generating this attribute. By default, Merchkit includes title and description, but you can customize this.
+
+Click **Product Data** to expand it and see which fields are selected. You'll see something like:
+
+```
+✓ title
+✓ description
+✓ price
+  vendor
+  tags
+```
+
+Checked fields are sent to the AI as context. Unchecked fields are not.
+
+**Why does this matter?** The more relevant context you give the AI, the better its output. For example:
+- If you're generating a "brand" attribute, make sure the product description is included (it often mentions the brand)
+- If you're generating "size_range", include price (expensive items may come in more sizes)
+- If you're generating something unrelated to price, you can uncheck it to reduce noise
+
+Select the fields that are most relevant to this attribute.
+
+[SCREENSHOT: Product Data section expanded, showing checkboxes for title, description, price, vendor, tags, etc.]
+
+### Image Source: When You Need the AI to Look at Pictures
+
+The **Image Source** section tells the AI which product images to analyze when generating this attribute.
+
+You'll only use this if your attribute requires image analysis. Examples:
+- "product_color" — the AI looks at the image to detect color
+- "has_packaging" — the AI looks for packaging in the image
+- "style_category" — the AI analyzes the visual style
+
+If your attribute doesn't need images (e.g., "SEO title", "material"), leave Image Source unchecked.
+
+Click **Image Source** to expand and select which product images to include (primary image, all images, etc.).
+
+[SCREENSHOT: Image Source section showing options like "Primary Image", "All Images", etc.]
+
+### Prompt: Your Instruction to the AI
+
+This is the most important field. The **Prompt** is your instruction to the AI—it tells the AI exactly what to generate.
+
+Example prompts:
+
+```
+Generate a concise product title under 60 characters based on the product description and title.
+```
+
+```
+Based on the product description and images, identify the primary material. Return only one material name.
+```
+
+```
+Analyze the product image and determine if it shows packaging. Return 'Yes' or 'No'.
+```
+
+**Using dynamic references:** You can reference other attributes in your prompt using `{{ }}` tags. For example:
+
+```
+Generate an SEO-friendly meta description for {{product_title}} under 160 characters.
+```
+
+When the AI runs, `{{product_title}}` will be replaced with the actual product title.
+
+**To insert a reference:**
+- Type `@` in the prompt field, and a dropdown of available attributes will appear
+- Or click the **Insert Value** button below the prompt field to browse and select an attribute
+
+[SCREENSHOT: Prompt field with @ symbol typed, showing attribute dropdown]
+
+[SCREENSHOT: Insert Value button and resulting attribute selector popup]
+
+### Acceptable Values: Constrain What the AI Can Return
+
+The **Acceptable Values** field lets you restrict the AI's output to a specific list of values. Use this when you want to ensure consistent, controlled outputs.
+
+Enter comma-separated values. For example:
+
+```
+Small, Medium, Large, XL
+```
+
+```
+Red, Blue, Green, Black, White, Other
+```
+
+When you set acceptable values, the AI will only return one of those options. This is useful for:
+- Size attributes (where you want standardized sizes)
+- Category or type attributes (where options are fixed)
+- Status attributes (approved, rejected, needs_review)
+
+Leave this blank if you want the AI to have freedom to generate any value.
+
+[SCREENSHOT: Acceptable Values field populated with comma-separated list]
+
+**Note:** For detailed guidance on using acceptable values effectively, see [Using Acceptable Values to Constrain AI Output](/product/attributes-and-enrichment/acceptable-values).
+
+### Edit with AI Button
+
+Click **Edit with AI** to let Merchkit's AI help you refine your prompt. Describe what you want to change, and the AI will suggest improvements.
+
+For example:
+- "Make this prompt simpler"
+- "Add a requirement for the output to be under 50 characters"
+- "Make sure it prioritizes the product images"
+
+[SCREENSHOT: Edit with AI button highlighted]
+
+## The Relationship Between These Settings
+
+Here's how all these pieces work together:
+
+1. **Product Data + Image Source** = What the AI sees (its context)
+2. **Prompt** = What the AI does (your instruction)
+3. **Acceptable Values** = What the AI is allowed to return (constraints)
+
+A complete attribute configuration might look like:
+
+| Setting | Value |
+|---------|-------|
+| Use AI | ON |
+| Field Type | Single Line Text |
+| Product Data | title, description, price |
+| Image Source | Primary Image |
+| Prompt | Analyze the product image and generate a compelling single-word color name. |
+| Acceptable Values | Red, Blue, Green, Black, White, Brown, Gray, Pink, Purple, Orange, Yellow |
+
+In this example, the AI sees the product details and primary image, follows your instruction, and can only return one of the 11 color options you specified.
+
+## Saving Your Configuration
+
+After you've configured all the fields:
+
+1. Click **Save Changes** at the bottom of the panel
+2. Merchkit will save your configuration
+3. The attribute is now ready for AI enrichment
+
+[SCREENSHOT: Configure Attribute panel with Save Changes button visible at the bottom]
+
+## Common Configuration Issues
+
+**Issue: "The AI is giving me output that doesn't match my Acceptable Values"**
+- Make sure your Acceptable Values are spelled exactly as you want them
+- Re-run enrichment on this attribute after saving changes
+- Check that the prompt isn't asking for something outside your acceptable values
+
+**Issue: "The AI is including irrelevant information in its output"**
+- Reduce the Product Data fields — uncheck fields that don't help
+- Make your prompt more specific (e.g., "Return only the primary material, nothing else")
+- Add Acceptable Values to constrain the output
+
+**Issue: "The AI needs to see product images but I haven't selected an Image Source"**
+- Open Configure Attribute, expand Image Source, and select which images to include
+- Re-run enrichment
+
+## What's Next?
+
+- **To write better prompts:** [Writing Effective AI Prompts](/product/attributes-and-enrichment/writing-effective-prompts)
+- **To use acceptable values strategically:** [Using Acceptable Values to Constrain AI Output](/product/attributes-and-enrichment/acceptable-values)
+- **To learn about field types in detail:** [Field Types](/product/attributes-and-enrichment/field-type-guide)
+- **Ready to run enrichment?** [Running Your First Enrichment](/product/attributes-and-enrichment/running-first-enrichment)

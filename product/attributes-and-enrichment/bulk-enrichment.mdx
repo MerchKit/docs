@@ -1,0 +1,232 @@
+---
+title: "Bulk Enrichment for Large Catalogs"
+description: "Strategies and best practices for enriching catalogs with thousands to hundreds of thousands of products efficiently."
+---
+
+# Bulk Enrichment for Large Catalogs
+
+If you're managing a catalog with 2,000 to 500,000+ SKUs, enriching everything at once is impractical. This article covers strategies to work smarter: batch processing, phased rollouts, and monitoring progress without overwhelming the system.
+
+## The Core Rule: Work in Batches, Not All at Once
+
+Trying to enrich your entire 50,000-SKU catalog in one go is a recipe for slow processing, timeouts, and frustration. Instead:
+
+**Work in logical batches** — by category, vendor, product type, or priority — and enrich 500–5,000 products at a time.
+
+This approach gives you:
+- Faster feedback and ability to test prompts early.
+- Easier troubleshooting if something goes wrong.
+- Incremental wins you can review and refine.
+- Manageable processing times.
+
+## Strategy 1: Batch by Category
+
+Your most straightforward approach: enrich one product category at a time.
+
+**Steps:**
+1. Go to **Workspace → Views** and create a new View (e.g., "Sofas - Unenriched").
+2. Filter by Category = "Sofas" AND Enrichment Status = "Empty" (or however you track unenriched products).
+3. Select all products in this View.
+4. Run **Generate → Generate All Attributes** or **Generate Empty Attributes Only** (depending on your needs).
+5. Review the output for a representative sample (10–20 products).
+6. Make any prompt refinements based on what you learned.
+7. Move to the next category and repeat.
+
+This keeps your work organized and lets you test and refine prompts before moving to the next batch.
+
+[SCREENSHOT: Workspace → Views showing a filtered view like "Sofas - Unenriched" with product count and category filters visible]
+
+## Strategy 2: Batch by Vendor
+
+If you work with multiple vendors, batch by vendor instead:
+
+1. Create a View for each vendor: "Vendor A - Electronics - Unenriched."
+2. Enrich by vendor, 1,000–3,000 products at a time.
+3. Because vendor data often has consistent formatting, you can test prompts on one vendor, refine, then scale to others.
+
+This is especially useful if different vendors provide different quality sources (one has detailed specs, another only has images).
+
+## Strategy 3: Batch by Priority
+
+If categories are too broad, batch by **highest-value products first**:
+
+1. Identify which products matter most: bestsellers, high-margin items, products that appear on your website.
+2. Create a View: "Top 500 - Unenriched."
+3. Enrich and refine on these high-impact products first.
+4. Once you're happy with quality, move to mid-tier and lower-value products.
+
+This ensures your best-selling items get the most attention and polish.
+
+## Recommended Batch Sizes and Timeline
+
+Here's a rough guide based on catalog size:
+
+| Catalog Size | Batch Size | Batches | Estimated Time per Batch | Total Timeline |
+|--------------|-----------|---------|--------------------------|-----------------|
+| 2,000–5,000 | 1,000–2,000 | 2–5 | 5–15 min | 1–2 hours |
+| 5,000–20,000 | 2,000–3,000 | 3–10 | 15–30 min | 1–5 hours |
+| 20,000–100,000 | 3,000–5,000 | 5–30 | 30–60 min | 1–3 days (spread across sessions) |
+| 100,000+ | 5,000–10,000 | 10–50+ | 1–3 hours | 1–2 weeks (phased) |
+
+These are estimates; actual time depends on complexity, number of attributes, and your system. **Always test a batch first** before committing to a full schedule.
+
+## The Phased Rollout Approach
+
+For very large catalogs (50,000+), don't plan to finish enrichment in a day. Instead, spread it across weeks:
+
+**Week 1:** Enrich your top 20% (highest-value, best-selling products)
+- Refine prompts aggressively on this batch.
+- Get stakeholder feedback.
+- Identify what "good" looks like.
+
+**Week 2:** Enrich the next 30% (mid-tier products)
+- Use refined prompts from Week 1.
+- Test any new sources or attributes added.
+- Gradually improve automation.
+
+**Week 3+:** Enrich remaining 50%
+- Use proven, tested prompts.
+- Run larger batches (less frequent review needed).
+- Focus on consistency and coverage.
+
+This phased approach lets you refine before you scale, reducing the risk of enriching 100,000 products with a flawed prompt.
+
+## Using "Generate Empty Attributes Only" for Incremental Enrichment
+
+As you add new sources (images, specs, reviews), you'll want to fill in gaps without re-enriching what's already done.
+
+**Scenario:** You've enriched 50,000 products for description, category, and brand. Now you're adding manufacturer spec sheets and want to enrich dimensions and materials on the same 50,000 products.
+
+**Solution:**
+1. Add spec sheets as a source.
+2. Configure "Dimensions" and "Materials" attributes with new prompts.
+3. Select all 50,000 products.
+4. Run **Generate → Generate Empty Attributes Only**.
+
+Only the new attributes (dimensions, materials) will generate. Your existing descriptions, categories, and brands stay exactly as they are. This saves processing time and respects your previous work.
+
+[SCREENSHOT: Generate dropdown with "Generate Empty Attributes Only" highlighted, showing a batch of products]
+
+## Monitoring Progress
+
+For large catalogs, track your progress systematically:
+
+### Use the Table to Track Completion
+
+In your View, add columns for each enriched attribute. Scan visually to see:
+- Which attributes are filled vs. empty.
+- Which categories or batches are done.
+- Where gaps remain.
+
+### Create a Tracking View
+
+Build a View that shows you "Unenriched Products" by filtering:
+- Enrichment Status = Empty OR
+- Critical attributes (like description, category) = blank
+
+Run this View periodically to see your remaining work.
+
+### Log Your Batches
+
+Keep a simple log (spreadsheet or notes) of what you've enriched:
+- Batch 1: Sofas (2,000 products) — completed, quality good
+- Batch 2: Chairs (3,000 products) — completed, category tags needed refinement
+- Batch 3: Tables (2,500 products) — in progress
+
+This helps you remember what you've tested, what worked, and what still needs attention.
+
+## Pre-Enrichment Setup for Large Catalogs
+
+Before you start enriching thousands of products, do this once:
+
+### Import All Your Sources First (Article 2.6)
+
+Don't enrich products, discover sources, then enrich again. Get all your sources loaded:
+- Manufacturer specs and datasheets
+- Images (organized and properly sized)
+- Vendor descriptions and reviews
+- Any custom data you have
+
+Then enrich once with everything available. This is far more efficient than multiple rounds.
+
+### Configure All Attributes Before Enriching
+
+Go to **Workspace → Attributes** and set up every attribute you'll need:
+- Decide on prompts, acceptable values, and data context.
+- Enable "Use AI" on all attributes you want enriched.
+- Test prompts on a small batch first.
+
+Once you're confident in your setup, run full batches. Don't start enriching, then pause halfway through to reconfigure attributes — it wastes time and creates inconsistency.
+
+### Use Categories to Organize Your Work
+
+Before you start:
+1. Make sure all products are correctly categorized (at least at a high level).
+2. Create one View per category or vendor.
+3. Label each View clearly so you know which ones are done.
+
+This makes batching and tracking much easier.
+
+## Common Issues for Large Catalog Enrichment
+
+### Processing Timeouts
+
+**Problem:** You selected 10,000 products and the enrichment stalled or timed out.
+
+**Solution:** Reduce batch size. Try 5,000 products instead. If 5,000 still times out, go down to 3,000. Stability matters more than speed.
+
+### Slow Processing on Large Batches
+
+**Problem:** A batch of 8,000 products is taking 4+ hours.
+
+**Solution:** Close other browser tabs and applications to free up resources. If that doesn't help, you might have too many attributes or overly complex prompts. Consider:
+- Temporarily disabling "Use AI" on less critical attributes.
+- Simplifying prompts (shorten them by 20–30%).
+- Running smaller batches in parallel sessions (if your system supports it).
+
+### Inconsistent Output Across Batches
+
+**Problem:** Sofas enriched in Week 1 have one tone/style, and sofas enriched in Week 2 look different.
+
+**Solution:** Your prompt changed, or your sources were inconsistent. Before starting Batch 2, review Batch 1 output and document the style/tone you achieved. Update your prompt to say "match the style and depth of previously enriched products." If sources changed, note that in your prompt too.
+
+### Some Products Didn't Enrich
+
+**Problem:** You ran Generate on 5,000 products, but 200 have empty description fields.
+
+**Solution:** Those 200 likely missing required source data (e.g., no product name, no vendor description). Before re-running:
+1. Identify what data is missing on those 200 products.
+2. Fill in the missing required fields.
+3. Run **Generate → Generate Empty Attributes Only** on just those 200 products.
+
+### Quality Drops on Later Batches
+
+**Problem:** Your first 10,000 products are rich and detailed. Your next 10,000 look generic.
+
+**Solution:** Your source data for later batches is thinner, or your prompt assumptions are breaking. Check:
+- Are later batches from different vendors with fewer sources?
+- Did you change which sources the prompt should use?
+- Is there inconsistency in how products are structured?
+
+Refine your prompt to be more adaptive. Test on a few products from the later batch, adjust, then re-run.
+
+## When to Use Each Generate Mode at Scale
+
+- **Generate All Attributes:** You've made a significant prompt change and want to refresh everything. Best used after testing on a small batch.
+- **Generate Empty Attributes Only:** You're adding new attributes or sources incrementally. Use this most of the time to avoid unnecessarily re-processing.
+
+For large catalogs, "Generate Empty Only" is your friend — it respects your previous work and only fills the gaps.
+
+## Next Steps: From Enrichment to Export
+
+Once you've enriched your catalog, you have two paths:
+
+**Exporting Enriched Data Back to Your Platform**
+
+If you imported from Shopify, WooCommerce, or another platform, you can sync enriched data back to keep your source system in sync. Head to [How Integrations Work in Merchkit](/product/integrations-and-field-mapping/how-integrations-work) in Section 4 to learn how.
+
+**Optimizing for Sales Channels**
+
+Your enriched catalog is now ready to be optimized for specific channels (Amazon, Wayfair, your own site). Each channel has different requirements for descriptions, images, and metadata. Go to Section 5 to start generating channel-optimized content.
+
+Both paths are available. Choose based on your immediate priorities.

@@ -1,0 +1,244 @@
+---
+title: "Triggering an Integration Import or Export"
+description: "Run integration syncs from the Products toolbar and understand sync status and failures."
+---
+
+# Triggering an Integration Import or Export
+
+Once you've set up field mapping, you're ready to move data. This guide shows you how to trigger imports and exports from the Products toolbar.
+
+## The Import/Export Dropdown
+
+In the Merchkit **Products** view, look at the toolbar. You'll find an **Import/Export** dropdown (often labeled "Import" or showing an icon). This dropdown shows:
+
+- **CSV Import / Export** (standard file-based import/export)
+- **Active Integrations** (connected platforms, listed by name)
+
+[SCREENSHOT: Products toolbar with Import/Export dropdown highlighted]
+
+## Triggering an Integration Import
+
+An import pulls data from your external platform into Merchkit.
+
+### Step 1: Click the Import/Export Dropdown
+
+In the Products toolbar, click the **Import/Export** dropdown.
+
+[SCREENSHOT: Import/Export dropdown open, showing CSV and integration options]
+
+### Step 2: Select Your Integration
+
+Find the platform you want to import from (e.g., "Shopify", "BigCommerce", "Salsify"). Click it.
+
+### Step 3: Choose Import Mapping (Optional)
+
+If you've created multiple import mappings, you may see a dialog asking which one to use. Select the active mapping or the one you want to apply for this import.
+
+Most of the time, you'll just have one default mapping, so this step is automatic.
+
+[SCREENSHOT: Import mapping selection dialog (if applicable)]
+
+### Step 4: Review Import Details
+
+Merchkit will show a preview:
+
+- **Platform**: Which platform you're importing from
+- **Mapping**: Which field mappings will be used
+- **Expected product count**: How many products will be imported (based on filters)
+- **Last sync**: When this integration last synced (if ever)
+
+Review these details. If something looks wrong, click **Cancel** and fix your mappings first.
+
+[SCREENSHOT: Import confirmation screen with details]
+
+### Step 5: Click "Import" or "Start Import"
+
+Confirm the import. Merchkit will:
+
+1. Connect to your platform using the authenticated integration
+2. Apply your import filters (e.g., import only "Kitchen" products)
+3. For each matching product, map platform fields to Merchkit columns
+4. Create or update products in Merchkit
+5. Record the sync timestamp
+
+### Step 6: Monitor Progress
+
+Depending on the catalog size, the import may take seconds to minutes. Merchkit will show:
+
+- **Progress bar** (% of products synced)
+- **Status** (Importing, Completed, or Error)
+- **Sync timestamp** (updated once complete)
+
+[SCREENSHOT: Import progress screen]
+
+### Step 7: Verify Results
+
+Once the import completes:
+
+1. Go to **Products** and verify the imported data looks correct
+2. Spot-check a few products: titles, descriptions, prices, SKUs
+3. If something looks wrong (bad mapping, missing data), you'll need to re-import with corrected mappings
+
+## Triggering an Integration Export
+
+An export pushes data from Merchkit back to your external platform.
+
+### Step 1: Click the Import/Export Dropdown
+
+In the Products toolbar, click **Import/Export** again.
+
+[SCREENSHOT: Import/Export dropdown, showing export options]
+
+### Step 2: Select Your Integration and "Export"
+
+Some integrations show both "Import" and "Export" options in the dropdown. Select the platform and click **Export** (or it may be combined as "Sync").
+
+[SCREENSHOT: Integration export option highlighted]
+
+### Step 3: Choose Export Mapping (Optional)
+
+If you've created multiple export mappings, select the one to use. Most teams use "Default Export".
+
+[SCREENSHOT: Export mapping selection dialog (if applicable)]
+
+### Step 4: Review Export Details
+
+Merchkit will show:
+
+- **Platform**: Which platform will be updated
+- **Mapping**: Which Merchkit columns will sync to which platform fields
+- **Products to export**: How many products in Merchkit will be exported
+- **Last sync**: When you last synced this integration
+
+**Important**: Exports overwrite platform data with Merchkit data. If you have unmapped fields (gold highlights), they won't sync, which is usually what you want.
+
+[SCREENSHOT: Export confirmation screen with mapping details]
+
+### Step 5: Click "Export" or "Start Sync"
+
+Confirm the export. Merchkit will:
+
+1. Connect to your platform
+2. For each product in Merchkit, push the mapped columns to the platform
+3. Update variant data if variant fields are mapped
+4. Overwrite any existing platform data in those fields
+5. Record the sync timestamp
+
+### Step 6: Monitor Progress
+
+Like imports, exports show progress and status.
+
+[SCREENSHOT: Export progress screen]
+
+### Step 7: Verify on the Platform
+
+Once complete:
+
+1. Log into your platform (Shopify, BigCommerce, etc.)
+2. Check a few products to confirm the exported data looks right
+3. Verify prices, descriptions, and other critical fields updated correctly
+
+## Understanding "Last Synced"
+
+In the **Active Integrations** list and in sync confirmation screens, you'll see **Last Synced**: a timestamp showing when this integration last imported or exported.
+
+Examples:
+
+- "Last synced 2 hours ago" — The most recent sync was successful and completed 2 hours ago
+- "Never synced" — This integration was set up but hasn't run an import or export yet
+- "Last synced 1 week ago" — It's been a while; consider running a sync if you've made changes
+
+The "Last Synced" time doesn't tell you whether it was an import or export—just that some sync happened.
+
+## Handling Sync Failures
+
+If a sync fails, you'll see an error message. Common causes:
+
+### "Authentication Failed"
+
+**Cause**: Your platform credentials expired or were revoked.
+
+**Fix**:
+1. Go to **Workspace → Integrations**
+2. Click your integration
+3. Click **Re-authenticate** or **Reconnect**
+4. Log in again with valid credentials
+5. Try the sync again
+
+### "Field Mapping Error"
+
+**Cause**: A mapped field doesn't exist on the platform, or data format is wrong (e.g., you're sending text where numbers are expected).
+
+**Fix**:
+1. Go to **Configure Fields**
+2. Review the problematic mapping
+3. Either fix the mapping or delete it
+4. Save and try the sync again
+
+### "No Products to Sync"
+
+**Cause**: Your import filters matched 0 products, or you have no products in Merchkit to export.
+
+**Fix**:
+- For imports: Check your filters; expand them to include more products
+- For exports: Ensure you have products in Merchkit first
+
+### "Partial Failure"
+
+**Cause**: Some products synced, but others failed.
+
+**Fix**:
+- Check the detailed error log (if available) to see which products failed and why
+- Correct the problematic products and try again
+- You may be able to sync just the failed products separately
+
+### "Sync Timeout"
+
+**Cause**: The platform took too long to respond (usually for very large catalogs).
+
+**Fix**:
+1. Wait a few minutes
+2. Try again during off-peak hours (when platform load is lower)
+3. Or reduce the scope: use import filters to sync a smaller subset at a time
+
+## Best Practices for Syncing
+
+### Before First Import
+
+1. Back up your product data on the platform (export to CSV, screenshot, etc.)
+2. Test with import filters: Import one product category first
+3. Spot-check the imported data in Merchkit
+4. If it looks good, expand filters and import more
+
+### Before First Export
+
+1. Back up your product data on the platform
+2. Verify your export mapping carefully (especially don't accidentally overwrite prices with empty values)
+3. Test on a few non-critical products first
+4. Only after verification, export your full catalog
+
+### Regular Syncing
+
+- **Imports**: Run weekly or daily if your platform data changes frequently
+- **Exports**: Run after you finish enrichment work (no need for constant syncing)
+- **Frequency**: Don't sync more often than necessary (it's resource-intensive)
+
+## Multiple Syncs and Data Consistency
+
+If you sync the same integration multiple times:
+
+- **Multiple imports**: Later imports update products based on your field mapping (newer platform data overwrites older Merchkit data)
+- **Multiple exports**: Each export overwrites platform data with the latest Merchkit version
+- **Import then export**: Product first imports from platform → you enrich it in Merchkit → you export back to platform. The final state is your enrichment.
+
+This is safe as long as your field mappings are consistent and correct.
+
+## Scheduled Syncing
+
+If you want to sync on a recurring schedule (e.g., import every night at midnight), check if your Merchkit plan includes **Scheduled Syncing**. Contact support or your account manager for setup.
+
+Otherwise, you'll trigger syncs manually from the toolbar.
+
+---
+
+**You're all set!** Your integrations are configured and syncing. If you sell through marketplaces like Wayfair, Walmart, or Amazon, you can use **Channels** to generate optimized content for those platforms. See [How Channels Work in Merchkit](/product/channels-and-content-generation/how-channels-work) to get started.

@@ -1,0 +1,142 @@
+---
+title: "Editing and Overriding AI Output"
+description: "Manually edit AI-generated values in your Products table, understand how manual edits interact with re-runs, and establish a feedback loop to improve your enrichment configuration."
+---
+
+# Editing and Overriding AI Output
+
+After you review your enrichment results, you'll likely find some values that need correction. Merchkit makes it easy to edit AI-generated values directly in the Products table. But understanding how manual edits interact with future enrichment runs is important—it affects your entire workflow.
+
+## Editing a Single Cell
+
+To fix any AI-generated value:
+
+1. **Click the cell** containing the value you want to edit in the Products table.
+2. **Type your correction** directly into the cell.
+3. **Press Enter** to save.
+
+That's it. Your manual edit now overrides the AI-generated value.
+
+[SCREENSHOT: Products table with a single cell in edit mode, showing cursor and typed text]
+
+## How Manual Edits Interact with Future Enrichment
+
+This is the critical part. When you run enrichment again, how your manual edits are treated depends on **which Generate option you choose**.
+
+### Scenario 1: You Run "Generate Empty Attributes Only"
+
+**What happens:** The AI only fills in attributes that are currently empty. Your manually edited cells are preserved—they're not empty, so the AI skips them.
+
+**Example:**
+- You enrich "Description" for 100 products using "Generate Empty Attributes Only."
+- You review and manually fix the description for 5 products.
+- Later, you enrich "Key Features" for the same 100 products using "Generate Empty Attributes Only."
+- The 5 descriptions you corrected remain unchanged. The "Key Features" attribute is generated for all 100 products, including the 5 with corrected descriptions.
+
+**This is the safest approach** when you have a mix of AI-generated and manually edited values.
+
+### Scenario 2: You Run "Generate All Attributes"
+
+**What happens:** The AI re-generates **every** AI-configured attribute for the selected products, including attributes with existing values. Your manually edited cells are overwritten.
+
+**Example:**
+- You enrich "Description" for 100 products.
+- You manually fix the descriptions for 5 products.
+- You realize your prompt wasn't clear enough, so you update it.
+- You select all 100 products and run "Generate All Attributes."
+- **All 100 descriptions are re-generated**, including the 5 you manually fixed. Your edits are lost.
+
+**Use this option carefully.** Only use "Generate All Attributes" if you're intentionally overwriting previous work (e.g., updating all values to match a new prompt).
+
+[SCREENSHOT: Products table showing a previously edited cell, with visual indication that it's about to be overwritten]
+
+## The Best Practice: Manual Edit → Improve Prompt → Re-run
+
+The strongest workflow combines manual edits with prompt refinement:
+
+### Step 1: Edit and Fix Values
+Review your enrichment results, spot-check quality, and manually fix any values that are wrong using the technique above.
+
+### Step 2: Identify the Pattern
+After fixing a few values, ask yourself: **Why were they wrong?** Common reasons:
+- Your prompt was too vague (didn't specify what you wanted).
+- Your Product Data context was missing a key field.
+- Your Acceptable Values list was incomplete or misaligned.
+
+### Step 3: Update Your Attribute Configuration
+Go to **Workspace → Attributes**, find the attribute you want to improve, and refine it:
+- **Rewrite your prompt** to be more specific. Add examples if helpful.
+- **Add missing Product Data** fields if the AI doesn't have enough context.
+- **Expand your Acceptable Values** to cover edge cases you've identified.
+
+[SCREENSHOT: Attributes configuration page with prompt and Acceptable Values being edited]
+
+### Step 4: Test on a Small Batch
+Select 5–10 products that previously had poor output, and run "Generate All Attributes" on just those products. This tests your improved configuration without affecting already-correct values.
+
+**Review the results.** If they're better, great—move to Step 5. If not, go back to Step 3 and refine further.
+
+### Step 5: Scale Up
+Once you're confident your improved configuration works, run enrichment on larger batches using "Generate Empty Attributes Only." This fills in new products while preserving any manual edits you've already made.
+
+[SCREENSHOT: Products table showing successful enrichment with improved output quality]
+
+## Understanding When to Edit vs. Re-configure
+
+**Edit individual cells when:**
+- It's a one-off error specific to that product (e.g., wrong spelling, typo, misplaced word).
+- The prompt is working well overall, but this product is an edge case.
+- You need a quick fix and don't have time to refine the prompt.
+
+**Re-configure and re-run when:**
+- Multiple products have the same type of error (systematic issue).
+- Your prompt is consistently too vague, too specific, or missing context.
+- You've updated Acceptable Values and want to enforce them across all products.
+- You've realized that the information the AI needs isn't in your current Product Data selection.
+
+## Common Scenarios
+
+### Scenario: You've Edited Several Values and Now Want a Fresh Start
+
+If you've made manual edits but now want the AI to regenerate everything (maybe your prompt has improved significantly):
+
+1. Select the products you want to regenerate.
+2. Run "Generate All Attributes."
+3. Review the new results—your manual edits will be overwritten.
+
+This is clean and straightforward, but make sure you've actually improved your configuration first. Otherwise, you'll just get the same poor results again.
+
+### Scenario: You Want to Re-run Only One Attribute Without Affecting Others
+
+If you've edited multiple attributes and want to regenerate just one of them:
+
+1. Go to **Workspace → Attributes.**
+2. Find the attribute you want to re-run.
+3. Return to the Products view, select your products, and run enrichment.
+4. Choose your Generate option.
+
+Since the Generate function only touches attributes with "Use AI" enabled, other attributes (whether manually edited or formulas) remain untouched. Enrichment runs on the selected attribute(s) only.
+
+**Note:** If you use "Generate All Attributes," all AI-configured attributes are re-generated, not just one. If you only want to regenerate a single attribute, use "Generate Empty Attributes Only" and manually clear the cells of the attribute you want to refresh (set them to blank) before running.
+
+## Common Issues
+
+**I ran "Generate All Attributes" and lost my manual edits**
+- Unfortunately, "Generate All Attributes" overwrites everything. If this was accidental, you can manually correct the values again using the editing technique above, or manually re-run your original edits from memory.
+- **Going forward:** Use "Generate Empty Attributes Only" instead. It preserves manual edits.
+
+**I edited a value, but it changed back on its own**
+- This can happen if you ran "Generate All Attributes" later. Manual edits don't persist through "Generate All Attributes" runs.
+- **Solution:** Use "Generate Empty Attributes Only" to preserve your edits, or be very intentional when using "Generate All Attributes" and only do so when you want to overwrite previous work.
+
+**My improved prompt worked on the test batch, but large batches still have issues**
+- Larger datasets include more edge cases. Run a few more small test batches from different categories, vendors, or price ranges to catch additional patterns before scaling.
+- Alternatively, make manual edits on the edge cases and refine your Acceptable Values to cover them explicitly.
+
+**I want to compare my manual edit with the AI-generated value**
+- Merchkit doesn't store a version history of cell values. Once you edit, the previous AI-generated value is replaced. If you need to compare, take a screenshot or export your products before making bulk manual changes.
+
+## Next Steps
+
+1. **Re-run enrichment strategically:** Check out [Re-running Enrichment](/product/attributes-and-enrichment/rerunning-enrichment) to learn how to progressively improve your configuration and scale enrichment across your entire catalog.
+2. **Refine your configuration:** Return to [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai) for tips on writing better prompts and setting up Acceptable Values that reduce the need for manual editing.

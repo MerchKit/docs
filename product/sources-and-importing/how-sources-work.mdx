@@ -1,0 +1,87 @@
+---
+title: "How Sources Work"
+description: "Understand what Sources are, why they matter for AI enrichment, and how they differ from product imports."
+---
+
+# How Sources Work
+
+Sources are the reference material you give Merchkit to help the AI understand your products better. Think of them as context documents that the AI reads while enriching your product data.
+
+## What Sources Are (and What They're Not)
+
+**Sources are NOT product records.** When you import a CSV of products or connect to an integration, that brings in your catalog data—SKUs, names, basic attributes. Sources are different. They're supplementary material: URLs, text snippets, documents that give the AI richer context about each product.
+
+**Here's the distinction:**
+- **Product imports** (CSV, integration): Your core product data. SKUs, names, categories, prices.
+- **Sources**: Context material that supplements those records. Supplier spec sheets, product pages, technical documentation, descriptions.
+
+When the AI generates attribute values for your products, it reads:
+1. The product data itself
+2. The sources you've attached to that product
+3. Your enrichment prompt
+
+Together, these three inputs produce richer, more accurate attribute values.
+
+## Where You Interact with Sources
+
+You interact with Sources in two places:
+
+### 1. Per-Product Sources Panel
+Open any product in your Products table and click its **Data Sources** cell. A panel appears showing all sources attached to that specific product. This is where you add sources one product at a time, or copy sources from parent products to variants.
+
+### 2. Sources Sidebar Page
+Navigate to **Catalog → Sources** in the sidebar. This shows a flat list of *all* sources across your entire catalog. Use this page to bulk-import sources via CSV, or to view and manage your source library at scale.
+
+## What Makes a Good Source
+
+**Strong sources:**
+- Supplier specification sheets (PDFs with technical details, dimensions, materials)
+- Manufacturer product pages (official specs, features, certifications)
+- Data sheets with structured information
+- Vendor documentation (installation guides, compliance docs)
+- Internal product briefs or marketing materials you trust
+
+**Weak sources:**
+- Marketing fluff without substance
+- Unrelated web pages
+- Generic category pages (not product-specific)
+- Social media posts or customer reviews (unless that's specifically what you want to enrich)
+
+## What Happens When You Add a Source
+
+Adding a Source isn't just storing a reference — Merchkit actively fetches and processes the source content so it's ready for AI enrichment. The pipeline runs automatically when you attach a Source to a product:
+
+1. **Fetch.** When you add a URL, Merchkit fetches the page. When you upload a document, Merchkit ingests the file. When you paste text, Merchkit captures it directly.
+2. **Extract and hold.** Merchkit extracts the underlying content from the source — page text, structured tables, form/dropdown values, supporting documents linked from the page — and holds it in a normalized intermediate form. This held content is what your enrichment prompts run against, not the raw URL.
+3. **Pull associated media.** Images and supporting documents present on the source page are pulled in alongside the text. They're hosted locally so vision models can analyze them and so they remain available even if the supplier source changes later.
+4. **Index by product.** All extracted content is associated with the product the Source was attached to, so enrichment runs against the right context.
+
+This means that once a Source has been added to a product, all subsequent enrichment runs use the held content — they don't re-fetch the URL every time. Re-fetching can be triggered manually if you need fresh content from a source that may have changed.
+
+## Supported Source Types and Languages
+
+Merchkit ingests:
+- Public supplier websites (manufacturer PDPs, series-level pages, taxonomy listings)
+- PDFs (datasheets, spec sheets, certificates, brochures) with text + layout-aware table extraction
+- Excel and CSV files in any structure
+- Word documents (DOCX), ODT, RTF
+- Images (JPG, PNG, WebP, TIFF) — analyzed by vision models for color, finish, surface treatment, code values shown in feature graphics
+- Pasted text (descriptions, marketing copy, technical notes)
+- HTML form fields and select dropdowns (e.g., variant configurators on supplier sites)
+
+Source content can be in any language — Merchkit's LLM extraction handles non-English supplier sites, including Spanish and French, while preserving technical precision in translated attribute values. Multilingual extraction works without any extra configuration.
+
+## How Sources Feed AI Enrichment
+
+When you run enrichment on a product with Sources attached:
+
+1. The AI reads the product record (name, basic attributes, etc.)
+2. The AI reads the held content from all Sources attached to that product (extracted text, tables, hosted images, supporting documents)
+3. The AI reads your enrichment prompt (what attributes you want to generate)
+4. The AI synthesizes all three to produce attribute values
+
+More sources = more context. More context = better, more confident enrichment.
+
+## Next Steps
+
+Ready to add sources to your products? Move to [**Adding Sources to a Product**](/product/sources-and-importing/adding-sources-to-product) for a step-by-step walkthrough.

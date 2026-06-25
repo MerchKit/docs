@@ -1,0 +1,106 @@
+---
+title: "Re-running Enrichment"
+description: "Update your AI prompts and re-run enrichment to improve attribute values across your catalog."
+---
+
+# Re-running Enrichment
+
+After you've reviewed your AI-generated content, you'll often want to re-run enrichment to improve results. Maybe your product descriptions need more detail, or you want to tighten up your category assignments. This article covers when and how to re-run enrichment safely.
+
+## When to Re-run Enrichment
+
+Re-run enrichment when you've made any of these changes:
+
+- **Updated attribute prompts** — You refined your prompt for product descriptions or added brand guidelines.
+- **Added new acceptable values** — You expanded the list of valid categories or size options.
+- **Added more sources** — You imported additional product data (images, specs, reviews) that the AI should use.
+- **Fixed attribute configuration issues** — You corrected a field type, enabled AI on an attribute, or changed the product data context.
+
+You might also re-run enrichment if you're not happy with the quality of previous output and want to test a new approach.
+
+## How to Re-run: Your Two Options
+
+When you re-run enrichment, you have two very different modes:
+
+### Generate All Attributes
+
+Select your products, then choose **Generate → Generate All Attributes** (or press ⌘↵).
+
+This mode **overwrites every AI-configured attribute**, whether it already has a value or not. Use this when you've made significant prompt updates or configuration changes and want the AI to start fresh.
+
+**What happens:**
+- Every attribute with "Use AI" enabled gets regenerated.
+- Existing values are replaced, including any manual edits you made to those cells.
+- Manually edited attributes (those with "Use AI" disabled) are left alone.
+
+### Generate Empty Attributes Only
+
+Select your products, then choose **Generate → Generate Empty Attributes Only**.
+
+This mode **preserves any values that are already filled in** and only generates values for empty cells. Use this for incremental enrichment — filling gaps as you add new sources or attributes without touching what's already there.
+
+**What happens:**
+- Only empty cells get values from AI.
+- Existing values (from previous AI runs or manual edits) stay exactly as they are.
+- Manually edited attributes are never touched.
+
+[SCREENSHOT: Generate dropdown showing "Generate All Attributes" and "Generate Empty Attributes Only" options]
+
+## Understanding What Changes and What Doesn't
+
+The key difference is this:
+
+| Scenario | Generate All | Generate Empty Only |
+|----------|--------------|-------------------|
+| Attribute is empty | ✓ Generates value | ✓ Generates value |
+| Attribute has AI-generated value | ✓ Overwrites with new value | ✗ Leaves existing value |
+| Attribute has manual edit | ✗ Overwrites (⚠️) | ✗ Leaves existing value |
+| Attribute has "Use AI" disabled | ✗ Leaves value alone | ✗ Leaves value alone |
+
+**Pro tip:** If you have manually edited some cells and don't want them overwritten, use "Generate Empty Only" — it respects your manual work.
+
+## Testing Before You Scale
+
+Never update a prompt and immediately re-run on your entire catalog. Test first:
+
+1. **Pick a small batch** — Select 5–10 representative products.
+2. **Run Generate All** — Apply your updated prompt to just these test products.
+3. **Review the output** — Check if the new results are better than before.
+4. **Compare side by side** — Look at before and after values. Did tone improve? Are keywords included?
+5. **If satisfied, scale** — Select your full catalog and re-run with confidence.
+6. **If not satisfied, iterate** — Refine your prompt again and test on the same 5–10 products.
+
+[SCREENSHOT: Small batch of products selected, with Generate All highlighted]
+
+## Re-running Specific Attributes Only
+
+You can't target individual attributes through the Generate button — when you run Generate, all AI-enabled attributes are processed.
+
+If you need to re-run just one attribute (say, descriptions), here's the workaround:
+
+1. Go to **Workspace → Attributes**.
+2. Find every other attribute with "Use AI" enabled.
+3. Disable "Use AI" on each one temporarily.
+4. Run **Generate All** — now only your target attribute will generate.
+5. Review the output.
+6. Go back to **Workspace → Attributes** and re-enable "Use AI" on the other attributes.
+
+This takes a few extra steps, but it's the only way to isolate a single attribute.
+
+## Common Issues and Fixes
+
+**My values look exactly the same as before.**
+Check that your prompt actually changed. Small tweaks (removing one word) might not create visible differences. Try a more substantial change (add a paragraph about target audience, change tone from "technical" to "friendly").
+
+**I lost my manual edits.**
+You used Generate All on attributes you'd manually edited. Switch to "Generate Empty Only" next time to preserve your work. If the damage is recent, you can undo with Ctrl+Z or Cmd+Z immediately.
+
+**Some products didn't generate new values.**
+Check if those products have required attributes that are still empty (e.g., a missing "Brand" field that your prompt depends on). The AI won't generate values if it doesn't have the inputs it needs. Fill in required fields first, then re-run.
+
+**Re-run is taking too long.**
+Large catalogs take time. If you're re-running your entire catalog at once, consider batching instead (see article 3.14). You can also close other browser tabs to free up resources.
+
+## Next Steps
+
+Once you've re-run enrichment and are happy with the quality, move to article **3.13** to learn what "good" enrichment actually looks like and how to set benchmarks for your team.

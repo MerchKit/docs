@@ -1,0 +1,85 @@
+---
+title: "API Overview"
+description: "What the Merchkit API is, how to think about products and attributes, and where to find the base URL, OpenAPI spec, and llms.txt."
+---
+
+Merchkit is an AI-native **PIM** (Product Information Management) system. The API and MCP server let
+you operate your catalog programmatically — from your own backend, a script, or an AI agent such as
+Claude — over the same data your team works with in the Merchkit app.
+
+<Note>
+  The examples below use `https://www.merchkit.com` as the base URL.
+</Note>
+
+## The mental model
+
+A few concepts carry the whole API. Internalize these and the rest follows.
+
+<Steps>
+  <Step title="A product is the core object">
+    The **product** is the central resource. (Assets, vendors, and categories are modeled the same
+    way and live alongside it.) When you talk to a person about a product, identify it by its primary
+    attribute — usually its SKU. When you call the API, identify it by its UUID `id`.
+  </Step>
+  <Step title="Attributes are dynamic">
+    A product's fields are **attributes**, defined per workspace rather than hard-coded. Attribute
+    definitions describe what a product can hold; attribute *values* are what a given product holds.
+    To enrich a product you set attribute values — you never recreate the product to change a field.
+  </Step>
+  <Step title="Completeness is per-channel">
+    Attributes can be **channel-scoped**, so completeness is evaluated **per channel**. The same
+    product can be complete for one channel and incomplete for another. Whenever you check
+    completeness, you pass the channel you care about.
+  </Step>
+</Steps>
+
+<Callout type="info">
+  Channels are **read-only and global** in the API — you read the available channel catalog, but you
+  cannot create channels through the API.
+</Callout>
+
+## Base URL and spec
+
+<ParamField path="Base URL" type="string">
+  `https://www.merchkit.com/api/v1` — all REST endpoints live under the `/api/v1` prefix.
+</ParamField>
+
+<ParamField path="OpenAPI spec" type="string">
+  `https://www.merchkit.com/api/v1/openapi` — the machine-readable contract. Field and enum
+  descriptions are rich enough for an agent to route by semantic search, and the spec backs the
+  **API Reference** in these docs.
+</ParamField>
+
+<ParamField path="llms.txt" type="string">
+  `https://www.merchkit.com/llms.txt` — a curated, instruction-bearing guide written for agents. It
+  lists the preferred endpoints, the filter DSL, and the common footguns. If you are pointing an
+  agent at Merchkit, give it this URL.
+</ParamField>
+
+## Authentication, in one line
+
+Every request carries your workspace API key as a bearer token:
+
+```http
+Authorization: Bearer mk_live_...
+```
+
+One key maps to exactly one workspace, and keys carry scopes. See
+[Authentication](/developers/authentication) for the full model.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/developers/authentication">
+    API keys, scopes, and read vs write access.
+  </Card>
+  <Card title="Conventions" icon="list-check" href="/developers/conventions">
+    Pagination, the filter DSL, the error envelope, and async jobs.
+  </Card>
+  <Card title="MCP server" icon="robot" href="/developers/mcp">
+    Operate your catalog from Claude and other agents.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference">
+    The full endpoint reference, generated from the OpenAPI spec.
+  </Card>
+</CardGroup>

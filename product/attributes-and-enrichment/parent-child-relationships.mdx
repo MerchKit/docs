@@ -1,0 +1,101 @@
+---
+title: "Parent/Child Product Relationships"
+description: "Use parent/child product relationships to model series and variants, share Sources across related SKUs, and inherit attribute values from parent to child."
+---
+
+# Parent/Child Product Relationships
+
+Many catalogs are organized around product families: a single product series with dozens or hundreds of variants that differ in size, color, finish, or material. Merchkit models this directly with **parent/child product relationships**. Child SKUs can inherit attribute values from a parent SKU, which keeps your catalog clean, your enrichment efficient, and your variant attributes correctly scoped.
+
+## When to Use Parent/Child Relationships
+
+Use parent/child relationships when a single product family has multiple SKUs that share most attributes but differ on a few specific ones:
+
+- **Drill bit series** — same Tool Material, Coating, Application across all variants; differ on Diameter, Length, Stock Number
+- **Furniture series** — same frame Material, Construction Type, Brand across all variants; differ on Color, Size, Upholstery
+- **Apparel** — same Brand, Style, Care Instructions; differ on Size, Color, Fit
+- **Hardware kits** — same component family; differ on Quantity, Specific Component Selection
+
+The pattern is: **shared attributes live on the parent, differentiating attributes live on the child.** This avoids duplicating shared data across every variant and avoids the risk of attributes drifting out of sync between sibling SKUs.
+
+## How Inheritance Works
+
+When a child SKU is missing a value for an attribute, Merchkit looks up the parent SKU. If the parent has a value for that attribute, the child inherits it. The inheritance is automatic — you don't have to write a Formula or configure a Reference Lookup.
+
+For example, suppose you have a parent SKU `220D` (the OSG drill bit series) with attribute values:
+- Tool Material: `HSS`
+- Coating: `Bright (Uncoated)`
+- Application: `Jobber-length drilling`
+
+And child variant SKU `220D-0.250-2.5` has its own values for:
+- Diameter: `0.250"`
+- Length: `2.5"`
+- Stock Number: `2200250`
+
+When you read `220D-0.250-2.5`, the effective attribute set is the union: Tool Material, Coating, and Application come from the parent; Diameter, Length, and Stock Number come from the child. The child explicitly stores only the differentiating attributes; everything else is inherited.
+
+If a child SKU has its own value for an attribute, the child's value wins — children can override parent values when needed.
+
+## Setting Up Parent/Child Relationships
+
+Parent/child relationships can be set up two ways:
+
+**During import.** When importing a CSV, include a column that identifies each row's parent product (typically by parent SKU or parent product ID). The Products view's **Parent Product** column shows the link. See [Importing Your First Catalog via CSV](/product/sources-and-importing/importing-first-catalog-csv) and [Setting Up Import Mapping](/product/integrations-and-field-mapping/setting-up-import-mapping) for details on mapping a parent column.
+
+**Manually.** From the Products view, you can assign a parent to a product by editing its Parent Product cell.
+
+For variants imported from a connected platform (like Shopify), parent/child relationships are typically auto-created from the platform's existing variant structure during import.
+
+## Sharing Sources Across a Series
+
+Parent/child relationships also help with Sources. A series-level supplier page (such as a manufacturer's series PDP) often contains shared specifications that apply to every variant. You can attach that single page as a Source to the parent SKU, and during enrichment, child variants benefit from the shared context without you needing to attach the same Source to every variant.
+
+For variants that have their own dedicated supplier pages (e.g., per-variant detail pages), attach those Sources to the child SKUs directly. The combined context — parent-level shared content plus variant-specific content — gives the AI the most complete picture for each child.
+
+You can also use the **Duplicate sources from the parent product** option when adding Sources to a child SKU, which copies the parent's Source list to the child as a starting point. See [Adding Sources to a Product](/product/sources-and-importing/adding-sources-to-product).
+
+## Enrichment with Parent/Child
+
+Enrichment respects parent/child relationships in two important ways:
+
+**Attribute inheritance during enrichment.** When the AI generates a value for a child SKU and a Source is attached to the parent (e.g., a series-level page), the AI sees the parent's Source content as part of the child's enrichment context. This is how series-level shared specifications make their way onto every variant without manual duplication.
+
+**Inferred-from-parent values.** If a child SKU's Sources don't directly state a value for an attribute, the AI may infer the value from the parent SKU. The rationale field will state this explicitly — for example, "Inferred from parent SKU 220D Series; not present in this variant's source page." Inferred-from-parent values typically carry Medium confidence and surface in confidence-filtered Views for review. See [Reviewing AI-Generated Content](/product/attributes-and-enrichment/reviewing-ai-content) for how to spot-check inferred values.
+
+## Preventing Cross-Variant Attribute Leakage
+
+A common risk when a single supplier page covers multiple variants is **attribute leakage** — accidentally assigning attributes from one variant to another. Parent/child relationships are one of Merchkit's three safeguards against this:
+
+1. **Parent/child relationships** keep series-level shared values on the parent and variant-specific values on the child. The AI knows which level a value belongs at and assigns it accordingly.
+2. **Prompt design** — your extraction prompts can explicitly scope to the right SKU (e.g., "For Manufacturer Model 220D-0.250, extract attributes from the row in the variant table where Mfr Model = 220D-0.250"). The LLM follows the scoping instruction.
+3. **Cross-source corroboration** — when a child SKU has 2+ Sources attached and they produce conflicting values for the same attribute, both values are flagged with Low confidence for review rather than auto-accepted.
+
+## Common Patterns
+
+**Pattern 1: One supplier series page, dozens of variants.** Attach the supplier's series page as a Source to the parent SKU. Configure shared attributes (Material, Coating, Application class) to be enriched on the parent. Configure variant-specific attributes (Diameter, Length, Color) to be enriched on each child SKU using its individual variant detail page (or scoped extraction from the series page's variant table).
+
+**Pattern 2: Parent without its own supplier page.** Sometimes the parent is a logical grouping rather than a product the supplier publishes. You can still use the parent for inheritance: attach the most representative supplier Source to the parent and let it serve as shared context for all children.
+
+**Pattern 3: Variant overrides.** When a specific variant differs from its siblings on what would normally be a shared attribute (e.g., one variant in a "stainless steel" series is actually titanium), set the value explicitly on the child SKU. The child's value overrides the parent's inherited value.
+
+## Common Issues
+
+**My child SKU isn't inheriting from the parent.**
+- Check that the parent/child relationship is actually set in the Products view's Parent Product column
+- Confirm the parent SKU has a value for the attribute (inheritance only works if the parent has a value to inherit)
+- Make sure the child SKU doesn't have its own value (if the child has any value, even an empty string, it overrides inheritance)
+
+**A shared attribute is showing different values across siblings.**
+- This usually means the value is set explicitly on each child rather than being inherited from the parent
+- Move the value to the parent (clear it from each child); siblings will then all show the parent's value via inheritance
+
+**The AI is assigning the wrong variant's attribute to a child.**
+- Check that your extraction prompt is scoped to the specific child SKU (use the Manufacturer Model Number or Stock Number in the prompt)
+- Use parent/child to keep shared and variant-specific attributes at the right level — don't try to extract a variant-specific attribute from the parent
+- See "Preventing Cross-Variant Attribute Leakage" above
+
+## Next Steps
+
+- **Configuring attributes for inheritance:** [Configuring an Attribute for AI Enrichment](/product/attributes-and-enrichment/configuring-attribute-for-ai)
+- **Reviewing inherited and inferred values:** [Reviewing AI-Generated Content](/product/attributes-and-enrichment/reviewing-ai-content)
+- **Adding Sources to parent and child SKUs:** [Adding Sources to a Product](/product/sources-and-importing/adding-sources-to-product)

@@ -1,0 +1,79 @@
+---
+title: "Managing Product Images"
+description: "Upload, organize, and use product images for AI enrichment"
+---
+
+# Managing Product Images
+
+Product images are a critical input for AI enrichment in Merchkit. The Images page under Catalog in the sidebar is where you manage your product image library.
+
+## What the Image Library Contains
+
+The Images page displays all images associated with your products. This is your centralized library for product photos, lifestyle shots, and any visual content that feeds into Merchkit's enrichment engine.
+
+## How Images Relate to Products
+
+Each product can have one or more images. When you import products, you can map a column in your CSV to the product's image field. Images are indexed and organized by product SKU, making it easy to match images to the right products.
+
+## Using Images for AI Enrichment
+
+Images are powerful inputs for AI-powered attribute generation. When you set up an attribute in Merchkit, you can tell the AI which images to analyze to generate or enrich that attribute.
+
+### Image Source in Attribute Configuration
+
+When creating or editing an attribute:
+
+1. In the attribute settings, look for **Image Source**
+2. Select which product images you want the AI to analyze
+3. The AI will use those images to generate or enhance the attribute value
+
+This is how Merchkit generates rich, accurate product descriptions and specifications directly from visual data.
+
+[SCREENSHOT: Image Source option in attribute configuration]
+
+### Image Field Type & AI-Generated Images
+
+Some attributes use the **Image** field type. These attributes can generate brand-new images using Merchkit's image generation model (powered by Nano Banana).
+
+**Use cases for AI-generated images:**
+
+- **Dimension line drawings** — generated from product silhouettes to show scale and sizing
+- **Lifestyle mockups** — product images placed in real-world contexts
+- **Transparent backgrounds** — clean product shots with standardized backgrounds
+- **Variations** — color, angle, or zoom variations derived from source images
+
+When you configure an Image field type attribute, you'll specify which source images the AI should use as reference input.
+
+[SCREENSHOT: Image field type with AI generation options]
+
+## Uploading and Managing Images
+
+### Import Images with Products
+
+The most common way to add images is through CSV import. When importing products:
+
+1. Include an image URL column in your CSV
+2. During the import mapping step, map this column to the **Image** field
+3. Merchkit will fetch and index these images with your products
+
+### Upload Images Directly
+
+You can also upload images directly to the Images page:
+
+1. Click **+ Upload Images**
+2. Select image files from your computer
+3. Map or confirm which product each image belongs to
+4. Click **Save**
+
+[SCREENSHOT: Direct image upload interface]
+
+### Image Best Practices
+
+- Use high-quality images (at least 500x500 pixels recommended)
+- Ensure images are in common formats (JPG, PNG, WebP)
+- Use clear, well-lit product photos for best AI analysis
+- Include multiple angles per product if available — the AI will use these for more comprehensive enrichment
+
+## Next Steps
+
+Now that your images are organized, you're ready to learn how to handle import errors and validation issues. Head to [Import Validation: Understanding Errors & Warnings](/product/sources-and-importing/import-validation-errors).

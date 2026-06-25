@@ -1,0 +1,170 @@
+---
+title: "Enrichment Quality: What 'Good' Looks Like"
+description: "Learn what quality AI-generated content looks like and how to establish benchmarks for your enriched catalog."
+---
+
+# Enrichment Quality: What 'Good' Looks Like
+
+Your catalog is now enriched with AI-generated content. But how do you know if it's *good*? This article helps you set benchmarks, spot problems, and improve quality before you push enriched data to your sales channels.
+
+## Quality Benchmarks by Attribute Type
+
+Different attribute types have different quality markers. Here's what to look for:
+
+### Product Descriptions
+
+**Signs of good quality:**
+- Length is appropriate for your channel (e.g., 150 words for marketplace listings, 300+ for your own site).
+- Tone matches your brand voice (is it technical, casual, luxury, eco-focused?).
+- Key details are included: materials, dimensions, use cases, benefits.
+- No filler or generic text like "this product is great" without specifics.
+- Grammar and spelling are correct.
+- Reads naturally — not obviously machine-generated.
+
+**Signs of poor quality:**
+- Too short (5 words) or too long (1,000+ words) for the intended channel.
+- Generic boilerplate: "This item is a high-quality product designed for everyday use."
+- Hallucinated details not found in your source data.
+- Missing key information (what material is it, how big is it?).
+- Awkward phrasing or grammar errors.
+- Reads like a tech manual when you need friendly, conversational tone.
+
+[SCREENSHOT: Side-by-side comparison showing a poor description ("This is a chair. It has four legs. You can sit on it.") next to a good description ("Mid-century modern dining chair with solid walnut frame and hand-stitched upholstery. Pairs well with industrial tables. Available in navy, charcoal, and natural linen.")]
+
+### Categorical Values (Categories, Collections, Tags)
+
+**Signs of good quality:**
+- Every value matches your acceptable values list exactly.
+- Values are consistent — similar products get the same tags.
+- Values are specific, not vague ("Sofas" is better than "Furniture").
+- The selection makes sense for discovery (if it's a "Bedroom Set," it's also correctly tagged "Bedroom").
+
+**Signs of poor quality:**
+- Values don't exist in your acceptable values list.
+- Inconsistent tags across similar products ("Sofa," "Couch," "Sectional" for the same product type).
+- Too broad or too vague ("Home" when you meant "Home Office Furniture").
+- Missing obvious categories that should be filled in.
+
+### Numeric Values (Price, Stock, Dimensions, Weight)
+
+**Signs of good quality:**
+- Values are within plausible ranges for your product type.
+- Units are correct and consistent (all weights in lbs, or all in kg — not mixed).
+- Precision matches your needs (dimensions to 0.1", weight to 0.5 lbs).
+- Values align with your source data (if your vendor says 48", the AI should say 48", not 50").
+
+**Signs of poor quality:**
+- Implausible values ("Chair height: 2,000 inches").
+- Mismatched units or missing units entirely.
+- Hallucinated numbers not in your source data.
+- Rounding errors or inconsistency (one product says "24\"" and the next says "2 feet" for the same measurement).
+
+### Images
+
+**Signs of good quality:**
+- Images are clear and well-lit.
+- The product is the main focus (not a crowded shelf or busy room).
+- Image dimensions match your channel requirements.
+- Images are relevant to the product and accurate.
+- No watermarks or logos from competitor sites.
+
+**Signs of poor quality:**
+- Blurry, dark, or low-resolution images.
+- Wrong product entirely (wrong color, style, or item).
+- Images are too small or don't meet your channel's minimum dimension requirements.
+- Watermarked or copyrighted images that can't be used.
+- Generic stock photos that don't match your product.
+
+## Consistency Across Similar Products
+
+One of the biggest quality markers is **consistency**. Sample 10 products in the same category:
+
+- Do they all have descriptions of roughly the same length?
+- Are they all using the same tone of voice?
+- Are category tags applied consistently (all sofas tagged "Sofas," not half tagged "Sofas" and half tagged "Seating")?
+- Are numeric values using the same units and precision?
+
+If you see wild variation, your prompts or acceptable values need tightening.
+
+## Before and After: The Impact of Refinement
+
+Let's say your initial product descriptions were vague. Here's what improvement looks like:
+
+**Before (Poor Prompt, Generic Sources):**
+> "This sofa is a comfortable piece of furniture for your living room. It comes in different colors and sizes. Great for relaxing."
+
+**After (Refined Prompt, Specific Sources Added):**
+> "Contemporary mid-century sofa with solid hardwood frame, high-density foam cushioning, and stain-resistant fabric. 84\" wide, perfect for large living rooms. Available in charcoal gray, navy, and natural linen. Pairs beautifully with modern or transitional decor. Ships fully assembled."
+
+The difference: the second version includes specific dimensions, materials, available colors, care details, and styling guidance. This came from:
+- A more detailed prompt that asked for materials, dimensions, and care tips.
+- Adding the manufacturer's spec sheet as a source.
+- Tightening acceptable values for colors so the AI picks from valid options.
+
+## How to Improve Your Enrichment Quality
+
+If your quality isn't where you want it, take these steps in order:
+
+### 1. Refine Your Prompts
+
+Go to **Workspace → Attributes** and review your prompts for each attribute:
+
+- Are you asking for the right details? (Example: "Include materials, dimensions, and care instructions" is much better than "write a description.")
+- Are you specifying tone and style? ("Write in a friendly, conversational tone" vs. "Write professionally.")
+- Are you setting length expectations? ("150–200 words" vs. open-ended).
+- Are you pointing to specific sources? ("Use the manufacturer's spec sheet and customer reviews, not competitor descriptions.")
+
+### 2. Add Better Sources
+
+Go to **Workspace → Attributes** and check the Product Data context. Are you using all available sources?
+
+- Manufacturer specs and datasheets?
+- High-quality images (not just low-res thumbnails)?
+- Customer reviews and testimonials?
+- Vendor descriptions (though avoid just copying them)?
+
+More sources = better context = better AI output.
+
+### 3. Tighten Your Acceptable Values
+
+For categorical attributes, your acceptable values list is the guardrail. If the list is too long, vague, or inconsistent, the AI will struggle:
+
+- Remove near-duplicates ("Sofa," "Couch," "Sectional Sofa" — pick one canonical term).
+- Be specific ("Women's Footwear" instead of just "Shoes").
+- Add helpful descriptions next to each value so the AI knows when to use it.
+
+### 4. Be More Specific About Product Data Context
+
+In the attribute settings, the "Product Data" field lets you tell the AI what fields to look at. Instead of letting it use everything:
+
+- Specify: "Use the 'Specifications' section only, not competitor reviews."
+- Or: "Use the product images and the manufacturer's material list. Ignore reviews with fewer than 4 stars."
+
+### 5. Test and Iterate
+
+After making changes, use "Generate All Attributes" on a small batch (5–10 products) and review. Does the output improve? If so, scale to your full catalog. If not, refine further and test again.
+
+[SCREENSHOT: Before/After side-by-side showing enrichment results, with annotations highlighting specific improvements like "Now includes material," "Tone is friendlier," "Dimensions are specific."]
+
+## Red Flags: When Output Starts to Fail
+
+Watch for these signs that your enrichment is degrading:
+
+- **Hallucination:** The AI is making up details not in your source data (e.g., claiming a product has features it doesn't).
+- **Repetition:** Descriptions are getting copy-paste boilerplate across multiple products.
+- **Mismatches:** Categorical values that don't match your acceptable values list.
+- **Dropout:** Some products stop generating values entirely.
+
+If you see these, pause enrichment and revisit your prompts, sources, and acceptable values. Small fixes often resolve them.
+
+## You've Hit the Core Onboarding Milestone
+
+If you've configured your attributes, enriched your catalog, and reviewed the output — **congratulations, you've hit the core onboarding milestone.** Your catalog is now rich, structured, and ready for the next step.
+
+From here, you have two paths:
+
+**Connect an Integration** — If you imported your catalog from a platform like Shopify or WooCommerce, you can sync your enriched data back. Head to [How Integrations Work in Merchkit](/product/integrations-and-field-mapping/how-integrations-work) in Section 4.
+
+**Add a Channel** — Once your enrichment is solid, you can optimize content for specific sales channels (Amazon, Wayfair, your own site). Go to Section 5 to learn about channels and start generating channel-optimized listings.
+
+Both paths are available to you now. Choose based on your immediate needs.

@@ -1,0 +1,155 @@
+---
+title: "Importing Your First Catalog via CSV"
+description: "Step-by-step walkthrough of the three-step CSV import flow: choose file, preview data, and map columns."
+---
+
+# Importing Your First Catalog via CSV
+
+This is the most common way to get your products into Merchkit. The CSV import flow walks you through three simple steps: choose your file, preview the data, and map your columns. Here's how.
+
+---
+
+## Step 1: Choose Your File
+
+1. Go to the **Products** view in the left sidebar
+2. Click the **Import** dropdown in the toolbar (top right of the table)
+3. Select **CSV Import**
+
+A modal opens titled "Import CSV into Catalog".
+
+[SCREENSHOT: Import CSV modal with "Choose file" button, two toggles below, and live preview panel on the right]
+
+### The Two Toggles
+
+**"Create new Products for CSV rows without a match"**
+
+By default, Merchkit matches incoming CSV rows to existing products based on SKU. If a SKU in your CSV matches one already in your catalog, the import will skip that row (to avoid duplicates). Toggle this **on** if you want to create brand new product records for any CSV rows that don't match an existing SKU.
+
+*Typical use case:* You're importing a fresh catalog for the first time. Toggle **on**.
+
+**"Create a new View for this import"**
+
+When toggled on, Merchkit automatically creates a new view after import containing only the products you just imported. This is useful for organizing and reviewing your import.
+
+*Typical use case:* Toggle **on** so you can easily see and work with the imported products.
+
+### Choose Your File
+
+1. Click the **Choose file** button
+2. Select your CSV file from your computer
+3. The preview panel on the right updates to show the first few rows of your CSV, with actual header names and sample values
+
+Once selected, click **Continue** to move to Step 2.
+
+---
+
+## Step 2: Preview and Confirm
+
+[SCREENSHOT: Step 2 preview screen with file info at top, "Change" link, parsed CSV data in right panel, toggles unchanged, "Continue" button]
+
+This screen shows:
+
+- **Selected file name** at the top with a **Change** link if you want to pick a different file
+- **Right panel:** The actual CSV data parsed and formatted — you'll see your header row and the first several data rows with real values
+- **Toggles:** The same two toggles from Step 1 are still visible; you can adjust them if needed
+
+Review the preview to make sure your data looks right. If you notice problems (wrong file, garbled encoding, missing headers), click **Change** to select a different file.
+
+Once confirmed, click **Continue** to move to Step 3.
+
+---
+
+## Step 3: Map CSV Columns
+
+[SCREENSHOT: Map CSV Columns screen with two-column layout on left (CSV Columns → Attribute), auto-mapped rows with "New" badges and field type icons (T, #), ✕ buttons on each row, data preview panel on right, "Import CSV" button at bottom]
+
+This is where you tell Merchkit which CSV columns map to which product attributes.
+
+### How Auto-Mapping Works
+
+Merchkit attempts to auto-map your CSV columns to existing attributes based on header name similarity. For example:
+
+- A CSV column named "Title" auto-maps to the **Title** attribute
+- A CSV column named "SKU" auto-maps to **SKU**
+- A CSV column named "Price" auto-maps to **Price**
+
+**Rows with a green "New" badge** indicate Merchkit is creating a brand new attribute for that CSV column (because no existing attribute matched). For example, if your CSV has a column called "Supplier Contact" and that attribute doesn't exist yet, you'll see a "New" badge.
+
+### Field Type Icons
+
+Each mapped row shows a field type icon to the left of the attribute name:
+
+- **T** = Text field (for descriptions, titles, categories, etc.)
+- **#** = Number field (for price, quantity, dimensions, etc.)
+
+Merchkit auto-detects the field type based on the values in your CSV column. You can trust these in most cases.
+
+### Skip Columns You Don't Need
+
+If your CSV has columns you don't want to import (like internal notes, legacy IDs, or confidential data), click the **✕** button on that row to skip it. Skipped columns won't be imported.
+
+### Review the Preview
+
+The right panel shows a live preview of how your data will look after mapping. Scroll through to make sure values are aligned correctly to their intended attributes.
+
+### Execute the Import
+
+Once you're satisfied with the mapping, click the **Import CSV** button. Merchkit processes your file and creates (or updates) products in your catalog.
+
+---
+
+## After Import
+
+Once the import completes:
+
+1. **Products appear in your table** with all mapped attributes populated
+2. **A new view is created** (if you toggled "Create a new View for this import" on) containing the imported products — you can find it in your view list on the left sidebar
+3. **You can now start enrichment** — add sources, run enrichment rules, or manually edit products
+
+---
+
+## Tips for a Smooth First Import
+
+**Clean headers**
+- Use clear, descriptive column names (e.g., "Product Title", "SKU", "Price")
+- Avoid special characters or spaces at the beginning/end of header names
+- One header row, clearly labeled
+
+**Consistent formatting**
+- One product per row
+- Consistent value formatting (e.g., all prices in the same format, all dates in the same format)
+- No merged cells from Excel
+
+**Encoding**
+- Save your CSV as **UTF-8 encoding** before uploading
+- If you're exporting from Excel, use "Save As" → CSV (Comma delimited)
+
+---
+
+## Common Issues
+
+**"My SKUs look like numbers, but they're being treated as text"**
+
+This can happen if your CSV column contains leading zeros or mixed types. You can adjust the field type during mapping or clean your source file before import. Most commonly, this isn't actually a problem — Merchkit handles it fine during enrichment.
+
+**"Some rows weren't imported"**
+
+Check the toggle "Create new Products for CSV rows without a match". If it's **off**, any CSV rows with a SKU matching an existing product are skipped (to avoid duplicates). Toggle **on** if you want to create new products for all rows.
+
+**"The encoding looks garbled"**
+
+Your CSV is likely not in UTF-8. Re-save your file as UTF-8 and try again. In Excel: File → Save As → CSV → Tools → Web Options → Encoding: UTF-8.
+
+**"Merchkit created an attribute I didn't expect"**
+
+This happens when a CSV column doesn't match any existing attribute name. During Step 3, you can:
+- Delete the "New" attribute mapping by clicking ✕
+- Or map it manually to an existing attribute if it exists
+
+---
+
+## Next Steps
+
+**Ready to enrich?** See [How Sources Work](/product/sources-and-importing/how-sources-work) to learn how to add context for the AI.
+
+**Need to prepare your data first?** See [Preparing Your Data for Import](/product/sources-and-importing/preparing-your-data-for-import) for file format requirements and data prep tips.

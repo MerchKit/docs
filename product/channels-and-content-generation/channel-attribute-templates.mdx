@@ -1,0 +1,143 @@
+---
+title: "Channel Attribute Templates"
+description: "Learn about pre-loaded channel attributes and default AI prompts. Understand what comes out of the box and what you can customize."
+---
+
+# Channel Attribute Templates
+
+When you connect a channel, Merchkit automatically loads a **template** of attributes that channel requires, along with default AI prompts designed to fill them intelligently.
+
+## What Are Attribute Templates?
+
+An **attribute template** is a pre-configured set of fields that a marketplace requires. When Merchkit loads a channel, it:
+
+1. Fetches the marketplace's attribute specification
+2. Creates a grid view with all required and recommended attributes
+3. Pre-loads default AI prompts for each attribute that can be intelligently generated
+
+You don't start from scratch—everything is pre-configured to get you moving fast.
+
+## Example: Wayfair Attribute Template
+
+Wayfair is a furniture and home goods marketplace with extensive requirements. When you connect Wayfair to Merchkit:
+
+**Out of the box, you get:**
+
+- **Pre-loaded attributes** organized by category
+- **Default prompts for common attributes** like:
+  - **Carton Width 1** — "Extract the width of the product's carton from the product description and specifications, in inches"
+  - **Carton Height 1** — "Extract the height of the product's carton from the product description and specifications, in inches"
+  - **Assembly Required** — "Determine if this product requires assembly. Answer yes or no."
+  - **Care Instructions** — "Extract care and maintenance instructions from the product description"
+  - **Material Composition** — "List all materials this product is made from, with percentages if available"
+
+- **Category-specific views** — Different furniture categories (sofas, chairs, tables) show only the attributes relevant to that category
+
+[SCREENSHOT: Wayfair channel grid showing Carton Width, Carton Height, Care Instructions, and Material Composition attributes]
+
+## How Default Prompts Work
+
+Each pre-loaded attribute has a **default AI prompt** that tells Merchkit how to generate that attribute from your product data.
+
+**The prompt extracts from:**
+- Your product title
+- Product description
+- Product specifications
+- Product images
+- Other enriched data in your Products view
+
+**Example prompt for Carton Width:**
+> "Extract the width of the product's carton from the product description and specifications, in inches. If not explicitly stated, calculate or estimate based on the product dimensions. Return only the number with 'inches' as the unit."
+
+When you generate this attribute for a product, Merchkit:
+1. Reads the prompt
+2. Analyzes your product's description and specs
+3. Extracts or calculates the carton width
+4. Fills the attribute automatically
+
+## What You Can Customize
+
+Merchkit's templates come **fully functional but completely flexible**. You can customize:
+
+### 1. **The AI Prompt Itself**
+
+Rewrite the prompt to emphasize different aspects or override the default logic.
+
+**Default prompt:** "Extract the width of the product's carton from the product description"
+
+**Your custom prompt:** "For this sofa, estimate the carton width as 120% of the sofa width rounded to the nearest 6 inches"
+
+This is useful when:
+- The marketplace has unique requirements for your category
+- You want to standardize how attributes are calculated
+- The default prompt doesn't match your data structure
+
+### 2. **Which Attributes to Generate**
+
+When you generate channel content, you choose:
+- **Generate Empty Attributes Only** — Fill only blank fields
+- **Generate All Attributes** — Regenerate everything, overwriting existing values
+
+If you've manually edited an attribute and like it, you can skip it in future generations.
+
+### 3. **Per-Channel Variations**
+
+The same product can have different attributes across channels. For example:
+
+**Amazon channel:** Your sofa's bullet points might emphasize style and comfort
+**Wayfair channel:** Your sofa's material composition might emphasize durability and care
+
+Each channel keeps its own attribute values separate.
+
+## Template Attributes vs. Your Products View
+
+Don't confuse channel templates with your main product data:
+
+| Aspect | Products View | Channel Template |
+|--------|---------------|------------------|
+| **Contains** | Your master product data | Channel-specific attributes only |
+| **Editing** | Edit core product info | Edit for marketplace requirements |
+| **Scope** | Single source of truth | Multiple per channel |
+| **Prompts** | General enrichment | Marketplace-specific |
+| **Export** | Internal use | Upload to marketplace |
+
+Your product description lives in Products view. The channel template uses that description to extract or generate marketplace-specific attributes.
+
+## Common Attribute Types Across Channels
+
+While each channel is different, many share common attribute types:
+
+**Text Attributes**
+- Title, Description, Brand, Color, Material
+
+**Category/Selection Attributes**
+- Product Category, Type, Assembly Required (yes/no)
+
+**Numeric Attributes**
+- Price, Weight, Dimensions, Stock Count
+
+**Rich Content Attributes**
+- Bullet Points, Images, Enhanced Descriptions, A+ Content
+
+**Technical Attributes**
+- Barcodes, SKU, Warranty, Certifications
+
+Each channel defines what format these should be in and what the marketplace expects.
+
+## When to Use Defaults vs. Customize
+
+**Use the default prompt when:**
+- Your product data is well-structured
+- The marketplace's requirements match your data
+- You want to get to market quickly
+
+**Customize the prompt when:**
+- Your products have unique data structures
+- You want to emphasize specific attributes
+- The marketplace has specific requirements your products need to meet
+
+## Next Steps
+
+Ready to modify prompts? Head to [Customizing Channel Attribute Prompts](/product/channels-and-content-generation/customizing-channel-prompts) to learn exactly how to edit and override defaults.
+
+Or, jump straight to [Generating Channel Content](/product/channels-and-content-generation/generating-channel-content) to start filling your channel attributes.

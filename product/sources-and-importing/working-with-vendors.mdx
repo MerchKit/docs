@@ -1,0 +1,71 @@
+---
+title: "Working with Vendors"
+description: "Manage vendor information and set up vendor-level attributes in Merchkit"
+---
+
+# Working with Vendors
+
+In Merchkit, vendors represent the suppliers, manufacturers, and brands that provide your products. The Vendors page in your Catalog sidebar is where you manage all vendor-related data.
+
+## What Vendors Represent
+
+Each vendor in your catalog is a supplier or brand entity. When you import your product data, you'll assign vendors to products — this helps you organize your catalog by source and manage vendor-specific information.
+
+## Accessing the Vendors Page
+
+In your Catalog sidebar, click **Vendors**. Here you can:
+- View all vendors in your catalog
+- Add new vendors
+- Edit vendor information
+- Import vendor data
+
+[SCREENSHOT: Vendors page in Catalog sidebar]
+
+## Vendor-Level Attributes
+
+Vendors can have their own attributes — just like products. These vendor attributes capture supplier-specific information that applies across multiple products.
+
+### Common Vendor Attributes
+
+- **Pricing Policy** — how this vendor prices products (e.g., "MSRP is catalog price minus 20%")
+- **Lead Time** — how long it takes to receive stock from this vendor
+- **MOQ (Minimum Order Quantity)** — minimum units required per order
+- **Support Contact** — vendor support email or phone
+- **Payment Terms** — net 30, net 60, etc.
+
+### Referencing Vendor Attributes in Products
+
+You can link product attributes to vendor attributes using **Reference Lookup** fields. This means a product attribute can pull data from its assigned vendor's attributes.
+
+**Example:** Your vendor "ACE Manufacturing" has a Pricing Policy attribute that says "Standard markup is 35%". You can create a product attribute called "Suggested Retail Price" with a Reference Lookup that pulls this policy — so all products from ACE Manufacturing automatically inherit that pricing guidance.
+
+[SCREENSHOT: Reference Lookup field pointing to vendor attribute]
+
+## Managing Vendors
+
+### Adding a New Vendor
+
+1. On the Vendors page, click **+ Add Vendor**
+2. Enter the vendor name and any available information
+3. Click **Save**
+
+### Editing Vendor Information
+
+1. Click on a vendor name to open its details
+2. Update any vendor attributes
+3. Click **Save**
+
+### Importing Vendors
+
+If you have vendor data in a CSV file, you can import it into Merchkit:
+
+1. On the Vendors page, click the **Import** dropdown
+2. Select **CSV Import**
+3. Follow the import flow: choose your file, preview the data, and map columns to vendor attributes
+4. Click **Import** to add or update vendors
+
+[SCREENSHOT: Vendor import flow]
+
+## Next Steps
+
+Once your vendors are in place, you're ready to manage your product images. Head to [Managing Product Images](/product/sources-and-importing/managing-product-images).

@@ -1,0 +1,299 @@
+---
+title: "Field Type Guide: Text, Number, Image, Formula, Reference Lookup"
+description: "Comprehensive reference for every field type. Learn when to use each one, how AI works with it, and how to configure it for your data needs."
+---
+
+Choosing the right field type is crucial. The field type determines what kind of data you can store, whether AI can help generate it, and how you'll use it downstream (filtering, reporting, syncing to channels).
+
+This guide covers every field type with examples, configuration details, and decision-making guidance.
+
+## Single Line Text (T icon)
+
+**What it is:** The most flexible field type. Stores text up to a certain character limit. Can be AI-generated or manually entered.
+
+**Best for:**
+- Product descriptions and titles
+- Specifications and technical details
+- Instructions (care, assembly, usage)
+- Material compositions
+- Any text-based data that varies by product
+
+**AI Support:** Yes. You can write a prompt to have the AI generate or extract text.
+
+**Configuration:**
+- **Prompt field:** Write instructions for the AI (e.g., "Generate a 2-3 sentence product description for {{product_title}}")
+- **Acceptable Values:** Optional. Use if you want to constrain output to a specific list
+- **Product Data Context:** The AI can reference other attributes via {{ }} tags
+- **Image Source:** The AI can see your product images to inform text generation
+
+**Example use cases:**
+- `Product Description` — "Write a compelling 2-3 sentence description of {{product_title}} highlighting {{material}} and {{intended_use}}."
+- `Care Instructions` — "Extract or write care instructions for {{product_title}}. Format as a bulleted list."
+- `Key Features` — "List 3-4 key features of {{product_title}}. Be specific and avoid marketing hype."
+
+**Validation:**
+- Single Line Text typically has a character limit (e.g., 500 characters); Merchkit will warn you if you exceed it
+- No calculation or formula needed
+
+**Common mistakes:**
+- Writing vague prompts (see 3.4 for prompt best practices)
+- Using when a different field type would be better (e.g., use Number for numeric data, not Text)
+
+---
+
+## Number (# icon)
+
+**What it is:** Stores numeric values only. Can be AI-generated (extracted from source documents) or manually entered.
+
+**Best for:**
+- Prices and costs (MSRP, wholesale price, cost)
+- Dimensions and measurements (weight, height, length)
+- Quantities and counts
+- Time-based values (lead time in days, warranty period in months)
+- Any data that's fundamentally numeric
+
+**AI Support:** Yes. The AI can extract numeric values from source documents or generate them based on context.
+
+**Configuration:**
+- **Prompt field:** Write instructions (e.g., "Extract the MSRP from the source document. Return only the numeric value.")
+- **Acceptable Values:** Optional, but unusual for numeric fields (used only if you want to restrict to specific numbers)
+- **Product Data Context:** AI can reference other attributes
+- **Image Source:** AI can analyze images to extract dimensions or measurements
+
+**Example use cases:**
+- `MSRP` — "Extract the MSRP (list price) from the source document for {{product_title}}. Return only the numeric value (e.g., 29.99)."
+- `Weight (kg)` — "Extract the product weight in kilograms from {{product_title}} source documents. Return only the number."
+- `Lead Time (Days)` — "Based on {{vendor_name}} inventory and shipping policy, estimate the lead time in days. Return an integer."
+
+**Validation:**
+- Returns only numeric values
+- You can set min/max constraints (e.g., MSRP must be > 0)
+- Non-numeric input is rejected
+
+**Common mistakes:**
+- Using Text field type for data that should be numeric (harder to sort, filter, and calculate later)
+- Asking the AI to return formatted values like "$29.99" or "3 days" instead of just the number
+- Forgetting to specify units in the prompt
+
+---
+
+## Image (camera icon)
+
+**What it is:** AI-generated images using the Nano Banana image generation model. The AI uses your product images as a reference and your prompt to create new visuals.
+
+**Best for:**
+- Dimension line drawings
+- Lifestyle renders
+- Compliance images (e.g., product showing size comparisons)
+- Alternate product angles
+- Visual specifications
+
+**AI Support:** Yes, fully AI-generated. The model analyzes your product image(s) and creates new visuals based on your prompt.
+
+**How it works:**
+1. The Image field reads your product image(s) as input
+2. You write a prompt describing what visual to generate (e.g., "Create a dimension line drawing with measurements")
+3. The AI (Nano Banana model) generates a new image
+4. The generated image replaces or supplements your existing product photo
+
+**Configuration:**
+- **Prompt field:** Write detailed visual instructions (e.g., "Create a dimension line drawing showing the product's height, width, and depth in centimeters. Use a clean white background and include measurement labels.")
+- **Source image selection:** Choose which product image(s) the AI should use as reference
+- **Acceptable Values:** Not applicable for images
+
+**Example use cases:**
+- `Dimension Diagram` — "Generate a dimension line drawing of {{product_title}} showing height, width, and depth. Include measurement labels in cm. Use white background."
+- `Lifestyle Render` — "Generate a lifestyle image showing {{product_title}} in use. Show {{intended_use}} context. Maintain {{brand}} colors and style."
+- `Size Comparison` — "Generate an image showing {{product_title}} next to a standard object (e.g., ruler, coin) for scale reference."
+
+**Validation:**
+- Image generation may take longer than text generation
+- The AI will attempt to match your source image style
+- Output quality depends on prompt clarity and input image quality
+
+**Limitations:**
+- Image generation is more resource-intensive than text
+- Style consistency can vary across multiple generated images
+- Not all prompts will produce high-quality results; test and iterate
+
+**Common mistakes:**
+- Vague visual descriptions (be specific: "3D isometric view with measurements" not "make it look good")
+- Unrealistic expectations (the model does its best but can't guarantee photorealism)
+- Not testing on a few products before running across your entire catalog
+
+---
+
+## Formula (ruler icon)
+
+**What it is:** Deterministic calculation field. NO AI involvement. Uses {{ }} references to other attributes in a mathematical expression.
+
+**Best for:**
+- Calculated fields that don't require AI judgment
+- Tax calculations
+- Margin calculations
+- Unit conversions
+- Discount calculations
+- Any math that follows a fixed rule
+
+**AI Support:** No. Formulas are purely deterministic—same input always produces the same output.
+
+**How it works:**
+1. You write a formula using {{ }} references: `={{msrp}} * 1.1` (MSRP + 10%)
+2. When Merchkit generates or updates the formula field, it evaluates the expression
+3. The result is stored as a calculated value
+
+**Configuration:**
+- **Formula field:** Write your mathematical expression
+- **Insert Function button:** Click to see 30 available functions organized by type:
+  - **Text functions (14):** CONCAT, UPPER, LOWER, TRIM, etc.
+  - **Logical functions (8):** IF, AND, OR, NOT, etc.
+  - **Numeric functions (8):** SUM, ROUND, AVERAGE, MIN, MAX, etc.
+- **Validation:** Merchkit shows a green checkmark ("Formula is valid and ready to use") when syntax is correct
+
+For the complete list of available functions, see the reference guide (linked from the Formula panel).
+
+**Example use cases:**
+- `Wholesale Price` — `={{msrp}} * 0.5` (MSRP with 50% wholesale discount)
+- `Tax Amount (USD)` — `={{msrp}} * 0.08` (assuming 8% tax rate)
+- `Product Code` — `=CONCAT({{brand}}, "-", {{product_id}})` (concatenate brand and ID)
+- `Margin Dollars` — `={{msrp}} - {{cost}}` (MSRP minus cost)
+- `Size Category` — `=IF({{weight}} > 10, "Large", "Standard")` (conditional logic)
+
+**Using Formulas for Validation**
+
+Formulas are also the right tool for deterministic validation rules — checks where you want a guaranteed, reproducible answer rather than an LLM judgment. A Formula attribute can compute a boolean flag, a status string, or a quality score that you can then filter on in Views.
+
+Common validation patterns:
+- `Weight Valid` — `=IF({{weight}} > 0, "Valid", "INVALID: weight must be > 0")` flags any extracted weight that's zero or negative
+- `Volume Check` — `=IF({{length}} * {{width}} * {{height}} = {{volume}}, "OK", "MISMATCH")` flags cross-field inconsistencies
+- `SKU Format Check` — pattern-validates that an extracted SKU matches your expected format
+- `Required Field Coverage` — `=IF(AND({{material}} <> "", {{weight}} <> "", {{dimensions}} <> ""), "Complete", "Missing required fields")` flags incomplete records
+- `Quality Score` — combine confidence ratings, validation flag presence, and source freshness into a per-SKU score that surfaces drift early
+
+For validation that requires context judgment (e.g., "is this material plausible for this product category"), write the rule into the AI extraction prompt itself rather than a Formula. Use Formula when the rule is deterministic and reproducible; use prompt-based validation when context judgment is needed.
+
+**Validation:**
+- Green checkmark ("Formula is valid") confirms syntax is correct
+- If formula errors, you'll see a red warning explaining the issue
+- Formulas are recalculated whenever referenced attributes change
+
+**Common mistakes:**
+- Forgetting {{ }} syntax (write `{{msrp}}` not `msrp`)
+- Referencing non-existent attributes (formula will fail)
+- Using formula when you should use AI (formulas can't make judgment calls)
+- Complex nested formulas that are hard to debug
+
+**When NOT to use Formula:**
+- When you need the AI to make decisions (use Text field instead)
+- When the logic is subjective or context-dependent (use AI)
+- When the calculation doesn't follow a fixed rule
+
+---
+
+## Reference Lookup (link icon)
+
+**What it is:** Pulls data from another entity. Non-AI relational lookup. You specify which entity to look up and which field to return.
+
+**Best for:**
+- Fetching vendor information for each product
+- Pulling category details for bulk assignment
+- Looking up pricing policies from a master table
+- Retrieving related data from other entities without duplicating it
+
+**AI Support:** No. This is a pure relational lookup.
+
+**How it works:**
+1. You configure which entity to look up (e.g., Vendors)
+2. You configure which field to return (e.g., "Pricing Policy")
+3. When the attribute is accessed, it queries the related entity and returns the value
+4. If the related record changes, the lookup reflects the update
+
+**Configuration:**
+- **Attribute Selector:** Choose the entity to look up (e.g., Vendors, Categories)
+- **Column Selector:** Choose which field from that entity to return (e.g., "Pricing Policy", "Lead Time", "Commission Rate")
+- The lookup happens automatically based on the relationship between entities
+
+**Example use cases:**
+- `Vendor Pricing Policy` — For each product, look up its vendor and return the vendor's "Pricing Policy"
+- `Category Commission Rate` — For each product, look up its category and return the category's "Commission Rate"
+- `Brand Guidelines` — For each product, look up its brand and return the brand's "Design Guidelines" URL
+
+**Validation:**
+- The lookup is validated at save time to ensure the target entity and field exist
+- If the relationship breaks (e.g., vendor is deleted), the lookup will return null
+
+**Common mistakes:**
+- Confusing Reference Lookup with Record Reference (Record Reference links to a single record; Reference Lookup fetches data from a linked record)
+- Using when a formula would be more efficient (if you're just doing math, use Formula)
+- Not ensuring the relationship exists before creating the lookup
+
+---
+
+## Collection Reference
+
+**What it is:** Links a product (or other entity) to a collection of related records. Stores multiple references.
+
+**Best for:**
+- Linking a product to multiple collections it belongs to
+- Linking a product to multiple certifications or standards
+- Linking a product to multiple vendors (if it's sold by more than one)
+- Any one-to-many relationship
+
+**Configuration:**
+- Specify the related entity type (e.g., Collections, Certifications)
+- Manage which records are linked
+- View all linked records
+
+**Common use cases:**
+- `Product Collections` — Link each product to the collections it belongs to (a product might be in "Summer Sale", "New Arrivals", and "Bestsellers")
+- `Certifications` — Link products to certifications they hold (e.g., Fair Trade, Organic, B Corp)
+
+---
+
+## Record Reference (single)
+
+**What it is:** Links a product to a single related record. Stores one reference.
+
+**Best for:**
+- Assigning a primary vendor to a product
+- Linking a product to its primary category
+- Linking a product to its brand
+- Any one-to-one relationship
+
+**Configuration:**
+- Specify the related entity type (e.g., Vendors, Brands, Categories)
+- Select which record to link
+- The link is stored and can be used in formulas and lookups
+
+**Common use cases:**
+- `Primary Vendor` — Each product has one main supplier
+- `Brand` — Each product belongs to one brand
+- `Manufacturer` — Link to the manufacturing company record
+
+---
+
+## Decision Matrix: Which Field Type Should I Use?
+
+| Need | Field Type | Why |
+|------|-----------|-----|
+| Store text-based data (descriptions, specs, instructions) | Single Line Text | Most flexible, AI-capable, human-readable |
+| Store numeric values (prices, weights, measurements) | Number | Proper type for calculations and filtering |
+| Store prices with currency formatting | Number | Store as number, handle formatting in display layer |
+| Extract data from images (dimensions, specs) | Number or Text (with AI prompt) | AI can analyze product images |
+| Generate new product images (diagrams, renders) | Image | Use Nano Banana model for visual generation |
+| Calculate a value based on other fields | Formula | Deterministic, efficient, always accurate |
+| Calculate with business logic or judgment | Text (with AI prompt) | AI can apply context and reasoning |
+| Fetch data from another entity | Reference Lookup | Pure relational query, no duplication |
+| Link to a single related record | Record Reference | Establish one-to-one relationship |
+| Link to multiple related records | Collection Reference | Establish one-to-many relationship |
+| Store yes/no or categorical data | Text (with Acceptable Values) | Constrained to approved values |
+
+---
+
+## Next Steps
+
+You now understand each field type and when to use it. The next step is to dive deeper into advanced attribute patterns and how to build dependent attributes (where one attribute's configuration depends on another). See [Building Dependent Attributes](/product/attributes-and-enrichment/building-dependent-attributes) (coming soon).
+
+For hands-on guidance on creating your first attribute, return to [Creating Custom Attributes](/product/attributes-and-enrichment/creating-custom-attributes).
+
+For formula function reference, see the complete [Formula Functions Reference](/product/reference/formula-functions) (coming soon).

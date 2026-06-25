@@ -1,0 +1,82 @@
+---
+title: "How Channels Work in Merchkit"
+description: "Understand how Merchkit channels function as dedicated content generation destinations with their own grid views, attribute sets, and formatting requirements—distinct from your main Products view and Integrations."
+---
+
+# How Channels Work in Merchkit
+
+Channels are where Merchkit generates fully enriched, properly formatted product content for your sales destinations. Think of channels as **specialized content generation destinations**, not just data pipelines.
+
+## Channels vs. Products View
+
+Your **Products view** is your master catalog—it's where you manage your core product information that feeds everything else.
+
+Your **Channels** are separate, dedicated views where Merchkit generates channel-specific content. When you open a channel, you see:
+
+- A **grid view** unique to that channel's requirements
+- **Channel-specific attributes** (like Wayfair's packaging dimensions or Amazon's bullet points)
+- **Pre-loaded AI prompts** that automatically fill those attributes from your product data
+- Channel-specific formatting and requirements
+
+**Example:** Wayfair requires a large number of specific attributes, including detailed packaging measurements, assembly instructions, and category-specific details. Merchkit creates a dedicated Wayfair channel view where you see only those attributes, with pre-configured prompts ready to generate them.
+
+## Channels vs. Integrations
+
+Don't confuse channels with integrations:
+
+- **Integrations** = data pipes. They import data into Merchkit or export data out. They're about connecting systems.
+- **Channels** = content generation destinations. They transform your product data into marketplace-specific formats and attributes.
+
+An integration might import inventory from your ERP. A channel generates a complete, formatted feed for Wayfair with all required attributes filled in.
+
+## Types of Channels
+
+Merchkit supports several channel types:
+
+### Traditional Marketplaces
+- **Wayfair** — Furniture and home goods with extensive category-specific attributes
+- **Walmart** — Retail marketplace with standard product attributes
+- **Amazon** — E-commerce with detailed product specifications
+- **Shopify** — Your own storefront or connected Shopify stores
+
+### Marketplace Platforms
+- **Mirakl** — White-label marketplaces (various branded instances: Mathis, Mine, Rue La La, etc.)
+- **Nordstrom Rack** — Luxury goods marketplace
+
+### Specialized Channels
+- **Google Merchant** — Google Shopping and feed requirements
+- **ChatGPT / GEO** — AI and voice assistant marketplaces (emerging channels)
+- **Houzz** — Home and design marketplace
+
+## How Channels Work: The Flow
+
+Here's what happens when you use a channel in Merchkit:
+
+1. **Connect the channel** — Link your account to Wayfair, Walmart, Amazon, etc.
+2. **View channel attributes** — Open the channel and see its dedicated grid with all required fields
+3. **Generate content** — Select SKUs and use AI to fill channel-specific attributes
+4. **Validate** — Check for errors and missing required fields
+5. **Export** — Download the channel-formatted data
+6. **Submit** — Upload the feed to the marketplace
+
+## Accessing Channels
+
+In your Merchkit sidebar, you'll see a **Channels** section listing all your connected channels with icons. At the bottom is a **+ Add Channel** button to connect new ones.
+
+Clicking a channel name opens its dedicated grid view—a separate URL like `merchkit.com/home/your-workspace/channels/wayfair`.
+
+[SCREENSHOT: Channels section in sidebar with connected channel icons and "+ Add Channel" button]
+
+## What Makes Channels Powerful
+
+Channels let you:
+
+- **Generate marketplace-ready content** — AI fills channel-specific attributes automatically
+- **Manage per-channel requirements** — Each marketplace has different needs; channels handle them separately
+- **Maintain consistency** — Your source product data stays clean; channels create formatted copies
+- **Optimize for each platform** — Customize channel prompts to match marketplace best practices
+- **Scale effortlessly** — Add new channels and regenerate content as you grow
+
+## Next Steps
+
+Ready to add your first channel? Move on to [Adding a Channel](/product/channels-and-content-generation/adding-a-channel) to get started.

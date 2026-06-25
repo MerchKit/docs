@@ -1,0 +1,119 @@
+---
+title: "Understanding the Products View"
+description: "A detailed walkthrough of the Products table — the toolbar, table columns, Import and Export dropdowns, per-product actions, and the action bar for bulk operations like Generate."
+---
+
+The Products view is your home base in Merchkit. It's the first thing you see when you log in, and it's where you'll do most of your work — browsing your catalog, importing data, launching enrichment, and exporting results.
+
+This article walks through every part of the Products view so you know what's available before you start working with your data.
+
+[SCREENSHOT: Full Products view showing the toolbar at top, the product table with several rows of data, and the sidebar on the left. Annotate the toolbar, table area, and column headers.]
+
+## The toolbar
+
+The toolbar runs across the top of the Products view. It controls what you see and how you interact with the table below.
+
+[SCREENSHOT: Close-up of the Products toolbar showing all buttons: Select a View, Attributes badge, Filters, Sort, Import dropdown, Export dropdown, and Save View.]
+
+**Select a View** — Views are saved configurations of your table. A view remembers which columns are visible, what filters are applied, and how the data is sorted. Click "Select a View" to switch between saved views or return to the default. When you import a CSV, Merchkit can auto-create a view filtered to just the imported products — this makes it easy to review what just came in.
+
+**Attributes** — Shows how many attributes are visible in this view. Clicking this shows or hides attribute columns in the table. Each attribute in the list has an arrow button that scrolls the spreadsheet to bring that attribute column into the center of your view. You can also grab an attribute from the left-hand side and drag and drop it to quickly reorder columns. This is a display toggle for the Products table — it's not the same as the Attributes page under Workspace, which is where you configure how attributes behave.
+
+**Filters** — Filter which products are displayed. You can filter by any attribute value, category, vendor, or other product data. Filters are saved as part of a view.
+
+**Sort** — Sort the table by any column, ascending or descending. Like filters, sort order is saved as part of a view.
+
+**Import** — Opens a dropdown with your import options. This is the unified entry point for getting data into Merchkit. The dropdown always includes **CSV Import** at the top. If you've connected any integrations (like Shopify or BigCommerce), those appear as additional options below CSV Import. Clicking an integration name triggers an import using the field mapping you've configured under Workspace → Integrations.
+
+**Export** — Works the same way as Import but in reverse. The dropdown includes **CSV Export** plus any connected integrations. Clicking an integration name triggers an export using that integration's export mapping.
+
+**Save View** — Saves your current filter, sort, and column configuration as a named view so you can return to it later.
+
+## The product table
+
+Below the toolbar is the table itself — a spreadsheet-like grid where each row is a product and each column is an attribute.
+
+### Default columns
+
+When you first open the Products view, you'll see a set of default columns. The exact columns depend on what's been imported and configured for your workspace, but common ones include:
+
+**Parent Product** — If a product is a variant (like a specific size or color of a rug), this column shows which parent product it belongs to. Parent-child relationships are set up during import or can be managed manually. Child SKUs can inherit attribute values from their parent, which is useful for series-style catalogs where many variants share most attributes — see [Parent/Child Product Relationships](/product/attributes-and-enrichment/parent-child-relationships) for a full walkthrough.
+
+**Data Sources** — Shows how many sources are attached to each product. This is an interactive column — double-clicking the cell opens the Sources upload view directly connected to that cell, where you can add URLs, paste text, or upload documents. Sources give the AI additional context for enrichment.
+
+**Product Images** — Thumbnails of the images associated with each product.
+
+**Vendor** — The supplier or vendor for this product.
+
+**Category** — The product's category assignment (e.g., "Sofas," "Rugs," "Lighting").
+
+**Created At** — When the product record was created in Merchkit.
+
+Beyond these defaults, every attribute you've configured appears as its own column. A workspace with 157 attributes has 157 potential columns — the Attributes toggle in the toolbar lets you control which ones are visible.
+
+### Adding and reordering columns
+
+Click the **+** icon at the far right of the column headers to add more attribute columns to the table. You can drag column headers to reorder them. Once you've arranged the columns the way you want, click **Save View** to preserve the layout.
+
+## Per-product actions
+
+### Opening the Sources panel
+
+Double-click any product's **Data Sources** cell to open the Sources upload view connected to that cell. From here you can:
+
+- Add a URL (paste a product page link, spec sheet, or supplier listing)
+- Add text (paste raw descriptions, specifications, or notes)
+- Upload documents (drag and drop PDFs, Excel files, Word docs, ODT, or RTF — up to 25MB per file)
+- Duplicate sources from the parent product (useful for variants that share the same reference material)
+
+[SCREENSHOT: The Sources upload view open for a product, showing the URL input, text input, and document drop zone. If the product has existing sources, show those listed above the input area.]
+
+### Editing cell values
+
+Click any editable cell in the table to modify its value directly. Text cells open an inline editor. For cells with constrained values (like a Category column), you'll see a dropdown of acceptable options.
+
+## The action bar
+
+When you select one or more products using the checkboxes on the left side of each row, an **action bar** appears at the bottom of the screen. The action bar gives you bulk operations for the selected products.
+
+[SCREENSHOT: The action bar visible at the bottom of the screen with products selected, showing the Delete, Export, and Generate buttons.]
+
+The action bar includes:
+
+**Delete** — Remove the selected products from your catalog.
+
+**Export** — Export just the selected products (as CSV or to a connected integration).
+
+**Generate** — This is the button that triggers AI enrichment. Clicking Generate opens a dropdown with two options:
+
+- **Generate Empty Attributes Only** (keyboard shortcut: ⌘↵ or Ctrl+Enter) — Fills in only the attributes that don't already have values. This is the most common choice, especially on your first enrichment run, because it won't overwrite anything you've already reviewed or manually entered.
+- **Generate All Attributes** — Re-generates every AI-configured attribute, including ones that already have values. Use this when you've updated your prompts or acceptable values and want to refresh the output.
+
+The Generate action only runs on attributes that have the **Use AI** toggle enabled in the Attributes configuration. Non-AI attributes (formulas, manual fields, reference lookups) are unaffected.
+
+## Putting it together: a typical workflow in the Products view
+
+Here's what a common session in the Products view looks like:
+
+1. You click **Import** → **CSV Import** to bring in a new batch of products
+2. Merchkit creates a view filtered to the imported products so you can review them
+3. You double-click a few products' **Data Sources** cells to add URLs or documents that give the AI more context
+4. You select all the imported products using the checkbox in the header row
+5. The action bar appears — you click **Generate** → **Generate Empty Attributes Only**
+6. Merchkit's AI fills in the configured attributes
+7. You scroll through the results, spot-checking values and making manual corrections where needed
+8. You click **Export** to push the enriched data back to your platform or download a CSV
+
+## Common issues
+
+**The Attributes button in the toolbar isn't what I expected.** The toolbar's Attributes button toggles column visibility in the table. To configure how attributes behave (prompts, AI settings, acceptable values), go to **Workspace → Attributes** in the sidebar.
+
+**I don't see the Import dropdown.** Make sure you're in the Products view (click "Products" in the sidebar under Catalog). The Import button is in the toolbar at the top of the Products table.
+
+**The action bar isn't appearing.** The action bar only shows when you've selected at least one product using the checkboxes. Click the checkbox to the left of a product row, or use the checkbox in the header row to select all visible products.
+
+**I see an integration in the Import dropdown but it's not importing anything.** Check that the integration's import mapping is configured under **Workspace → Integrations**. The import will use whatever field mapping you've set up there — if no fields are mapped, there's nothing to import.
+
+---
+
+**Next step:** Ready to bring in your data? Read [Importing Your First Catalog via CSV](/product/sources-and-importing/importing-first-catalog-csv) for a step-by-step walkthrough of the CSV import flow.

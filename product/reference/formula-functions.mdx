@@ -1,0 +1,77 @@
+---
+title: "Formula Functions Reference"
+description: "Complete reference of all available functions for the Formula field type in Merchkit — text, logical, and numeric functions with examples."
+---
+
+# Merchkit Formula Functions Reference
+
+This reference documents all available functions for the **Formula** field type in Merchkit. Use these via the "Insert Function" button when configuring a Formula attribute.
+
+Formula expressions use `{{attribute_name}}` to reference other attribute values, and can combine references with functions and operators (e.g., `{{msrp}}+15`, `ROUND({{price}} * 1.1, 2)`).
+
+---
+
+## Text Functions
+
+| Function | Description | Example |
+|---|---|---|
+| `CONCATENATE(text1, text2, ...)` | Join multiple text values into one string | `CONCATENATE({brand}, " - ", {name})` |
+| `UPPER(text)` | Convert text to uppercase | `UPPER({brand})` |
+| `LOWER(text)` | Convert text to lowercase | `LOWER({brand})` |
+| `TRIM(text)` | Remove leading and trailing whitespace | `TRIM({description})` |
+| `LEFT(text, count)` | Extract characters from the start of text | `LEFT({sku}, 3)` |
+| `RIGHT(text, count)` | Extract characters from the end of text | `RIGHT({sku}, 4)` |
+| `MID(text, start, count)` | Extract characters from the middle of text (1-based) | `MID({sku}, 4, 3)` |
+| `LEN(text)` | Get the length of text | `LEN({description})` |
+| `REPLACE(text, search, replacement)` | Replace first occurrence of text | `REPLACE({name}, "-", " ")` |
+| `SUBSTITUTE(text, oldText, newText)` | Replace all occurrences of text | `SUBSTITUTE({description}, "old", "new")` |
+| `TEXT(value)` | Format a value as text | `TEXT({price})` |
+| `LPAD(text, length, padChar?)` | Pad text on the left to reach target length | `LPAD({quantity}, 4, "0")` |
+| `RPAD(text, length, padChar?)` | Pad text on the right to reach target length | `RPAD({code}, 10, "-")` |
+| `CONTAINS(text, search)` | Check if text contains a substring (returns boolean) | `CONTAINS({description}, "premium")` |
+
+## Logical Functions
+
+| Function | Description | Example |
+|---|---|---|
+| `IF(condition, ifTrue, ifFalse)` | Return different values based on a condition | `IF({price} > 100, "Premium", "Standard")` |
+| `ISBLANK(value)` | Check if a value is empty or null | `ISBLANK({sale_price})` |
+| `COALESCE(value1, value2, ...)` | Return the first non-blank value | `COALESCE({sale_price}, {price}, 0)` |
+| `AND(condition1, condition2, ...)` | Return true if all conditions are true | `AND({active}, {in_stock})` |
+| `OR(condition1, condition2, ...)` | Return true if any condition is true | `OR({featured}, {on_sale})` |
+| `NOT(value)` | Return the opposite boolean value | `NOT({discontinued})` |
+| `SWITCH(expr, case1, result1, ...)` | Return value based on matching expression | `SWITCH({status}, "A", "Active", "I", "Inactive", "Unknown")` |
+| `IFS(cond1, result1, cond2, result2, ...)` | Return value based on multiple conditions | `IFS({score} > 90, "A", {score} > 80, "B", true, "C")` |
+
+## Numeric Functions
+
+| Function | Description | Example |
+|---|---|---|
+| `ROUND(number, decimals?)` | Round a number to specified decimal places | `ROUND({price}, 2)` |
+| `FLOOR(number)` | Round down to nearest integer | `FLOOR({quantity})` |
+| `CEILING(number)` | Round up to nearest integer | `CEILING({quantity})` |
+| `ABS(number)` | Return the absolute value | `ABS({difference})` |
+| `MIN(number1, number2, ...)` | Return the minimum value | `MIN({price}, {sale_price})` |
+| `MAX(number1, number2, ...)` | Return the maximum value | `MAX({price}, {min_price})` |
+| `SUM(number1, number2, ...)` | Add multiple numbers together | `SUM({price}, {tax}, {shipping})` |
+| `AVERAGE(number1, number2, ...)` | Calculate the average of numbers | `AVERAGE({rating1}, {rating2}, {rating3})` |
+
+---
+
+## Common Patterns
+
+**Markup calculation:** `{{msrp}} + 15` or `ROUND({{cost}} * 1.4, 2)`
+
+**Conditional pricing:** `IF({{sale_price}} > 0, {{sale_price}}, {{price}})`
+
+**SKU generation:** `CONCATENATE(LEFT({{brand}}, 3), "-", {{product_id}})`
+
+**Null-safe display:** `COALESCE({{sale_price}}, {{price}}, "Contact for price")`
+
+**Category mapping:** `SWITCH({{category}}, "Sofas", "Living Room", "Tables", "Dining", "Other")`
+
+**Validation check:** `IF(AND(NOT(ISBLANK({{width}})), NOT(ISBLANK({{height}})), NOT(ISBLANK({{depth}}))), "Complete", "Missing dimensions")`
+
+---
+
+*This reference is part of the Merchkit Knowledge Base. See article 3.6a (Field Type Guide) for when to use Formulas vs. AI-generated attributes.*
