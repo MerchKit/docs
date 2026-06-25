@@ -8,14 +8,13 @@ other MCP-capable agents. The MCP layer is a thin shim over the same REST API, s
 drift from the documented surface.
 
 <Note>
-  Examples use `https://app.merchkit.com` as the base URL. Treat this as a placeholder and confirm
-  your account's actual API host.
+  Examples use `https://www.merchkit.com` as the base URL.
 </Note>
 
 ## Endpoint and auth
 
 <ParamField path="MCP endpoint" type="string">
-  `https://app.merchkit.com/api/mcp` — a remote MCP server over **Streamable HTTP**.
+  `https://www.merchkit.com/api/mcp` — a remote MCP server over **Streamable HTTP**.
 </ParamField>
 
 Authenticate with the **same workspace API key** you use for REST — a bearer `mk_live_` token:
@@ -46,7 +45,7 @@ Claude Desktop connects to remote MCP servers through the `mcp-remote` bridge. A
           "args": [
             "-y",
             "mcp-remote",
-            "https://app.merchkit.com/api/mcp",
+            "https://www.merchkit.com/api/mcp",
             "--header",
             "Authorization: Bearer mk_live_..."
           ]

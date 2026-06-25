@@ -8,8 +8,7 @@ you operate your catalog programmatically — from your own backend, a script, o
 Claude — over the same data your team works with in the Merchkit app.
 
 <Note>
-  The examples below use `https://app.merchkit.com` as the base URL. Treat this as a placeholder and
-  confirm your account's actual API host before going to production.
+  The examples below use `https://www.merchkit.com` as the base URL.
 </Note>
 
 ## The mental model
@@ -42,17 +41,17 @@ A few concepts carry the whole API. Internalize these and the rest follows.
 ## Base URL and spec
 
 <ParamField path="Base URL" type="string">
-  `https://app.merchkit.com/api/v1` — all REST endpoints live under the `/api/v1` prefix.
+  `https://www.merchkit.com/api/v1` — all REST endpoints live under the `/api/v1` prefix.
 </ParamField>
 
 <ParamField path="OpenAPI spec" type="string">
-  `https://app.merchkit.com/api/v1/openapi` — the machine-readable contract. Field and enum
+  `https://www.merchkit.com/api/v1/openapi` — the machine-readable contract. Field and enum
   descriptions are rich enough for an agent to route by semantic search, and the spec backs the
   **API Reference** in these docs.
 </ParamField>
 
 <ParamField path="llms.txt" type="string">
-  `https://app.merchkit.com/llms.txt` — a curated, instruction-bearing guide written for agents. It
+  `https://www.merchkit.com/llms.txt` — a curated, instruction-bearing guide written for agents. It
   lists the preferred endpoints, the filter DSL, and the common footguns. If you are pointing an
   agent at Merchkit, give it this URL.
 </ParamField>

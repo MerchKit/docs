@@ -7,8 +7,7 @@ The Merchkit API and MCP server authenticate with **workspace API keys**. You cr
 workspace settings, then send it as a bearer token on every request.
 
 <Note>
-  The examples use `https://app.merchkit.com` as the base URL. Treat this as a placeholder and confirm
-  your account's actual API host.
+  The examples use `https://www.merchkit.com` as the base URL.
 </Note>
 
 ## API keys
@@ -21,12 +20,12 @@ Authorization: Bearer mk_live_...
 
 <CodeGroup>
 ```bash cURL
-curl https://app.merchkit.com/api/v1/products \
+curl https://www.merchkit.com/api/v1/products \
   -H "Authorization: Bearer mk_live_..."
 ```
 
 ```ts fetch
-const res = await fetch("https://app.merchkit.com/api/v1/products", {
+const res = await fetch("https://www.merchkit.com/api/v1/products", {
   headers: { Authorization: "Bearer mk_live_..." },
 });
 ```

@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Merchkit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3E703F",
+    "light": "#6EA570",
+    "dark": "#2E5530"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -136,7 +136,7 @@
           },
           {
             "group": "API Reference",
-            "openapi": "https://app.merchkit.com/api/v1/openapi"
+            "openapi": "https://www.merchkit.com/api/v1/openapi"
           }
         ]
       }
@@ -165,7 +165,7 @@
     "primary": {
       "type": "button",
       "label": "Go to App",
-      "href": "https://app.merchkit.com/home"
+      "href": "https://www.merchkit.com/home"
     }
   },
   "contextual": {
