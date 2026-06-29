@@ -139,6 +139,15 @@
             "openapi": "https://www.merchkit.com/api/v1/openapi"
           }
         ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "What's new",
+            "pages": ["changelog"]
+          }
+        ]
       }
     ],
     "global": {
@@ -173,8 +182,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/merchkit",
-      "linkedin": "https://linkedin.com/company/merchkit"
+      "x": "https://x.com/merchkit_",
+      "linkedin": "https://www.linkedin.com/company/merchkithq/"
     }
   }
 }
