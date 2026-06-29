@@ -6,6 +6,29 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
+<Update label="Week of June 29, 2026" description="Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
+
+  **New**
+  - **Wayfair sandbox credentials.** Connect a Wayfair integration with sandbox keys, run a full mapping and export end to end, then swap in production credentials when you're ready. See [adding a channel](/product/channels-and-content-generation/adding-a-channel).
+  - **Merge attribute on CSV import.** Pick which attribute Merchkit should match incoming rows against, and apply a filter so an import only touches the subset of products you intend to update. Useful for partial vendor refreshes and targeted price or inventory loads. See [reimporting and updating products](/product/sources-and-importing/reimporting-updating-products).
+  - **Child entities in product list references.** Variants and other child products can now be selected directly in a product-list reference cell, not just their parents.
+
+  **Updated**
+  - Wayfair class views are labeled with the class ID, and a **Refresh classes** button resets the view to the latest taxonomy from Wayfair.
+  - Filters in the catalog grid handle inverse, parent, and other reference attributes, and the operator list is scoped to the ones that make sense for each filter type.
+  - The **Usage** page is paginated, so workspaces with long event histories load quickly.
+  - Default grid pagination size is larger, so you scroll less between pages on big catalogs.
+  - The Lulu print-on-demand payload was updated to match the latest field list.
+  - File names are preserved when sources are uploaded, so the original filename shows up against each import job.
+
+  **Fixed**
+  - **Shopify image sync** is more reliable: newly created Shopify images are polled so their filenames sync back, previously unlinked images get relinked on the next sync, and image format and extension are saved correctly on import.
+  - Entity references can be assigned in import and export mappings again.
+  - The image reference editor no longer mishandles deletions while you're searching, and child products can pull an image directly from their parent.
+  - The OpenAPI spec served to the docs API playground uses an absolute server URL, so **Try it** requests resolve correctly. See the [API overview](/developers/overview).
+
+</Update>
+
 <Update label="June 2026" description="Wayfair, the API and MCP server, the AI agent, and roles & permissions">
 
   **Channels**
