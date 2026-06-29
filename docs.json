@@ -139,6 +139,15 @@
             "openapi": "https://www.merchkit.com/api/v1/openapi"
           }
         ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "What's new",
+            "pages": ["changelog"]
+          }
+        ]
       }
     ],
     "global": {
