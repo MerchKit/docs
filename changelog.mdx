@@ -13,6 +13,10 @@ Everything new in Merchkit, newest first. Want something added to the roadmap? E
   - **Merge attribute on CSV import.** Pick which attribute Merchkit should match incoming rows against, and apply a filter so an import only touches the subset of products you intend to update. Useful for partial vendor refreshes and targeted price or inventory loads. See [reimporting and updating products](/product/sources-and-importing/reimporting-updating-products).
   - **Child entities in product list references.** Variants and other child products can now be selected directly in a product-list reference cell, not just their parents.
 
+  **Billing & usage**
+  - **Invoice history on the Billing page.** Accounts billed through Measure now see a table of past invoices with **View** (hosted invoice) and **PDF** actions. Voided invoices show muted, drafts are hidden, and the list is capped at the most recent 100 with a notice if there are more.
+  - **Step through past billing periods on Usage.** Use the ←/→ arrows on the **Usage** page to move between billing periods, and share a specific period with a `?period=YYYY-MM-DD` URL. History is available back to May 2026. Past-period views show plain event counts — allowance bars and overage banners only render for the current period.
+
   **Updated**
   - Wayfair class views are labeled with the class ID, and a **Refresh classes** button resets the view to the latest taxonomy from Wayfair.
   - Filters in the catalog grid handle inverse, parent, and other reference attributes, and the operator list is scoped to the ones that make sense for each filter type.
