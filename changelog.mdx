@@ -6,152 +6,164 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
-<Update label="Week of June 29, 2026" description="Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
-
+<Update label="Week of June 29, 2026" description="Image variations DAM, Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
   **New**
-  - **Wayfair sandbox credentials.** Connect a Wayfair integration with sandbox keys, run a full mapping and export end to end, then swap in production credentials when you're ready. See [adding a channel](/product/channels-and-content-generation/adding-a-channel).
+
+  - **Major Image generation updates.** Every Image field cell now keeps a full history of the images it has generated so you can look through edits as you make improvements. From the image viewer you can: 
+    - Select image to **Add to image collections** 
+    - **Edit any image** by removing/adding objects, cleaning up specific areas or describing any other edit through our AI image editor 
+    - **Reframe** images to a new aspect ratio in case you want to use the image in other contexts 
+    - **Use as reference** to feed the image back into the attribute's reference set as an example or if you want to have future images copy this images style, structure or art direction 
+    - or **Save / Copy / Download**. 
+    - Note: unpromoted (as in images that are not saved, added to product images or collections) generated images have a lifetime and are auto-deleted after 365 days. See [managing product images](/product/sources-and-importing/managing-product-images) and the [Image field type](/product/attributes-and-enrichment/field-type-guide).
+
   - **Merge attribute on CSV import.** Pick which attribute Merchkit should match incoming rows against, and apply a filter so an import only touches the subset of products you intend to update. Useful for partial vendor refreshes and targeted price or inventory loads. See [reimporting and updating products](/product/sources-and-importing/reimporting-updating-products).
   - **Child entities in product list references.** Variants and other child products can now be selected directly in a product-list reference cell, not just their parents.
 
   **Updated**
+
   - Wayfair class views are labeled with the class ID, and a **Refresh classes** button resets the view to the latest taxonomy from Wayfair.
   - Filters in the catalog grid handle inverse, parent, and other reference attributes, and the operator list is scoped to the ones that make sense for each filter type.
-  - The **Usage** page is paginated, so workspaces with long event histories load quickly.
-  - Default grid pagination size is larger, so you scroll less between pages on big catalogs.
-  - The Lulu print-on-demand payload was updated to match the latest field list.
-  - File names are preserved when sources are uploaded, so the original filename shows up against each import job.
 
   **Fixed**
-  - **Shopify image sync** is more reliable: newly created Shopify images are polled so their filenames sync back, previously unlinked images get relinked on the next sync, and image format and extension are saved correctly on import.
-  - Entity references can be assigned in import and export mappings again.
-  - The image reference editor no longer mishandles deletions while you're searching, and child products can pull an image directly from their parent.
-  - The OpenAPI spec served to the docs API playground uses an absolute server URL, so **Try it** requests resolve correctly. See the [API overview](/developers/overview).
 
+  - **Shopify image sync** is more reliable: newly created Shopify images are polled so their filenames sync back, previously unlinked images get relinked on the next sync, and image format and extension are saved correctly on import.
 </Update>
 
 <Update label="June 2026" description="Wayfair, the API and MCP server, the AI agent, and roles & permissions">
-
   **Channels**
+
   - **Sell on Wayfair, end to end.** Map your catalog to Wayfair's product taxonomy, auto-classify products into the right categories, and validate values against Wayfair's accepted attributes before you export. Connect **sandbox** credentials to test the full flow, then switch to production when you're ready.
   - A single workspace can now carry multiple attribute classes, so distinct channel taxonomies live side by side.
 
   **Developers (beta)**
+
   - **Customer API and MCP server.** Operate your catalog programmatically over a REST API at `/api/v1` (OpenAPI 3.1), or connect an agent like Claude through the remote MCP server. Available in beta — [contact support](mailto:support@merchkit.com) to enable it for your workspace. See the [API overview](/developers/overview) to get started.
   - API key management is rolling out gradually behind an account flag.
 
   **AI agent**
+
   - **Chat with your catalog.** A side-panel assistant answers questions, builds attributes, creates and edits products, and runs bulk changes. It reads the rows and cells you have selected, and asks for your approval before it writes anything.
 
   **Teams**
+
   - **Roles and permissions** (gradual rollout). Give teammates Admin, Editor, or Viewer access, and fine-tune what each role can do per workspace.
   - Invitations now use a 6-digit code, so corporate email scanners no longer consume the link before your teammate clicks it.
 
   **Images**
+
   - Manage every product image in one full-screen library. Search, preview, upload by file or URL, reorder, and link or unlink images across products or from a parent down to its variants.
   - More reliable two-way image sync with Shopify, including media-name handling and Media ID mapping fixes.
 
   **Enrichment**
+
   - Reference lookups now feed generation, so the AI can pull values from linked vendors and products.
   - Large bulk runs process faster and stay within platform limits.
-
 </Update>
 
 <Update label="May 2026" description="Confidence filtering, usage transparency, audit logging, and presence">
-
   **Enrichment**
+
   - **Confidence filter.** Every generated value carries a confidence score. Filter the grid to surface low-confidence values for review, or find products that don't have a score yet.
   - Generation now supports JSON responses.
   - Toggling AI generation on or off now preserves your attribute configuration.
 
   **Usage and billing**
+
   - A new **Usage** page shows your SKU enrichment allowance and agent credits with progress bars, overage warnings, and per-user attribution. See what you've used before the bill arrives.
 
   **Channels**
+
   - Readable integration errors: a failed export now names the field or metafield at fault in plain language.
   - Shopify import runs in resumable batches for large stores.
-  - Wayfair attributes are disambiguated by class name.
 
   **Teams**
+
   - **Audit logging** records every product create, update, and delete.
   - **Presence indicators** show which teammates are in the workspace and what they're viewing.
 
   **Workspace**
+
   - Bulk-refresh URL sources from the sources page.
   - Map imported records to a parent product on update, and trigger relationship mapping yourself.
-
 </Update>
 
 <Update label="April 2026" description="Custom classification, a rebuilt enrichment engine, and reworked CSV export">
-
   **Enrichment**
-  - **Custom classification.** Auto-classify products down a deep, multi-level taxonomy (1,500+ categories) while staying inside your own category tree, with no invented categories.
+
+  - **Custom classification.** Auto-classify products down a deep, multi-level taxonomy (1,500\+ categories) while staying inside your own category tree, with no invented categories.
   - A rebuilt attribute-generation engine delivers faster, more reliable enrichment, with cleaner handling of empty and enum values.
 
   **Workspace**
+
   - Column width and pinning now persist and survive import and export.
   - A new custom cell editor replaces the previous grid editor for smoother editing.
   - Collections inherit in both directions across products, data sources, and images.
 
   **Images**
-  - Image generation moved to the gpt-image-2 model.
+
+  - Image generation now supports the OpenAI gpt-image-2 model.
 
   **Channels**
-  - CSV export now honors your exact selection, including select-all with exceptions.
 
+  - CSV export now honors your exact selection, including select-all with exceptions.
 </Update>
 
 <Update label="March 2026" description="Reference lookups in enrichment, infinite Shopify import, and reusable templates">
-
   **Enrichment**
+
   - Generation can read **reference lookups**, pulling values from linked products and vendors. Formulas can use them too.
   - A new specialized data type adds purpose-built editors for structured channel fields.
 
   **Channels**
+
   - **Infinite Shopify import** handles stores of any size without timing out.
   - Save and reuse named **import and export mapping templates** per integration.
   - Merchkit now detects and maps Shopify metafields automatically, including unstructured ones.
 
   **Images**
+
   - Reorder images in the image collection editor by drag-and-drop.
 
   **Workspace**
-  - Import filters gained an "in list" operator, and primary-ID matching is now whitespace- and case-tolerant, so updates land on the right products instead of creating duplicates.
 
+  - Import filters gained an "in list" operator, and primary-ID matching is now whitespace- and case-tolerant, so updates land on the right products instead of creating duplicates.
 </Update>
 
 <Update label="February 2026" description="Formula attributes, product collections, and a simpler channel setup">
-
   **Enrichment**
+
   - **Formula attributes.** Derive a value deterministically from your other columns using spreadsheet-style functions. Formulas recompute automatically on bulk update and re-import. See the [formula functions reference](/product/reference/formula-functions).
 
   **Workspace**
+
   - Group products into **collections**, add variants from the product tree, and import variant structures from CSV.
   - Keyboard shortcuts for column search, and clearer single- and multi-select cells.
   - Choose whether a CSV import is allowed to create new products.
 
   **Channels**
+
   - A simpler channel template system, and one-click Shopify connect with automatic cleanup on uninstall.
 
   **Images**
-  - A faster default image-generation model, with no model picker to manage.
 
+  - A faster default image-generation model, with no model picker to manage.
 </Update>
 
 <Update label="January 2026" description="Shopify on GraphQL, CSV import onboarding, and read-only attributes">
-
   **Channels**
+
   - Shopify export moved to the **GraphQL API**, with variant-level export for SKUs, prices, barcodes, and options.
-  - Automatic detection when the Merchkit app is installed, plus updated webhooks.
-  - Build the structured JSON payload Lulu print-on-demand needs straight from your attributes.
 
   **Workspace**
+
   - A guided **CSV import onboarding** flow.
   - **Read-only attributes** protect source-of-truth fields from manual edits, while still accepting imports, syncs, and formula writes.
   - Export errors now write back to the originating grid cell.
   - Search now matches the attribute names you see on screen.
 
   **Enrichment**
+
   - Point individual attributes at the model that suits them (OpenAI, Anthropic Claude, or Google Gemini).
   - Image extraction retries automatically when a source returns nothing.
-
 </Update>

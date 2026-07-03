@@ -1,6 +1,6 @@
 ---
-title: "Managing Product Images"
-description: "Upload, organize, and use product images for AI enrichment"
+title: "Managing product images"
+description: "Upload product photos, browse AI-generated variations, edit and reframe images, and promote them into product image collections from the Merchkit DAM."
 ---
 
 # Managing Product Images
@@ -45,6 +45,38 @@ Some attributes use the **Image** field type. These attributes can generate bran
 When you configure an Image field type attribute, you'll specify which source images the AI should use as reference input.
 
 [SCREENSHOT: Image field type with AI generation options]
+
+### Working with Image Variations
+
+
+Every Image field cell keeps a full history of the images it has generated. Click a cell to open the fullscreen viewer and you'll see a **filmstrip of variations** across the bottom (newest first) and a details panel on the right with the model, aspect ratio, and prompt used for the focused variation.
+
+From any variation you can:
+
+- **Add to collection** — promote the variation into `product_images` (or any other image collection defined on the product) so it appears alongside your other product photos. The variation stays in the history too.
+- **Edit** — open the masked inpaint editor: paint over the region you want to change, describe the fix, and generate a new variation with just that area repainted.
+- **Reframe** — open the generative reframe/outpaint editor: pick a target aspect ratio (Square, Portrait, Tall, Landscape, Wide, Story) and let Bria expand the canvas to fill in new margins.
+- **Use as reference** — feed the variation back into the attribute's reference images so future generations of this column pick up its style.
+- **Save**, **Copy URL**, and **Download** — pin a variation so it's excluded from cleanup, copy its URL, or download the file locally.
+
+Edit and reframe results are appended to the same variations list as new entries, so you can always revert by focusing an earlier variation.
+
+### DAM Gallery
+
+The Images page under Catalog is now a workspace-wide **digital asset manager**. It lists every image entity — uploaded product photos and every AI-generated variation across every cell — in a single grid.
+
+Use the filter chips at the top to narrow the view:
+
+- **Generated** — only AI-generated images (variations, edits, reframes)
+- **In collection** — only images that have been promoted into an image collection like `product_images`
+- **Saved** — only images you've explicitly starred
+- **Model** — filter by the generation model that produced the image
+
+Select an image to see its provenance (source image, model, prompt, aspect ratio) and jump to the product it belongs to.
+
+### Retention of Unpromoted Variations
+
+To keep the DAM manageable, generated variations that are **not** promoted into a collection, saved, or used as a lineage source for another image are automatically deleted after 365 days. Uploaded images, saved images, and any variation that's been added to a collection are kept indefinitely. If you want to keep a one-off generated image, star it (**Save**) or add it to a collection.
 
 ## Uploading and Managing Images
 
