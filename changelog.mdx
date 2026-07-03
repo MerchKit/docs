@@ -6,9 +6,10 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
-<Update label="Week of June 29, 2026" description="Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
+<Update label="Week of June 29, 2026" description="Image variations DAM, Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
 
   **New**
+  - **Image variations and DAM.** Every Image field cell now keeps a full history of the images it has generated. Open the fullscreen viewer to browse variations newest-first, then per variation **Add to collection** (promote into `product_images`), **Edit** with a masked inpaint, **Reframe** to a new aspect ratio via Bria outpaint, **Use as reference** to feed the image back into the attribute's reference set, or **Save / Copy / Download**. The Catalog → Images page is now a workspace-wide DAM listing every uploaded and generated image with filters for generated, in-collection, saved, and model. Unpromoted generated variations are auto-deleted after 365 days. See [managing product images](/product/sources-and-importing/managing-product-images) and the [Image field type](/product/attributes-and-enrichment/field-type-guide).
   - **Wayfair sandbox credentials.** Connect a Wayfair integration with sandbox keys, run a full mapping and export end to end, then swap in production credentials when you're ready. See [adding a channel](/product/channels-and-content-generation/adding-a-channel).
   - **Merge attribute on CSV import.** Pick which attribute Merchkit should match incoming rows against, and apply a filter so an import only touches the subset of products you intend to update. Useful for partial vendor refreshes and targeted price or inventory loads. See [reimporting and updating products](/product/sources-and-importing/reimporting-updating-products).
   - **Child entities in product list references.** Variants and other child products can now be selected directly in a product-list reference cell, not just their parents.

@@ -111,10 +111,24 @@ This guide covers every field type with examples, configuration details, and dec
 - The AI will attempt to match your source image style
 - Output quality depends on prompt clarity and input image quality
 
+**Variations, editing, and promoting to a collection**
+
+Every Image field cell keeps its full generation history as a list of **variations**. Click the cell to open the fullscreen viewer — variations are shown newest-first in a bottom filmstrip, with model, aspect ratio, and prompt on the right.
+
+From the viewer you can, per variation:
+- **Add to collection** — promote the variation into `product_images` (or another image collection defined on the product), so it becomes a published product image alongside uploads. The variation itself stays in the history.
+- **Edit (masked inpaint)** — mask a region and describe a change; a new variation is generated with just that area repainted.
+- **Reframe (outpaint, Bria)** — pick a target aspect ratio (Square, Portrait, Tall, Landscape, Wide, Story) and let the model outpaint new margins.
+- **Use as reference** — add the variation to this attribute's reference images so future generations of the column pick up its style.
+- **Save**, **Copy URL**, and **Download** — pin, copy, or download individual variations.
+
+Every image entity — uploads and variations across every cell — also shows up in the workspace-wide DAM at Catalog → Images. See [Managing product images](/product/sources-and-importing/managing-product-images) for the full gallery workflow and retention behavior.
+
 **Limitations:**
 - Image generation is more resource-intensive than text
 - Style consistency can vary across multiple generated images
 - Not all prompts will produce high-quality results; test and iterate
+- Generated variations that are not saved, promoted into a collection, or used as a lineage source are auto-deleted after 365 days
 
 **Common mistakes:**
 - Vague visual descriptions (be specific: "3D isometric view with measurements" not "make it look good")
