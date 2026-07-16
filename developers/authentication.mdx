@@ -51,6 +51,7 @@ Scopes are granted per resource and split into **read** and **write** granularit
 | Resource | Read scope | Write scope(s) |
 |---|---|---|
 | Products | `read:products` | `write:products` |
+| Assets (images) | `read:products` | `write:products` |
 | Attribute definitions | `read:attributes` | `write:attributes` |
 | Attribute values | — | `write:attribute_values` |
 | Grid views | `read:views` | `write:views` |
@@ -61,6 +62,16 @@ Scopes are granted per resource and split into **read** and **write** granularit
 | History | `read:history` | — |
 | Jobs | `read:jobs` | — |
 | Import / export | — | `data:import`, `data:export` |
+
+Three scope details worth knowing:
+
+- **Assets (images) share the product scopes** (`read:products` / `write:products`) — there is no
+  separate `read:assets`.
+- **Product enrichment differs by surface.** The MCP `set_attribute_values` tool checks
+  `write:attribute_values`; the REST equivalent (`PATCH /api/v1/products/{id}/attributes`) checks
+  `write:products`. Grant both to a key that enriches over both surfaces.
+- **Other entities use their own write scope.** Updating attribute values on a vendor or category
+  requires `write:vendors` / `write:categories`; on an image, `write:products`.
 
 <Callout type="info">
   Scopes mirror Merchkit's internal permission model, so an API key and a human team member reason

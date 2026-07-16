@@ -94,6 +94,7 @@ The MCP tools mirror the REST API.
 |---|---|
 | `search_products` | List and search products with the [filter DSL](/developers/conventions#filtering-and-sorting), sort, and pagination |
 | `get_product` | Fetch a single product's full detail |
+| `list_entities` | List and search any catalog entity type — products, images, vendors, or categories — with the same filters, sort, and pagination |
 | `list_attributes` | List attribute definitions for an entity type / channel |
 | `get_completeness` | Check per-channel completeness for a product |
 | `get_references` | Read a product's **references** (related entities) |
@@ -106,7 +107,8 @@ The MCP tools mirror the REST API.
 | Tool | What it does |
 |---|---|
 | `create_product` | Create a product (optionally as a variant via a parent) |
-| `set_attribute_values` | Set attribute values on a product (enrichment) |
+| `create_entity` | Create any catalog entity — a product, image, vendor, or category |
+| `set_attribute_values` | Set attribute values on an entity (products by default; pass `entity_type` to update an image, vendor, or category — `product_id` then holds that entity's id) |
 | `set_parent` | Set a product's parent entity |
 
 <Callout type="info">
@@ -118,4 +120,71 @@ The MCP tools mirror the REST API.
   **There is no delete tool in the beta.** Destructive operations are disabled across both REST and
   MCP and will be enabled in a later release. See
   [Authentication](/developers/authentication#beta-limitation-deletes-are-disabled).
+</Callout>
+
+## Working with vendors, categories, and images
+
+Products point at other entities — a vendor, a category, their images — through
+**[reference attributes](/developers/conventions#reference-attributes)**. A reference always holds
+the other entity's `id`, so the entity has to exist before a product can point at it.
+`list_entities` and `create_entity` cover that: look up what already exists, create what doesn't,
+then set the reference.
+
+For example, to file a product under a "Trail Running" category:
+
+<Steps>
+  <Step title="Look for the category first">
+    ```json
+    {
+      "tool": "list_entities",
+      "arguments": {
+        "entity_type": "category",
+        "filters": [{ "attribute_key": "name", "operator": "contains", "value": "Trail Running" }]
+      }
+    }
+    ```
+    If it exists, use its `id` and skip to step 3. Search with `contains` rather than an exact
+    match — it also surfaces near-duplicates, which keeps your catalog clean: one "Trail Running",
+    not five spellings of it.
+  </Step>
+  <Step title="Create it if it's missing">
+    ```json
+    {
+      "tool": "create_entity",
+      "arguments": {
+        "entity_type": "category",
+        "attributes": { "name": "Trail Running" },
+        "confirm": true
+      }
+    }
+    ```
+    `create_entity` is a write tool, so the same preview-then-confirm flow applies. The response
+    includes the new category's `id`.
+  </Step>
+  <Step title="Point the product at it">
+    ```json
+    {
+      "tool": "set_attribute_values",
+      "arguments": {
+        "product_id": "…",
+        "attributes": { "category": "<category-id>" },
+        "confirm": true
+      }
+    }
+    ```
+    Single references take one entity ID; list references (like `product_images`) take an array of
+    them.
+  </Step>
+</Steps>
+
+The same pattern works for vendors and images. Creating an **image** entity (the resource the REST
+API calls **assets**) records a hosted image URL — its `url` attribute. To upload files or pull
+images down from the web, use the image library in the app or a
+[CSV import](/product/sources-and-importing/importing-first-catalog-csv).
+
+<Callout type="info">
+  References are deliberately ID-based: a reference can only point at an entity that already exists,
+  so a typo in a reference value fails loudly instead of silently minting a new vendor. When you
+  check for near-duplicates before creating, search with `contains` — matching is case-insensitive,
+  and a wider net catches alternate spellings an exact match would miss.
 </Callout>
