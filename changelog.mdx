@@ -6,6 +6,17 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
+<Update label="Week of July 13, 2026" description="MCP tools for vendors, categories, and images">
+
+  **New**
+  - **Work with vendors, categories, and images from an agent.** Two new MCP tools — `list_entities` and `create_entity` — let Claude and other agents look up or create the entities your products reference, then link them by ID. Ask your agent to "file these shoes under Trail Running and set the vendor to Salomon" and it can now do the whole thing: find or create the category and vendor, then set the references. See [working with vendors, categories, and images](/developers/mcp#working-with-vendors-categories-and-images).
+  - **Enrich more than products.** `set_attribute_values` now accepts an `entity_type`, so an agent can update an image's alt text, fix a vendor's name, or edit a category — not just products.
+
+  **Fixed**
+  - Asking the API for attribute definitions with an unknown entity type returns a clear validation error instead of an opaque failure.
+
+</Update>
+
 <Update label="Week of June 29, 2026" description="Wayfair sandbox, smarter CSV imports, and Shopify image sync polish">
 
   **New**
