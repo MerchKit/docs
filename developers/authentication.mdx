@@ -1,10 +1,13 @@
 ---
 title: "Authentication"
-description: "Authenticate with workspace API keys: bearer mk_live_ tokens, one key per workspace, and per-resource read/write scopes."
+description: "Authenticate the API and MCP server: connect an agent with OAuth (no key), or use a workspace API key — bearer mk_live_ tokens, one key per workspace, and per-resource read/write scopes."
 ---
 
-The Merchkit API and MCP server authenticate with **workspace API keys**. You create a key from your
-workspace settings, then send it as a bearer token on every request.
+The Merchkit **REST API** authenticates with a **workspace API key** — create a key in your
+workspace settings and send it as a bearer token on every request. The **MCP server** accepts the
+same key, and it *also* lets an agent connect over **OAuth** with no key at all — the recommended
+path for tools like Claude, ChatGPT, and VS Code. See [connecting an agent](#connecting-an-agent)
+for that flow; the rest of this page covers API keys and the scopes they carry.
 
 <Note>
   The examples use `https://www.merchkit.com` as the base URL.
@@ -42,6 +45,22 @@ Each API key maps to **exactly one workspace**. There is no account-level key th
 to operate across multiple workspaces, create one key per workspace and select the right key per
 request. The same key authenticates both the REST API and the [MCP server](/developers/mcp).
 
+## Connecting an agent
+
+Interactive agents don't need an API key. When you add Merchkit to Claude, ChatGPT, VS Code, or
+another MCP client, the app connects to the [MCP server](/developers/mcp) over **OAuth 2.1**: you
+sign in, pick the **workspace** to connect, and choose the **scopes** to grant on a consent screen.
+
+- **No secret on disk** — the agent holds a short-lived token, not your API key.
+- **One connection, one workspace** — the same model as an API key.
+- **Scopes work identically** — the consent screen grants the same read/write scopes documented
+  below, with every scope except `delete:products` selected by default.
+- **Revoke anytime** — manage connections under **Settings → API keys → Connected apps**; revoking
+  cuts the agent's access on its next request.
+
+Use an API key for non-interactive clients — servers, scripts, and CI — that can't complete a browser
+sign-in. See the [MCP guide](/developers/mcp#connect-in-one-click) for the one-click connect buttons.
+
 ## Scopes
 
 Keys carry **scopes** that grant least-privilege access. Each operation declares the scope(s) it
@@ -61,7 +80,6 @@ Scopes are granted per resource and split into **read** and **write** granularit
 | Completeness | `read:completeness` | — |
 | History | `read:history` | — |
 | Jobs | `read:jobs` | — |
-| Import / export | — | `data:import`, `data:export` |
 
 Three scope details worth knowing:
 
@@ -86,8 +104,8 @@ Because scopes are per-resource and split read/write, you can mint keys for diff
 - **Read-only key** — grant only `read:*` scopes. It can list and read every resource you authorize
   but cannot mutate anything. Use it for dashboards, analytics, sync-out jobs, or pointing an agent
   at your catalog for inspection.
-- **Write key** — grant the `write:*` (and `data:*`) scopes the integration needs, in addition to the
-  reads. Use it for enrichment, imports, and any agent that mutates data.
+- **Write key** — grant the `write:*` scopes the integration needs, in addition to the reads. Use it
+  for enrichment, imports, and any agent that mutates data.
 
 A read-only key **cannot perform writes** — this is enforced by scope on both the REST API and the
 MCP write tools.

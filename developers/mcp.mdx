@@ -1,68 +1,112 @@
 ---
 title: "MCP Server"
-description: "Operate your Merchkit catalog from Claude and other agents over the remote MCP server, authenticated with the same mk_live_ API key."
+description: "Operate your Merchkit catalog from Claude, ChatGPT, VS Code, and other agents over the remote MCP server. Connect in one click with OAuth — no API key — or authenticate with a workspace API key for programmatic use."
 ---
 
-Merchkit exposes a **remote MCP server** so you can operate your catalog directly from Claude and
-other MCP-capable agents. The MCP layer is a thin shim over the same REST API, so its tools never
-drift from the documented surface.
+Merchkit exposes a **remote MCP server** so you can operate your catalog directly from Claude,
+ChatGPT, VS Code (GitHub Copilot), Cursor, and any other MCP-capable agent. The MCP layer is a thin
+shim over the same REST API, so its tools never drift from the documented surface.
 
 <Note>
   Examples use `https://www.merchkit.com` as the base URL.
 </Note>
 
-## Endpoint and auth
-
 <ParamField path="MCP endpoint" type="string">
   `https://www.merchkit.com/api/mcp` — a remote MCP server over **Streamable HTTP**.
 </ParamField>
 
-Authenticate with the **same workspace API key** you use for REST — a bearer `mk_live_` token:
+## Connect in one click
+
+The MCP endpoint speaks **OAuth 2.1**, so most agents connect with a button: click, sign in to
+Merchkit, choose the **workspace** and the **permissions** to grant, and approve. **There is no API
+key to create, copy, or paste**, and you can revoke the connection at any time from **Settings → API
+keys → Connected apps**.
+
+<CardGroup cols={2}>
+  <Card title="Add to Claude" icon="robot" href="https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Merchkit&connectorUrl=https%3A%2F%2Fwww.merchkit.com%2Fapi%2Fmcp">
+    Opens claude.ai with the Merchkit connector pre-filled. Works on Claude web and Claude Desktop.
+  </Card>
+  <Card title="Install in VS Code" icon="code" href="https://insiders.vscode.dev/redirect/mcp/install?name=merchkit&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fwww.merchkit.com%2Fapi%2Fmcp%22%7D">
+    Adds the Merchkit MCP server to VS Code for GitHub Copilot agent mode.
+  </Card>
+</CardGroup>
+
+<Callout type="info">
+  Whichever client you use, the URL to add is always **`https://www.merchkit.com/api/mcp`**. On the
+  consent screen the **default permissions** are everything except **product delete** — tighten them
+  to a read-only set for an agent that should only inspect your catalog.
+</Callout>
+
+### Claude (web & Desktop)
+
+Click **Add to Claude** above, or add it manually: **Settings → Connectors → Add custom connector**,
+paste `https://www.merchkit.com/api/mcp`, and click **Add**. Claude opens the Merchkit consent
+screen — pick a workspace, choose scopes, approve — and the tools appear. No `claude_desktop_config.json`
+editing and no `mcp-remote` bridge required.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http merchkit https://www.merchkit.com/api/mcp
+```
+
+Then run `/mcp` and select **merchkit** to complete the browser sign-in. No key or header needed.
+
+### ChatGPT
+
+ChatGPT supports custom remote MCP connectors through **developer mode**, on the web app and a paid
+plan (Plus, Pro, Business, Enterprise, or Edu). There is no one-click link — add it manually:
+
+<Steps>
+  <Step title="Enable developer mode">
+    In ChatGPT on the web, open **Settings → Apps & Connectors → Advanced settings** and turn on
+    **developer mode**. On Business/Enterprise/Edu a workspace admin must enable it first.
+  </Step>
+  <Step title="Create the connector">
+    On **Apps & Connectors**, click **Create**, give it a name, and paste the server URL
+    `https://www.merchkit.com/api/mcp`. For authentication choose **OAuth** and leave the client-id
+    and client-secret fields blank — ChatGPT registers itself.
+  </Step>
+  <Step title="Sign in and use it">
+    Click **Create** and complete the Merchkit sign-in. The tools then appear from the **+** menu in
+    a chat.
+  </Step>
+</Steps>
+
+### VS Code / GitHub Copilot & Cursor
+
+Click **Install in VS Code** above, or add it from the command line:
+
+```bash
+code --add-mcp '{"name":"merchkit","type":"http","url":"https://www.merchkit.com/api/mcp"}'
+```
+
+For **Cursor**, open **Settings → MCP → Add** and paste `https://www.merchkit.com/api/mcp`. VS Code
+and Cursor both run the OAuth sign-in on first connect — no key required.
+
+## Authenticate with an API key (programmatic)
+
+For servers, scripts, CI, or any client without a browser to sign in, authenticate with a
+**workspace API key** instead — the same `mk_live_` bearer token the REST API uses:
 
 ```http
 Authorization: Bearer mk_live_...
 ```
 
 The key's scopes apply identically here: a read-only key can call the read tools but not the write
-tools. See [Authentication](/developers/authentication) for the scope model.
-
-## Connect from Claude Desktop
-
-Claude Desktop connects to remote MCP servers through the `mcp-remote` bridge. Add Merchkit to your
-`claude_desktop_config.json`:
-
-<Steps>
-  <Step title="Open your config file">
-    On macOS this is `~/Library/Application Support/Claude/claude_desktop_config.json`. Create it if
-    it does not exist.
-  </Step>
-  <Step title="Add the Merchkit server">
-    ```json
-    {
-      "mcpServers": {
-        "merchkit": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "mcp-remote",
-            "https://www.merchkit.com/api/mcp",
-            "--header",
-            "Authorization: Bearer mk_live_..."
-          ]
-        }
-      }
-    }
-    ```
-  </Step>
-  <Step title="Restart Claude Desktop">
-    Restart the app. The Merchkit tools appear in the tools menu, and you can ask Claude to search,
-    inspect, and enrich your catalog.
-  </Step>
-</Steps>
+tools. See [Authentication](/developers/authentication) for the full key + scope model.
 
 <Callout type="warning">
-  Your API key is a secret. Anyone with this config file can act on your workspace with the key's
-  scopes — protect it accordingly.
+  An API key is a secret with workspace access — store it in a secret manager or environment
+  variable, never in a shared config file. For interactive agents, **prefer the one-click OAuth
+  connect above**: it keeps no key on disk and is revocable per connection.
+</Callout>
+
+<Callout type="info">
+  For a local, stdio-only MCP client that cannot reach a remote HTTP server, bridge to it with
+  [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+  `npx -y mcp-remote https://www.merchkit.com/api/mcp` — add `--header "Authorization: Bearer mk_live_..."`
+  if the client cannot complete the OAuth sign-in itself.
 </Callout>
 
 ## Write tools require confirmation
@@ -86,7 +130,8 @@ Every **write** tool takes a `confirm` flag so the agent can preview a change be
 
 ## Tools
 
-The MCP tools mirror the REST API.
+The MCP tools mirror the REST API. Read tools require the resource's `read:*` scope; write tools
+require the matching `write:*` scope — see [scopes](/developers/authentication#scopes).
 
 ### Read tools
 
@@ -96,6 +141,9 @@ The MCP tools mirror the REST API.
 | `get_product` | Fetch a single product's full detail |
 | `list_entities` | List and search any catalog entity type — products, images, vendors, or categories — with the same filters, sort, and pagination |
 | `list_attributes` | List attribute definitions for an entity type / channel |
+| `list_attribute_classes` | List the workspace's attribute classes (cell-disabling rule sets) |
+| `get_attribute_class` | Fetch one attribute class with its full attribute mappings |
+| `list_grid_views` | List saved grid (table) views for an entity type |
 | `get_completeness` | Check per-channel completeness for a product |
 | `get_references` | Read a product's **references** (related entities) |
 | `get_history` | Read an entity's change history |
@@ -104,12 +152,20 @@ The MCP tools mirror the REST API.
 
 ### Write tools
 
+Every write tool follows the preview-then-`confirm` flow above.
+
 | Tool | What it does |
 |---|---|
 | `create_product` | Create a product (optionally as a variant via a parent) |
 | `create_entity` | Create any catalog entity — a product, image, vendor, or category |
 | `set_attribute_values` | Set attribute values on an entity (products by default; pass `entity_type` to update an image, vendor, or category — `product_id` then holds that entity's id) |
-| `set_parent` | Set a product's parent entity |
+| `set_parent` | Set or clear a product's variant parent |
+| `create_attribute` | Create an attribute definition — including AI-generated attributes |
+| `update_attribute` | Update an attribute definition |
+| `create_attribute_class` | Create an attribute class (a cell-disabling rule set) |
+| `update_attribute_class` | Update an attribute class |
+| `create_grid_view` | Create a saved grid (table) view |
+| `update_grid_view` | Update a saved grid view |
 
 <Callout type="info">
   The relationship resource is called **references** — use `get_references` to read related entities.
@@ -117,8 +173,9 @@ The MCP tools mirror the REST API.
 </Callout>
 
 <Callout type="warning">
-  **There is no delete tool in the beta.** Destructive operations are disabled across both REST and
-  MCP and will be enabled in a later release. See
+  **Deletes are disabled during the beta.** Destructive operations are turned off across both REST
+  and MCP: the delete tool is not exposed and `DELETE` endpoints return `403`, even for a key or
+  connection that holds a `delete:products` scope. Deletes will be enabled in a later release. See
   [Authentication](/developers/authentication#beta-limitation-deletes-are-disabled).
 </Callout>
 
