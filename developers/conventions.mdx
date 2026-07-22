@@ -3,9 +3,8 @@ title: "Conventions"
 description: "Cross-cutting conventions: the one-map resource shape, labeled references, the filter grammar, the pagination envelope, events polling, async jobs, and reserved extensions."
 ---
 
-These conventions apply across the entire `/api/v1` surface. They are deliberately agent-friendly:
-the same projection, filtering engine, and error shapes power the REST API and the MCP server, so
-semantics never diverge.
+These conventions apply across the entire `/api/v1` surface. The same projection, filtering engine,
+and error shapes power both the REST API and the MCP server, so semantics never diverge.
 
 <Note>
   Examples use `https://www.merchkit.com` as the base URL.
@@ -13,9 +12,9 @@ semantics never diverge.
 
 ## Resource anatomy
 
-Every entity resource — `products`, `images`, `vendors`, `categories`, `sources` — uses one shape
-everywhere: list rows, detail reads, and mutation responses are identical. System fields live at the
-top level; **every customer-defined key lives under `attributes`**.
+Every entity resource uses one shape everywhere. `products`, `images`, `vendors`, `categories`, and
+`sources` return identical list rows, detail reads, and mutation responses. System fields live at the
+top level. Every customer-defined key lives under `attributes`.
 
 ```json
 {
@@ -40,8 +39,8 @@ top level; **every customer-defined key lives under `attributes`**.
 ### The label rule
 
 `label` is the entity's primary-attribute value (usually its name or SKU). When the workspace has no
-primary attribute configured, or the value is unset, `label` is **`null`** — never a UUID posing as
-a name. The render recipe, everywhere a label appears (top level and inside reference stubs alike):
+primary attribute configured, or the value is unset, `label` is `null`. Render a label the same way
+everywhere it appears, at the top level and inside reference stubs alike:
 
 ```ts
 const display = resource.label ?? resource.id;
@@ -49,35 +48,35 @@ const display = resource.label ?? resource.id;
 
 ### Sparse attributes
 
-`attributes` contains **only keys that have values**. A missing key means unset *or* not applicable
-(disabled by an attribute class) — both truthfully "no value here". The client convention:
+`attributes` contains only keys that have values. A missing key means unset or not applicable
+(disabled by an attribute class). Both truthfully mean "no value here". Read an attribute with a
+fallback:
 
 ```ts
 const price = resource.attributes["price"] ?? null;
 ```
 
-The full key list — including keys currently absent from every product — comes from
-`GET /v1/attributes?type=product` (cache it). Absence is never the debugging surface: unknown keys
-on writes and filters still fail loudly with a `400`.
+The full key list comes from `GET /v1/attributes?type=product`, including keys currently absent from
+every product (cache it). Unknown keys on writes and filters still fail with a `400`.
 
 ### The empty string is not a value
 
-Writing `null` **or** `""` clears an attribute, for every data type — after clearing, the key
-disappears from reads. `attributes` never contains `null` or `""`. Whitespace-only strings are
-stored as sent (trimming is your job — no invisible mutation). `filter[key][exists]=false` matches
-cleared and never-set alike.
+Writing `null` or `""` clears an attribute, for every data type. After clearing, the key disappears
+from reads. `attributes` never contains `null` or `""`. Whitespace-only strings are stored as sent,
+so trim before writing if you need to. `filter[key][exists]=false` matches cleared and never-set
+alike.
 
 ### Reference stubs and symmetric writes
 
-A single reference reads as `{id, type, label}`. A list reference reads as a **complete ordered
-array** of those stubs — array order is display order, no cap, no wrapper. You always have the name
-inline; fetch the full record only when you need more than the label.
+A single reference reads as `{id, type, label}`. A list reference reads as an ordered array of those
+stubs. Array order is display order, with no cap and no wrapper. You always have the name inline, so
+fetch the full record only when you need more than the label.
 
-Writes follow **"write what you read"**: a single-reference key accepts a bare UUID string *or* an
-`{id: "…"}` object (extra stub fields like `label` and `type` are tolerated and ignored); a
-list-reference key accepts an array of either, with **replace semantics**. So a
-`GET → modify → PATCH` round-trip of the whole `attributes` object is always legal — read stubs
-re-sent verbatim are valid writes.
+Writes follow "write what you read". A single-reference key accepts a bare UUID string or an
+`{id: "…"}` object; extra stub fields like `label` and `type` are tolerated and ignored. A
+list-reference key accepts an array of either, with replace semantics. A `GET → modify → PATCH`
+round-trip of the whole `attributes` object is therefore always legal, since read stubs re-sent
+verbatim are valid writes.
 
 ```bash
 curl -X PATCH "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21" \
@@ -94,13 +93,13 @@ curl -X PATCH "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-
   }'
 ```
 
-Reference targets must already exist in your workspace — a typo'd UUID fails loudly with
+Reference targets must already exist in your workspace. A typo'd UUID fails with
 `referenced_entity_not_found` instead of silently minting a vendor.
 
 ### Inverse references are queries, not data
 
-Forward references (a product's `vendor`, its `gallery_images`) embed complete. **Inverse**
-references — "every product pointing at this category" — are unbounded, so they never appear in
+Forward references (a product's `vendor`, its `gallery_images`) embed complete. Inverse references,
+like "every product pointing at this category", are unbounded, so they never appear in
 `attributes`. Traverse them as queries:
 
 ```bash
@@ -113,14 +112,15 @@ curl "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9
   -H "Authorization: Bearer mk_live_..."
 ```
 
-`GET /{id}/references` returns each key as `{total, has_more, items: [{id, type, label, position}]}`
-— with explicit positions. Without `?attribute=` it returns every **forward** list key, complete;
-inverse keys require `?attribute=` and page with `limit`/`offset`.
+`GET /{id}/references` returns each key as `{total, has_more, items: [{id, type, label, position}]}`,
+with explicit positions. Without `?attribute=` it returns every forward list key, complete. Inverse
+keys require `?attribute=` and page with `limit`/`offset`.
 
 ### Mutations return the full resource
 
-`POST` (create) and `PATCH` responses carry the complete resource in the shape above — no follow-up
-`GET` needed. `parent_id` (variant parent) is always present, `null` when there is none.
+`POST` (create) and `PATCH` responses carry the complete resource in the shape above, with no
+follow-up `GET` needed. `parent_id` (variant parent) is always present, and `null` when there is
+none.
 
 ## Filtering and sorting
 
@@ -151,7 +151,7 @@ GET /api/v1/products?filter[vendor]=77e1b2aa-…&sort=-updated_at              #
 </ParamField>
 <ParamField path="sort" type="string">
   Comma-separated fields, `-` prefix for descending: `sort=-updated_at,sku`. Sortable: text, number,
-  and date attributes plus the builtins. Reference keys are **not sortable** — sorting one is a
+  and date attributes plus the builtins. Reference keys are not sortable. Sorting one returns a
   `400` (`not_sortable`), never a silent no-op.
 </ParamField>
 
@@ -159,8 +159,8 @@ Unknown keys, unknown operators, and operator/type mismatches all return `400` w
 [`field_errors`](/developers/errors#validation_failed) naming the exact clause.
 
 <Callout type="info">
-  `filter[<key>][exists]=false` answers the most common enrichment question — "which products are
-  **missing** an attribute?" — and matches both never-set and cleared values.
+  `filter[<key>][exists]=false` answers the most common enrichment question, "which products are
+  missing an attribute?", and matches both never-set and cleared values.
 </Callout>
 
 ## Pagination
@@ -175,13 +175,13 @@ List endpoints return rows under `data` and cursor metadata under `pagination`.
 ```
 
 <ParamField path="limit" type="integer" default="50">
-  Page size, 1–**200**. Larger pages mean fewer round-trips, which agents generally prefer.
+  Page size, 1–200. Larger pages mean fewer round-trips, which agents generally prefer.
 </ParamField>
 <ParamField path="offset" type="integer" default="0">
   How many rows to skip. Combine with `limit` to page through results.
 </ParamField>
 <ParamField path="has_more" type="boolean">
-  Whether more pages exist. **Read `has_more`** rather than computing it — it is the canonical
+  Whether more pages exist. Read `has_more` rather than computing it. It is the canonical
   signal to stop paging.
 </ParamField>
 
@@ -208,45 +208,44 @@ the same shape scoped to one product. Both require `read:events`.
 }
 ```
 
-The honest contract: `type` is `entity.created | entity.updated | entity.deleted`; `value` is the
-**new** value (there is no old value — the log stores only what was written); `entity_type` is
-`null` for deleted entities; `actor.kind` is `user | api_key | system` and nothing more. Events are
-returned **newest-first**.
+`type` is `entity.created | entity.updated | entity.deleted`. `value` is the new value; there is no
+old value, since the log stores only what was written. `entity_type` is `null` for deleted entities.
+`actor.kind` is `user | api_key | system` and nothing more. Events are returned newest-first.
 
 ### Polling recipe
 
 <Steps>
   <Step title="Poll with your checkpoint">
     `GET /v1/events?since=<checkpoint>&limit=200`. When `has_more` is `false`, the page holds
-    **every** event since your checkpoint.
+    every event since your checkpoint.
   </Step>
   <Step title="Advance the checkpoint">
     Set your checkpoint to `pagination.next_since` (the newest `created_at`). On the next poll,
-    **overlap by one second** and **dedupe on event `id`** — same-second events on the boundary then
-    can't slip through.
+    overlap by one second and dedupe on event `id`, so same-second events on the boundary can't slip
+    through.
   </Step>
   <Step title="Refetch what changed">
     Batch-refetch the touched entities in one call per resource:
     `GET /v1/products?filter[id][in]=<ids>` (a full 200-event page refetches in a single call).
   </Step>
   <Step title="Recover from overflow">
-    When `has_more` is `true`, the window exceeded one page and middle events are **not** reachable
-    by paging. Recover by state, not by log: `GET /{resource}?filter[updated_at][gte]=<checkpoint>`
-    per synced resource. Deletions during an overflow window surface on your next full reconcile —
+    When `has_more` is `true`, the window exceeded one page and middle events are not reachable
+    by paging. Recover by state rather than by log: `GET /{resource}?filter[updated_at][gte]=<checkpoint>`
+    per synced resource. Deletions during an overflow window surface on your next full reconcile, so
     poll often enough that overflow stays rare.
   </Step>
 </Steps>
 
 ### Retention
 
-Events are retained **according to your subscription plan**. Treat the feed as a sync mechanism,
-not a permanent archive: if your checkpoint is older than your plan's retention window — or simply
-weeks old — recover by state instead (`filter[updated_at][gte]=<checkpoint>` per resource), which
+Events are retained according to your subscription plan. Treat the feed as a sync mechanism,
+not a permanent archive. If your checkpoint is older than your plan's retention window, or simply
+weeks old, recover by state instead (`filter[updated_at][gte]=<checkpoint>` per resource), which
 is also faster than paging months of events one window at a time.
 
 ## Async jobs
 
-Long-running operations return **`202 Accepted`** with a job handle instead of blocking:
+Long-running operations return `202 Accepted` with a job handle instead of blocking:
 
 ```json
 { "job_id": "b8d3e6f1-2a4c-4e5d-8f9a-0b1c2d3e4f5a", "status": "queued" }
@@ -270,12 +269,12 @@ Poll `GET /v1/jobs/{job_id}` until a terminal status (`completed`, `failed`, `ca
 }
 ```
 
-`GET /v1/jobs` lists recent jobs, newest first. `result` is reserved — `null` today.
+`GET /v1/jobs` lists recent jobs, newest first. `result` is reserved, and `null` today.
 
 ### Source processing, end to end
 
-Sources are the async flow you'll meet first. `POST /v1/sources` schedules a scrape — the source
-entity is created *by* the pipeline, with its scraped `processed_content`:
+`POST /v1/sources` schedules a scrape. The source entity is created by the pipeline, with its
+scraped `processed_content`:
 
 ```bash
 # 1. Schedule → 202 { "job_id": "…", "status": "queued" }
@@ -296,37 +295,37 @@ curl -X PATCH "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-
   -d '{ "attributes": { "data_sources": ["<source-id>"] } }'
 ```
 
-One source may attach to many products. There is no upsert/batch for sources — creation is always
+One source may attach to many products. There is no upsert or batch for sources; creation is always
 the processing pipeline.
 
 ## Errors
 
-Every non-2xx response uses one machine-recoverable envelope — `code`, `is_retriable`,
+Every non-2xx response uses one machine-recoverable envelope: `code`, `is_retriable`,
 `retry_after_seconds`, `alternative_action`, and per-field `field_errors` whose
 `acceptable_values` tell you exactly what would have passed. The full catalog, code by code, lives
 on the [Errors](/developers/errors) page.
 
 <Callout type="info">
-  Rate limits are enforced at the edge during the beta — no fixed numbers are published. If you
+  Rate limits are enforced at the edge during the beta, and no fixed numbers are published. If you
   receive a `429`, honor the `Retry-After` header.
 </Callout>
 
 ## Tenancy: 404, not 403
 
-Any `id` outside your workspace is a uniform **`404 not_found`** — indistinguishable from an id that
+Any `id` outside your workspace is a uniform `404 not_found`, indistinguishable from an id that
 never existed. The API never confirms that a foreign resource exists, so don't build logic that
-distinguishes "no access" from "no such record": there is no such distinction.
+distinguishes "no access" from "no such record". There is no such distinction.
 
 ## Reserved extensions
 
 Documented now so you can plan for them; none are emitted yet:
 
-- **`attribute_metadata`** — a future top-level sibling of `attributes` carrying per-value metadata
+- **`attribute_metadata`**: a future top-level sibling of `attributes` carrying per-value metadata
   (confidence, flags) behind `?include=attribute_metadata`. `attributes` values themselves will
   never grow envelopes.
-- **`Idempotency-Key`** — a reserved request header for safe write retries.
-- **`?attributes=sku,price`** — a reserved sparse-fieldset parameter for narrowing rows.
-- **Webhooks** — the committed roadmap item for push-based sync. Until then, sync is polling: the
-  [events feed](#events-the-change-feed) plus `filter[updated_at][gte]` recovery — the same
+- **`Idempotency-Key`**: a reserved request header for safe write retries.
+- **`?attributes=sku,price`**: a reserved sparse-fieldset parameter for narrowing rows.
+- **Webhooks**: the committed roadmap item for push-based sync. Until then, sync is polling: the
+  [events feed](#events-the-change-feed) plus `filter[updated_at][gte]` recovery, the same
   reconciliation pattern the feed's overflow recipe already uses. When webhooks ship, subscriptions
   will be provisioned via the API (not app-only configuration) with signed payloads.
