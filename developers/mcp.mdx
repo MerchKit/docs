@@ -1,14 +1,13 @@
 ---
 title: "MCP Server"
-description: "Operate your Merchkit catalog from Claude, ChatGPT, VS Code, and other agents over the remote MCP server. Connect in one click with OAuth — no API key — or authenticate with a workspace API key for programmatic use."
+description: "Operate your Merchkit catalog from Claude, ChatGPT, VS Code, and other agents over the remote MCP server. Connect in one click with OAuth and no API key, or authenticate with a workspace API key for programmatic use."
 ---
 
-Merchkit exposes a **remote MCP server** so you can operate your catalog directly from Claude,
-ChatGPT, VS Code (GitHub Copilot), Cursor, and any other MCP-capable agent. **MCP is a superset of
-the REST API with identical shapes**: every tool emits the same
+Merchkit exposes a remote MCP server so you can operate your catalog directly from Claude,
+ChatGPT, VS Code (GitHub Copilot), Cursor, and any other MCP-capable agent. MCP is a superset of
+the REST API with identical shapes. Every tool emits the same
 [one-map resource](/developers/conventions#resource-anatomy), event, and job shapes as REST, takes
-snake_case arguments, and runs the same validation — so nothing an agent learns from these docs is
-MCP-specific, and nothing drifts.
+snake_case arguments, and runs the same validation. What you learn from these docs applies to both.
 
 <Note>
   Examples use `https://www.merchkit.com` as the base URL.
@@ -20,9 +19,9 @@ MCP-specific, and nothing drifts.
 
 ## Connect in one click
 
-The MCP endpoint speaks **OAuth 2.1**, so most agents connect with a button: click, sign in to
-Merchkit, choose the **workspace** and the **permissions** to grant, and approve. **There is no API
-key to create, copy, or paste**, and you can revoke the connection at any time from **Settings → API
+The MCP endpoint speaks OAuth 2.1, so most agents connect with a button. Click, sign in to
+Merchkit, choose the workspace and the permissions to grant, and approve. There is no API
+key to create, copy, or paste, and you can revoke the connection at any time from **Settings → API
 keys → Connected apps**.
 
 <CardGroup cols={2}>
@@ -36,7 +35,7 @@ keys → Connected apps**.
 
 <Callout type="info">
   Whichever client you use, the URL to add is always **`https://www.merchkit.com/api/mcp`**. On the
-  consent screen the **default permissions** are everything except the delete scopes — tighten them
+  consent screen the default permissions are everything except the delete scopes. Tighten them
   to a read-only set for an agent that should only inspect your catalog.
 </Callout>
 
@@ -44,7 +43,7 @@ keys → Connected apps**.
 
 Click **Add to Claude** above, or add it manually: **Settings → Connectors → Add custom connector**,
 paste `https://www.merchkit.com/api/mcp`, and click **Add**. Claude opens the Merchkit consent
-screen — pick a workspace, choose scopes, approve — and the tools appear. No `claude_desktop_config.json`
+screen where you pick a workspace, choose scopes, and approve. Then the tools appear. No `claude_desktop_config.json`
 editing and no `mcp-remote` bridge required.
 
 ### Claude Code
@@ -58,7 +57,7 @@ Then run `/mcp` and select **merchkit** to complete the browser sign-in. No key 
 ### ChatGPT
 
 ChatGPT supports custom remote MCP connectors through **developer mode**, on the web app and a paid
-plan (Plus, Pro, Business, Enterprise, or Edu). There is no one-click link — add it manually:
+plan (Plus, Pro, Business, Enterprise, or Edu). There is no one-click link, so add it manually:
 
 <Steps>
   <Step title="Enable developer mode">
@@ -68,7 +67,7 @@ plan (Plus, Pro, Business, Enterprise, or Edu). There is no one-click link — a
   <Step title="Create the connector">
     On **Apps & Connectors**, click **Create**, give it a name, and paste the server URL
     `https://www.merchkit.com/api/mcp`. For authentication choose **OAuth** and leave the client-id
-    and client-secret fields blank — ChatGPT registers itself.
+    and client-secret fields blank. ChatGPT registers itself.
   </Step>
   <Step title="Sign in and use it">
     Click **Create** and complete the Merchkit sign-in. The tools then appear from the **+** menu in
@@ -85,12 +84,12 @@ code --add-mcp '{"name":"merchkit","type":"http","url":"https://www.merchkit.com
 ```
 
 For **Cursor**, open **Settings → MCP → Add** and paste `https://www.merchkit.com/api/mcp`. VS Code
-and Cursor both run the OAuth sign-in on first connect — no key required.
+and Cursor both run the OAuth sign-in on first connect. No key required.
 
 ## Authenticate with an API key (programmatic)
 
 For servers, scripts, CI, or any client without a browser to sign in, authenticate with a
-**workspace API key** instead — the same `mk_live_` bearer token the REST API uses:
+**workspace API key** instead. It is the same `mk_live_` bearer token the REST API uses:
 
 ```http
 Authorization: Bearer mk_live_...
@@ -100,26 +99,26 @@ The key's scopes apply identically here: a read-only key can call the read tools
 tools. See [Authentication](/developers/authentication) for the full key + scope model.
 
 <Callout type="warning">
-  An API key is a secret with workspace access — store it in a secret manager or environment
-  variable, never in a shared config file. For interactive agents, **prefer the one-click OAuth
-  connect above**: it keeps no key on disk and is revocable per connection.
+  An API key is a secret with workspace access. Store it in a secret manager or environment
+  variable, never in a shared config file. For interactive agents, prefer the one-click OAuth
+  connect above: it keeps no key on disk and is revocable per connection.
 </Callout>
 
 <Callout type="info">
   For a local, stdio-only MCP client that cannot reach a remote HTTP server, bridge to it with
   [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
-  `npx -y mcp-remote https://www.merchkit.com/api/mcp` — add `--header "Authorization: Bearer mk_live_..."`
+  `npx -y mcp-remote https://www.merchkit.com/api/mcp`. Add `--header "Authorization: Bearer mk_live_..."`
   if the client cannot complete the OAuth sign-in itself.
 </Callout>
 
 ## Write tools require confirmation
 
-Every **write** tool takes a `confirm` flag so the agent can preview a change before applying it.
+Every write tool takes a `confirm` flag so the agent can preview a change before applying it.
 
 <Steps>
   <Step title="Preview">
     Call the tool with `confirm` omitted or `false`. The tool returns a **diff** describing exactly
-    what would change — and makes no change.
+    what would change, and makes no change.
   </Step>
   <Step title="Apply">
     Call the same tool again with `confirm: true` to apply the change.
@@ -133,10 +132,10 @@ Every **write** tool takes a `confirm` flag so the agent can preview a change be
 
 ## Tools
 
-The tools are **generic over entity type** — one `list_entities` instead of a tool per resource,
+The tools are generic over entity type. One `list_entities` replaces a tool per resource,
 with `type` as a parameter exactly like the REST path segment:
 `product | image | vendor | category | source`. Read tools require the resource's `read:*` scope;
-write tools require the matching `write:*` scope — see
+write tools require the matching `write:*` scope. See
 [scopes](/developers/authentication#scopes).
 
 ### Read tools
@@ -168,7 +167,7 @@ Every write tool follows the preview-then-`confirm` flow above.
 
 ### MCP-only tools
 
-MCP is a **superset**: grid views and attribute classes left the public REST surface and live only
+MCP is a superset. Grid views and attribute classes left the public REST surface and live only
 here.
 
 | Tool | Scope | What it does |
@@ -188,7 +187,7 @@ here.
 
 ## Working with vendors, categories, and images
 
-Products point at other entities — a vendor, a category, their images — through
+Products point at other entities (a vendor, a category, their images) through
 **[reference attributes](/developers/conventions#reference-stubs-and-symmetric-writes)**.
 A reference always holds the other entity's `id`, so the entity has to exist before a product can
 point at it. `list_entities` and `create_entity` cover that: look up what already exists, create
@@ -208,7 +207,7 @@ For example, to file a product under a "Trail Running" category:
     }
     ```
     If it exists, use its `id` and skip to step 3. Search with `contains` rather than an exact
-    match — it also surfaces near-duplicates, which keeps your catalog clean: one "Trail Running",
+    match. It also surfaces near-duplicates, which keeps your catalog clean: one "Trail Running",
     not five spellings of it.
   </Step>
   <Step title="Create it if it's missing">
@@ -237,18 +236,18 @@ For example, to file a product under a "Trail Running" category:
       }
     }
     ```
-    Single references take one entity ID (or an `{id}` stub — read stubs re-sent verbatim are valid
+    Single references take one entity ID (or an `{id}` stub; read stubs re-sent verbatim are valid
     writes); list references (like `gallery_images`) take an array, replace semantics.
   </Step>
 </Steps>
 
-The same pattern works for vendors and images. Creating an **image** entity records a hosted image
-URL — its `url` attribute. To upload files or pull images down from the web, use the image library
+The same pattern works for vendors and images. Creating an image entity records a hosted image
+URL, its `url` attribute. To upload files or pull images down from the web, use the image library
 in the app or a [CSV import](/product/sources-and-importing/importing-first-catalog-csv).
 
 <Callout type="info">
-  References are deliberately ID-based: a reference can only point at an entity that already exists,
+  A reference can only point at an entity that already exists,
   so a typo in a reference value fails loudly instead of silently minting a new vendor. When you
-  check for near-duplicates before creating, search with `contains` — matching is case-insensitive,
+  check for near-duplicates before creating, search with `contains`. Matching is case-insensitive,
   and a wider net catches alternate spellings an exact match would miss.
 </Callout>

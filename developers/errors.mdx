@@ -1,11 +1,11 @@
 ---
 title: "Errors"
-description: "Every API error code — meaning, HTTP status, retriability, an example body, and how to fix it — plus the full catalog of field-level issue codes."
+description: "Every API error code with its meaning, HTTP status, retriability, an example body, and how to fix it, plus the full catalog of field-level issue codes."
 ---
 
 Every non-2xx response from `/api/v1` uses one machine-recoverable envelope. The `code` is stable
-and machine-readable; `documentation_url` links to the matching section on this page; and
-`field_errors` (when present) name the exact field or filter clause at fault.
+and machine-readable. `documentation_url` links to the matching section on this page. `field_errors`,
+when present, name the exact field or filter clause at fault.
 
 ```json
 {
@@ -33,7 +33,7 @@ and machine-readable; `documentation_url` links to the matching section on this 
 </ParamField>
 <ParamField path="is_retriable" type="boolean">
   Whether retrying the same request could succeed. Only `rate_limited` and `internal_error` are
-  retriable — never retry a `4xx` validation or auth error unchanged.
+  retriable. Never retry a `4xx` validation or auth error unchanged.
 </ParamField>
 <ParamField path="retry_after_seconds" type="integer | null">
   How long to wait before retrying, when set. A `429` also carries a `Retry-After` header.
@@ -42,7 +42,7 @@ and machine-readable; `documentation_url` links to the matching section on this 
   A suggested next step that may resolve the problem, when one exists.
 </ParamField>
 <ParamField path="request_id" type="string">
-  Echoed in the `X-Request-Id` response header and our logs — include it when contacting support.
+  Echoed in the `X-Request-Id` response header and our logs. Include it when contacting support.
 </ParamField>
 <ParamField path="field_errors[]" type="array">
   Per-field details: `{field, issue, acceptable_values?}`. See the
@@ -50,9 +50,8 @@ and machine-readable; `documentation_url` links to the matching section on this 
 </ParamField>
 
 <Callout type="info">
-  `field_errors[].acceptable_values` is the strongest self-correction signal in the API: when a
-  select value is rejected, the response carries the exact set that would have passed, so an agent
-  can fix the payload and retry without a human.
+  When a select value is rejected, `field_errors[].acceptable_values` carries the exact set that
+  would have passed. An agent can use it to fix the payload and retry without a human.
 </Callout>
 
 ## unauthorized
@@ -107,8 +106,8 @@ operation to its scope.
 
 **HTTP 403 · `is_retriable: false`**
 
-The key is valid and scoped, but the operation is disabled — today that means **deletes during the
-beta**.
+The key is valid and scoped, but the operation is disabled. Today that means deletes during the
+beta.
 
 ```json
 {
@@ -131,7 +130,7 @@ enabling destructive actions.
 
 **HTTP 404 · `is_retriable: false`**
 
-The resource does not exist **in your workspace** — or the path itself is unknown.
+The resource does not exist in your workspace, or the path itself is unknown.
 
 ```json
 {
@@ -146,18 +145,19 @@ The resource does not exist **in your workspace** — or the path itself is unkn
 }
 ```
 
-**How to fix:** re-resolve the id (`GET /v1/products?filter[sku]=...`) — ids never change, so a
+**How to fix:** re-resolve the id (`GET /v1/products?filter[sku]=...`). Ids never change, so a
 `404` on a previously valid id means the entity was deleted. Note the
 [tenancy rule](/developers/conventions#tenancy-404-not-403): an id belonging to another workspace
-is a uniform `404`, indistinguishable from an id that never existed — there is no cross-tenant
+is a uniform `404`, indistinguishable from an id that never existed. There is no cross-tenant
 `403`. A `404` on the path itself means the endpoint doesn't exist; check `GET /api/v1/openapi`.
 
 ## validation_failed
 
 **HTTP 400 · `is_retriable: false`**
 
-The request was understood but rejected — a malformed body, an unknown attribute key, a bad filter
-clause, or a value that fails its data type or acceptable values. `field_errors` names each fault.
+The request was understood but rejected. The cause is a malformed body, an unknown attribute key, a
+bad filter clause, or a value that fails its data type or acceptable values. `field_errors` names
+each fault.
 
 ```json
 {
@@ -176,16 +176,16 @@ clause, or a value that fails its data type or acceptable values. `field_errors`
 }
 ```
 
-**How to fix:** walk `field_errors` and correct every entry — all faults are reported at once, not
+**How to fix:** walk `field_errors` and correct every entry. All faults are reported at once, not
 one per request. The [issue code catalog](#field-error-issue-codes) below explains each code. For
-unknown keys, discover the schema with `GET /v1/attributes?type=<type>`; for rejected select
+unknown keys, discover the schema with `GET /v1/attributes?type=<type>`. For rejected select
 values, use the echoed `acceptable_values`.
 
 ## rate_limited
 
 **HTTP 429 · `is_retriable: true`**
 
-Too many requests. Limits are enforced at the edge during the beta — no fixed numbers are
+Too many requests. Limits are enforced at the edge during the beta, and no fixed numbers are
 published.
 
 ```json
@@ -210,8 +210,8 @@ steps.
 
 **HTTP 409 · `is_retriable: false`**
 
-The operation contradicts existing data. The two cases: an **upsert** matched more than one
-existing entity (the message carries the matching ids), or a write hit a uniqueness constraint.
+The operation contradicts existing data. Either an upsert matched more than one existing entity
+(the message carries the matching ids), or a write hit a uniqueness constraint.
 
 ```json
 {
@@ -256,9 +256,9 @@ persists, contact support with the `request_id`.
 ## Field error issue codes
 
 `field_errors[].issue` carries a stable code for every fault the query parser, filter validator, and
-write validator can raise. (One exception: when a request **body fails its structural schema** —
-wrong JSON types, unknown top-level fields — `issue` carries the human-readable schema message
-instead of a code.)
+write validator can raise. There is one exception. When a request body fails its structural schema
+(wrong JSON types, unknown top-level fields), `issue` carries the human-readable schema message
+instead of a code.
 
 ### Query, filter, and sort issues
 
