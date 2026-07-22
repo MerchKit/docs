@@ -131,6 +131,7 @@
               "developers/overview",
               "developers/authentication",
               "developers/conventions",
+              "developers/errors",
               "developers/mcp"
             ]
           },

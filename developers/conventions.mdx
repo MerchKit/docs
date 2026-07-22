@@ -1,201 +1,332 @@
 ---
 title: "Conventions"
-description: "Cross-cutting conventions: the pagination envelope, the filter DSL, the machine-recoverable error envelope, async jobs, and reference attributes."
+description: "Cross-cutting conventions: the one-map resource shape, labeled references, the filter grammar, the pagination envelope, events polling, async jobs, and reserved extensions."
 ---
 
 These conventions apply across the entire `/api/v1` surface. They are deliberately agent-friendly:
-the same filtering engine and error shapes power the REST API and the MCP server, so semantics never
-diverge.
+the same projection, filtering engine, and error shapes power the REST API and the MCP server, so
+semantics never diverge.
 
 <Note>
   Examples use `https://www.merchkit.com` as the base URL.
 </Note>
 
-## Pagination
+## Resource anatomy
 
-List endpoints return their results in an envelope: the rows under `data`, and the cursor metadata
-under `pagination`.
-
-```json
-{
-  "data": [ /* resources */ ],
-  "pagination": {
-    "total": 1234,
-    "limit": 50,
-    "offset": 0,
-    "has_more": true
-  }
-}
-```
-
-<ParamField path="limit" type="integer" default="50">
-  Page size. Defaults to **50**, with a maximum of **200**. Larger pages mean fewer round-trips,
-  which agents generally prefer.
-</ParamField>
-<ParamField path="offset" type="integer" default="0">
-  How many rows to skip. Combine with `limit` to page through results.
-</ParamField>
-<ParamField path="total" type="integer">
-  The total number of rows matching the query, across all pages.
-</ParamField>
-<ParamField path="has_more" type="boolean">
-  Whether more pages exist after this one. **Read `has_more`** rather than computing it yourself — it
-  is the canonical signal to stop paging.
-</ParamField>
-
-## Filtering and sorting
-
-Filter with the query-string DSL: `filter[<key>][<op>]=<value>`. Combine multiple filters with
-`filter_join`, and order results with `sort`.
-
-```http
-GET /api/v1/products
-  ?filter[vendor][contains]=Stressless
-  &filter[description][blank]=true
-  &filter[price][greaterThanOrEqual]=100
-  &filter_join=AND
-  &sort=-updated_at
-```
-
-<ParamField path="filter[<key>][<op>]" type="string">
-  One filter clause: an attribute key, an operator, and a value.
-</ParamField>
-<ParamField path="filter_join" type="AND | OR" default="AND">
-  How multiple filter clauses combine.
-</ParamField>
-<ParamField path="sort" type="string">
-  A comma-separated list of fields. Prefix a field with `-` for descending order (e.g.
-  `sort=-updated_at`).
-</ParamField>
-
-### Operators
-
-| Operator | Meaning |
-|---|---|
-| `contains` | Value contains the substring |
-| `notContains` | Value does not contain the substring |
-| `equals` | Exact match |
-| `notEquals` | Not an exact match |
-| `startsWith` | Value begins with |
-| `endsWith` | Value ends with |
-| `blank` | Attribute is empty / unset |
-| `notBlank` | Attribute is set |
-| `greaterThan` | Numeric / date greater than |
-| `lessThan` | Numeric / date less than |
-| `greaterThanOrEqual` | Numeric / date ≥ |
-| `lessThanOrEqual` | Numeric / date ≤ |
-
-<Callout type="info">
-  `blank` / `notBlank` answer the most common enrichment question — "which products are **missing** an
-  attribute?" For example, `filter[description][blank]=true` finds every product without a
-  description, and `notBlank` finds the inverse.
-</Callout>
-
-## Error envelope (machine-recoverable)
-
-Every non-2xx response uses one shape, designed so an agent can recover without a human in the loop.
+Every entity resource — `products`, `images`, `vendors`, `categories`, `sources` — uses one shape
+everywhere: list rows, detail reads, and mutation responses are identical. System fields live at the
+top level; **every customer-defined key lives under `attributes`**.
 
 ```json
 {
-  "error": {
-    "code": "validation_failed",
-    "message": "The attribute 'color' is not one of the acceptable values for this channel.",
-    "is_retriable": false,
-    "retry_after_seconds": null,
-    "documentation_url": "https://docs.merchkit.com/api/errors#validation_failed",
-    "alternative_action": "Set 'color' to one of the acceptable values, or update the attribute definition.",
-    "request_id": "req_8f2c…",
-    "field_errors": [
-      {
-        "field": "color",
-        "issue": "not_in_acceptable_values",
-        "acceptable_values": ["Navy", "Charcoal", "Olive"]
-      }
+  "id": "9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21",
+  "type": "product",
+  "label": "Aria Oak Dining Table",
+  "parent_id": null,
+  "created_at": "2026-06-02T14:11:09Z",
+  "updated_at": "2026-07-18T09:30:22Z",
+  "attributes": {
+    "sku": "ARIA-DT-72",
+    "price": 1299,
+    "vendor": { "id": "77e1b2aa-4f6d-4c1a-9e6b-2f8a1d3c5e70", "type": "vendor", "label": "Nordic Timber Co." },
+    "gallery_images": [
+      { "id": "f0a1c2d3-e4b5-46a7-98c9-0d1e2f3a4b5c", "type": "image", "label": "aria-hero.jpg" },
+      { "id": "f0a2d3e4-f5a6-47b8-a9d0-1e2f3a4b5c6d", "type": "image", "label": "aria-detail.jpg" }
     ]
   }
 }
 ```
 
-<ParamField path="code" type="string">
-  A stable machine code. Common codes: `unauthorized`, `insufficient_scope`, `not_found`,
-  `validation_failed`, `conflict`, `internal_error`.
-</ParamField>
-<ParamField path="message" type="string">
-  A human-readable explanation of what went wrong.
-</ParamField>
-<ParamField path="is_retriable" type="boolean">
-  Whether retrying the same request could succeed. If `true`, honor `retry_after_seconds`.
-</ParamField>
-<ParamField path="retry_after_seconds" type="integer | null">
-  How long to wait before retrying, when the error is retriable.
-</ParamField>
-<ParamField path="documentation_url" type="string">
-  A link to documentation for this specific error code.
-</ParamField>
-<ParamField path="alternative_action" type="string">
-  A suggested next step that may resolve the problem.
-</ParamField>
-<ParamField path="request_id" type="string">
-  An identifier echoed in logs — include it when contacting support.
-</ParamField>
-<ParamField path="field_errors[]" type="array">
-  Per-field details. Each entry has a `field`, an `issue`, and — critically —
-  `acceptable_values`: the exact set of values that would have passed validation.
-</ParamField>
+### The label rule
 
-<Callout type="info">
-  `field_errors[].acceptable_values` is the strongest self-correction signal in the API. When a value
-  is rejected, the response tells you exactly which values are acceptable, so an agent can fix the
-  payload and retry without asking a human.
-</Callout>
+`label` is the entity's primary-attribute value (usually its name or SKU). When the workspace has no
+primary attribute configured, or the value is unset, `label` is **`null`** — never a UUID posing as
+a name. The render recipe, everywhere a label appears (top level and inside reference stubs alike):
 
-## Async jobs
+```ts
+const display = resource.label ?? resource.id;
+```
 
-Long-running operations — bulk writes, imports, exports — do not block. They return **`202`** with a
-job handle, and you poll for completion.
+### Sparse attributes
 
-<Steps>
-  <Step title="Start the operation">
-    The operation returns `202 Accepted` with a `job_id`:
+`attributes` contains **only keys that have values**. A missing key means unset *or* not applicable
+(disabled by an attribute class) — both truthfully "no value here". The client convention:
 
-    ```json
-    { "job_id": "job_…", "status": "queued" }
-    ```
-  </Step>
-  <Step title="Poll the job">
-    Call `GET /api/v1/jobs/{id}` until it reaches a terminal state. While running, it reports
-    progress; on completion, `result` carries the payload (for example, an export's file URL):
+```ts
+const price = resource.attributes["price"] ?? null;
+```
 
-    ```json
-    {
-      "id": "job_…",
-      "status": "running",
-      "progress": { "current": 320, "total": 1000 },
-      "result": null
+The full key list — including keys currently absent from every product — comes from
+`GET /v1/attributes?type=product` (cache it). Absence is never the debugging surface: unknown keys
+on writes and filters still fail loudly with a `400`.
+
+### The empty string is not a value
+
+Writing `null` **or** `""` clears an attribute, for every data type — after clearing, the key
+disappears from reads. `attributes` never contains `null` or `""`. Whitespace-only strings are
+stored as sent (trimming is your job — no invisible mutation). `filter[key][exists]=false` matches
+cleared and never-set alike.
+
+### Reference stubs and symmetric writes
+
+A single reference reads as `{id, type, label}`. A list reference reads as a **complete ordered
+array** of those stubs — array order is display order, no cap, no wrapper. You always have the name
+inline; fetch the full record only when you need more than the label.
+
+Writes follow **"write what you read"**: a single-reference key accepts a bare UUID string *or* an
+`{id: "…"}` object (extra stub fields like `label` and `type` are tolerated and ignored); a
+list-reference key accepts an array of either, with **replace semantics**. So a
+`GET → modify → PATCH` round-trip of the whole `attributes` object is always legal — read stubs
+re-sent verbatim are valid writes.
+
+```bash
+curl -X PATCH "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21" \
+  -H "Authorization: Bearer mk_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "attributes": {
+      "vendor": "77e1b2aa-4f6d-4c1a-9e6b-2f8a1d3c5e70",
+      "gallery_images": [
+        { "id": "f0a1c2d3-e4b5-46a7-98c9-0d1e2f3a4b5c" },
+        "f0a2d3e4-f5a6-47b8-a9d0-1e2f3a4b5c6d"
+      ]
     }
-    ```
-  </Step>
-</Steps>
+  }'
+```
+
+Reference targets must already exist in your workspace — a typo'd UUID fails loudly with
+`referenced_entity_not_found` instead of silently minting a vendor.
+
+### Inverse references are queries, not data
+
+Forward references (a product's `vendor`, its `gallery_images`) embed complete. **Inverse**
+references — "every product pointing at this category" — are unbounded, so they never appear in
+`attributes`. Traverse them as queries:
+
+```bash
+# All products referencing this vendor:
+curl "https://www.merchkit.com/api/v1/products?filter[vendor]=77e1b2aa-4f6d-4c1a-9e6b-2f8a1d3c5e70" \
+  -H "Authorization: Bearer mk_live_..."
+
+# Or the paged, key-scoped reference view (the only reader for inverse keys):
+curl "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21/references?attribute=used_by_kits&limit=50" \
+  -H "Authorization: Bearer mk_live_..."
+```
+
+`GET /{id}/references` returns each key as `{total, has_more, items: [{id, type, label, position}]}`
+— with explicit positions. Without `?attribute=` it returns every **forward** list key, complete;
+inverse keys require `?attribute=` and page with `limit`/`offset`.
+
+### Mutations return the full resource
+
+`POST` (create) and `PATCH` responses carry the complete resource in the shape above — no follow-up
+`GET` needed. `parent_id` (variant parent) is always present, `null` when there is none.
+
+## Filtering and sorting
+
+`filter[<key>]=<value>` is equals; `filter[<key>][<op>]=<value>` for everything else. `<key>` is any
+defined attribute key or a builtin: `id`, `parent_id`, `created_at`, `updated_at`.
+
+| Operator | Types | Meaning |
+|---|---|---|
+| *(bare)* / `eq`, `ne` | all | Equals / not equals. Reference keys take UUID values |
+| `contains`, `not_contains` | text | Substring match |
+| `starts_with`, `ends_with` | text | Prefix / suffix match |
+| `gt`, `gte`, `lt`, `lte` | number, date, timestamps | Comparison. Date-only values coerce to UTC midnight |
+| `exists` | all | `=true` has a value, `=false` blank (replaces the old `blank`/`notBlank`) |
+| `in` | text, `id`, reference | Comma-separated OR-of-equals, ≤ 200 values. Text matching is case-sensitive; UUID lists are validated per token |
+
+Example one-liners:
+
+```bash
+GET /api/v1/products?filter[sku]=ARIA-DT-72                                  # find by SKU
+GET /api/v1/products?filter[description][exists]=false&filter[price][lt]=100 # missing + cheap
+GET /api/v1/products?filter[sku][in]=ARIA-DT-72,ARIA-BN-18,ARIA-CH-04        # resolve 3 SKUs in 1 call
+GET /api/v1/products?filter[id][in]=9b2f6c1e-…,3c77a1b9-…                    # batch refetch after events
+GET /api/v1/products?filter[vendor]=77e1b2aa-…&sort=-updated_at              # by reference, newest first
+```
+
+<ParamField path="filter_join" type="and | or" default="and">
+  How multiple filter clauses combine. Case-insensitive.
+</ParamField>
+<ParamField path="sort" type="string">
+  Comma-separated fields, `-` prefix for descending: `sort=-updated_at,sku`. Sortable: text, number,
+  and date attributes plus the builtins. Reference keys are **not sortable** — sorting one is a
+  `400` (`not_sortable`), never a silent no-op.
+</ParamField>
+
+Unknown keys, unknown operators, and operator/type mismatches all return `400` with
+[`field_errors`](/developers/errors#validation_failed) naming the exact clause.
 
 <Callout type="info">
-  Poll the job rather than blocking on the original request. The job status endpoint is the source of
-  truth for both progress and the final result.
+  `filter[<key>][exists]=false` answers the most common enrichment question — "which products are
+  **missing** an attribute?" — and matches both never-set and cleared values.
 </Callout>
 
-## Reference attributes
+## Pagination
 
-Some attributes are **references** — they point at another entity (a product pointing at a vendor or
-an asset, for example). Instead of returning a raw UUID, a reference attribute returns a compact
-summary:
+List endpoints return rows under `data` and cursor metadata under `pagination`.
 
 ```json
 {
-  "entityId": "…",
-  "entityType": "vendor",
-  "label": "Stressless"
+  "data": [ /* resources */ ],
+  "pagination": { "total": 1240, "limit": 50, "offset": 0, "has_more": true }
 }
 ```
 
-The `label` is enough to render or reason about the relationship inline. When you need the full
-record, fetch it with `GET /api/v1/products/{id}` (or the corresponding resource endpoint) using the
-`entityId`.
+<ParamField path="limit" type="integer" default="50">
+  Page size, 1–**200**. Larger pages mean fewer round-trips, which agents generally prefer.
+</ParamField>
+<ParamField path="offset" type="integer" default="0">
+  How many rows to skip. Combine with `limit` to page through results.
+</ParamField>
+<ParamField path="has_more" type="boolean">
+  Whether more pages exist. **Read `has_more`** rather than computing it — it is the canonical
+  signal to stop paging.
+</ParamField>
+
+## Events: the change feed
+
+`GET /v1/events?since=&limit=` is the workspace-wide change feed; `GET /v1/products/{id}/events` is
+the same shape scoped to one product. Both require `read:events`.
+
+```json
+{
+  "data": [
+    {
+      "id": "e7c94f21-6b3a-4d8e-9f01-2c3b4a5d6e7f",
+      "type": "entity.updated",
+      "entity_id": "9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21",
+      "entity_type": "product",
+      "attribute_key": "price",
+      "value": 1299,
+      "actor": { "kind": "api_key" },
+      "created_at": "2026-07-18T09:30:22Z"
+    }
+  ],
+  "pagination": { "limit": 200, "has_more": false, "next_since": "2026-07-18T09:30:22Z" }
+}
+```
+
+The honest contract: `type` is `entity.created | entity.updated | entity.deleted`; `value` is the
+**new** value (there is no old value — the log stores only what was written); `entity_type` is
+`null` for deleted entities; `actor.kind` is `user | api_key | system` and nothing more. Events are
+returned **newest-first**.
+
+### Polling recipe
+
+<Steps>
+  <Step title="Poll with your checkpoint">
+    `GET /v1/events?since=<checkpoint>&limit=200`. When `has_more` is `false`, the page holds
+    **every** event since your checkpoint.
+  </Step>
+  <Step title="Advance the checkpoint">
+    Set your checkpoint to `pagination.next_since` (the newest `created_at`). On the next poll,
+    **overlap by one second** and **dedupe on event `id`** — same-second events on the boundary then
+    can't slip through.
+  </Step>
+  <Step title="Refetch what changed">
+    Batch-refetch the touched entities in one call per resource:
+    `GET /v1/products?filter[id][in]=<ids>` (a full 200-event page refetches in a single call).
+  </Step>
+  <Step title="Recover from overflow">
+    When `has_more` is `true`, the window exceeded one page and middle events are **not** reachable
+    by paging. Recover by state, not by log: `GET /{resource}?filter[updated_at][gte]=<checkpoint>`
+    per synced resource. Deletions during an overflow window surface on your next full reconcile —
+    poll often enough that overflow stays rare.
+  </Step>
+</Steps>
+
+### Retention
+
+Events are retained **according to your subscription plan**. Treat the feed as a sync mechanism,
+not a permanent archive: if your checkpoint is older than your plan's retention window — or simply
+weeks old — recover by state instead (`filter[updated_at][gte]=<checkpoint>` per resource), which
+is also faster than paging months of events one window at a time.
+
+## Async jobs
+
+Long-running operations return **`202 Accepted`** with a job handle instead of blocking:
+
+```json
+{ "job_id": "b8d3e6f1-2a4c-4e5d-8f9a-0b1c2d3e4f5a", "status": "queued" }
+```
+
+Poll `GET /v1/jobs/{job_id}` until a terminal status (`completed`, `failed`, `cancelled`):
+
+```json
+{
+  "data": {
+    "id": "b8d3e6f1-2a4c-4e5d-8f9a-0b1c2d3e4f5a",
+    "name": "Process Source",
+    "status": "running",
+    "progress": { "current": 40, "total": 100, "percent": 40 },
+    "created_at": "2026-07-18T09:30:22Z",
+    "started_at": "2026-07-18T09:30:24Z",
+    "completed_at": null,
+    "result": null,
+    "metadata": { "workflow": "process-source" }
+  }
+}
+```
+
+`GET /v1/jobs` lists recent jobs, newest first. `result` is reserved — `null` today.
+
+### Source processing, end to end
+
+Sources are the async flow you'll meet first. `POST /v1/sources` schedules a scrape — the source
+entity is created *by* the pipeline, with its scraped `processed_content`:
+
+```bash
+# 1. Schedule → 202 { "job_id": "…", "status": "queued" }
+curl -X POST "https://www.merchkit.com/api/v1/sources" \
+  -H "Authorization: Bearer mk_live_..." -H "Content-Type: application/json" \
+  -d '{ "attributes": { "url": "https://nordictimber.example.com/spec-sheets/aria-dt-72" } }'
+
+# 2. Poll until completed
+curl "https://www.merchkit.com/api/v1/jobs/<job_id>" -H "Authorization: Bearer mk_live_..."
+
+# 3. Find the created source
+curl "https://www.merchkit.com/api/v1/sources?filter[url]=https://nordictimber.example.com/spec-sheets/aria-dt-72" \
+  -H "Authorization: Bearer mk_live_..."
+
+# 4. Attach it to a product — an ordinary reference write
+curl -X PATCH "https://www.merchkit.com/api/v1/products/9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21" \
+  -H "Authorization: Bearer mk_live_..." -H "Content-Type: application/json" \
+  -d '{ "attributes": { "data_sources": ["<source-id>"] } }'
+```
+
+One source may attach to many products. There is no upsert/batch for sources — creation is always
+the processing pipeline.
+
+## Errors
+
+Every non-2xx response uses one machine-recoverable envelope — `code`, `is_retriable`,
+`retry_after_seconds`, `alternative_action`, and per-field `field_errors` whose
+`acceptable_values` tell you exactly what would have passed. The full catalog, code by code, lives
+on the [Errors](/developers/errors) page.
+
+<Callout type="info">
+  Rate limits are enforced at the edge during the beta — no fixed numbers are published. If you
+  receive a `429`, honor the `Retry-After` header.
+</Callout>
+
+## Tenancy: 404, not 403
+
+Any `id` outside your workspace is a uniform **`404 not_found`** — indistinguishable from an id that
+never existed. The API never confirms that a foreign resource exists, so don't build logic that
+distinguishes "no access" from "no such record": there is no such distinction.
+
+## Reserved extensions
+
+Documented now so you can plan for them; none are emitted yet:
+
+- **`attribute_metadata`** — a future top-level sibling of `attributes` carrying per-value metadata
+  (confidence, flags) behind `?include=attribute_metadata`. `attributes` values themselves will
+  never grow envelopes.
+- **`Idempotency-Key`** — a reserved request header for safe write retries.
+- **`?attributes=sku,price`** — a reserved sparse-fieldset parameter for narrowing rows.
+- **Webhooks** — the committed roadmap item for push-based sync. Until then, sync is polling: the
+  [events feed](#events-the-change-feed) plus `filter[updated_at][gte]` recovery — the same
+  reconciliation pattern the feed's overflow recipe already uses. When webhooks ship, subscriptions
+  will be provisioned via the API (not app-only configuration) with signed payloads.

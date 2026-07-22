@@ -4,8 +4,11 @@ description: "Operate your Merchkit catalog from Claude, ChatGPT, VS Code, and o
 ---
 
 Merchkit exposes a **remote MCP server** so you can operate your catalog directly from Claude,
-ChatGPT, VS Code (GitHub Copilot), Cursor, and any other MCP-capable agent. The MCP layer is a thin
-shim over the same REST API, so its tools never drift from the documented surface.
+ChatGPT, VS Code (GitHub Copilot), Cursor, and any other MCP-capable agent. **MCP is a superset of
+the REST API with identical shapes**: every tool emits the same
+[one-map resource](/developers/conventions#resource-anatomy), event, and job shapes as REST, takes
+snake_case arguments, and runs the same validation — so nothing an agent learns from these docs is
+MCP-specific, and nothing drifts.
 
 <Note>
   Examples use `https://www.merchkit.com` as the base URL.
@@ -33,7 +36,7 @@ keys → Connected apps**.
 
 <Callout type="info">
   Whichever client you use, the URL to add is always **`https://www.merchkit.com/api/mcp`**. On the
-  consent screen the **default permissions** are everything except **product delete** — tighten them
+  consent screen the **default permissions** are everything except the delete scopes — tighten them
   to a read-only set for an agent that should only inspect your catalog.
 </Callout>
 
@@ -130,25 +133,26 @@ Every **write** tool takes a `confirm` flag so the agent can preview a change be
 
 ## Tools
 
-The MCP tools mirror the REST API. Read tools require the resource's `read:*` scope; write tools
-require the matching `write:*` scope — see [scopes](/developers/authentication#scopes).
+The tools are **generic over entity type** — one `list_entities` instead of a tool per resource,
+with `type` as a parameter exactly like the REST path segment:
+`product | image | vendor | category | source`. Read tools require the resource's `read:*` scope;
+write tools require the matching `write:*` scope — see
+[scopes](/developers/authentication#scopes).
 
 ### Read tools
 
 | Tool | What it does |
 |---|---|
-| `search_products` | List and search products with the [filter DSL](/developers/conventions#filtering-and-sorting), sort, and pagination |
-| `get_product` | Fetch a single product's full detail |
-| `list_entities` | List and search any catalog entity type — products, images, vendors, or categories — with the same filters, sort, and pagination |
-| `list_attributes` | List attribute definitions for an entity type / channel |
-| `list_attribute_classes` | List the workspace's attribute classes (cell-disabling rule sets) |
-| `get_attribute_class` | Fetch one attribute class with its full attribute mappings |
-| `list_grid_views` | List saved grid (table) views for an entity type |
-| `get_completeness` | Check per-channel completeness for a product |
-| `get_references` | Read a product's **references** (related entities) |
-| `get_history` | Read an entity's change history |
-| `list_channels` | List the available channel catalog |
-| `get_job` | Poll an async [job](/developers/conventions#async-jobs) |
+| `list_entities(type, filters?, filter_join?, sort?, limit?, offset?)` | List and search any entity type. Filters are structured objects — `{attribute_key, operator, value}` — with the same semantics **and the same short operator spellings** as the REST [filter grammar](/developers/conventions#filtering-and-sorting): `eq`, `ne`, `contains`, `not_contains`, `starts_with`, `ends_with`, `gt`, `gte`, `lt`, `lte`, `exists`, `in` |
+| `get_entity(id, type)` | Fetch one entity's full detail (the one-map shape, references complete) |
+| `list_variants(id, limit?, offset?)` | List a product's variants (children) |
+| `get_references(id, type, attribute?)` | The key-scoped reference view with explicit positions — and **the** way to walk [inverse references](/developers/conventions#inverse-references-are-queries-not-data), which never appear in `attributes` |
+| `get_completeness(product_id, channel)` | Per-channel completeness with actionable issues |
+| `list_events(since?, entity_id?, limit?)` | The [change feed](/developers/conventions#events-the-change-feed) — workspace-wide, or scoped to one entity |
+| `list_attributes(type, channel?)` | Attribute definitions — schema discovery |
+| `get_attribute(key, type?)` | One attribute definition |
+| `list_channels()` | The enabled channel catalog |
+| `list_jobs()` / `get_job(id)` | List / poll async [jobs](/developers/conventions#async-jobs) |
 
 ### Write tools
 
@@ -156,36 +160,39 @@ Every write tool follows the preview-then-`confirm` flow above.
 
 | Tool | What it does |
 |---|---|
-| `create_product` | Create a product (optionally as a variant via a parent) |
-| `create_entity` | Create any catalog entity — a product, image, vendor, or category |
-| `set_attribute_values` | Set attribute values on an entity (products by default; pass `entity_type` to update an image, vendor, or category — `product_id` then holds that entity's id) |
-| `set_parent` | Set or clear a product's variant parent |
-| `create_attribute` | Create an attribute definition — including AI-generated attributes |
-| `update_attribute` | Update an attribute definition |
-| `create_attribute_class` | Create an attribute class (a cell-disabling rule set) |
-| `update_attribute_class` | Update an attribute class |
-| `create_grid_view` | Create a saved grid (table) view |
-| `update_grid_view` | Update a saved grid view |
+| `create_entity(type, parent_id?, attributes)` | Create any entity — references inline, exactly like `POST /v1/{resource}`. `type: "source"` fires the same async processing pipeline as `POST /v1/sources` |
+| `update_entity(id, type, parent_id?, attributes?)` | The one write path — set values, references, or the variant parent |
+| `upsert_entity(type, merge_key, parent_id?, attributes)` | Create-or-update by your own key (usually `sku`) — mirrors `POST /v1/{resource}/upsert` |
+| `upsert_entities(type, merge_key, items ≤100)` | Bulk create-or-update — mirrors `POST /v1/{resource}/batch` exactly, returning the same `{summary, data}` per-item results. The preview (`confirm: false`) is deliberately compact: item count + sample merge values, not 100 diffs |
+| `create_attribute` / `update_attribute` | Manage attribute definitions, including AI-generation config |
 
-<Callout type="info">
-  The relationship resource is called **references** — use `get_references` to read related entities.
-  (There is no "connections" tool.)
-</Callout>
+### MCP-only tools
+
+MCP is a **superset**: grid views and attribute classes left the public REST surface and live only
+here.
+
+| Tool | Scope | What it does |
+|---|---|---|
+| `list_grid_views` / `get_grid_view` / `create_grid_view` / `update_grid_view` | `read:views` / `write:views` | Saved grid (table) views |
+| `set_grid_view_column_visibility(grid_view_id, col_ids, hidden?)` | `write:views` | Show/hide specific columns **in place** — column order, widths, pinning, sorting, and filters are preserved exactly (`update_grid_view` rebuilds the layout; use this for visibility-only changes). Preview reports exactly what would flip; unmatched keys are reported, never guessed |
+| `reorder_grid_views(type, grid_view_ids)` | `write:views` | Reorder an entity type's view tabs. Takes **every** view id of that type in the desired order; partial lists are rejected with what's missing |
+| `list_attribute_classes` / `get_attribute_class` | `read:attributes` | Attribute classes (cell-disabling rule sets) |
+| `create_attribute_class` / `update_attribute_class` | `write:attributes` | Create / update attribute classes |
 
 <Callout type="warning">
   **Deletes are disabled during the beta.** Destructive operations are turned off across both REST
-  and MCP: the delete tool is not exposed and `DELETE` endpoints return `403`, even for a key or
-  connection that holds a `delete:products` scope. Deletes will be enabled in a later release. See
+  and MCP: no delete tool is exposed and `DELETE` endpoints return `403`, even for a key or
+  connection that holds a `delete:*` scope. Deletes will be enabled in a later release. See
   [Authentication](/developers/authentication#beta-limitation-deletes-are-disabled).
 </Callout>
 
 ## Working with vendors, categories, and images
 
 Products point at other entities — a vendor, a category, their images — through
-**[reference attributes](/developers/conventions#reference-attributes)**. A reference always holds
-the other entity's `id`, so the entity has to exist before a product can point at it.
-`list_entities` and `create_entity` cover that: look up what already exists, create what doesn't,
-then set the reference.
+**[reference attributes](/developers/conventions#reference-stubs-and-symmetric-writes)**.
+A reference always holds the other entity's `id`, so the entity has to exist before a product can
+point at it. `list_entities` and `create_entity` cover that: look up what already exists, create
+what doesn't, then set the reference.
 
 For example, to file a product under a "Trail Running" category:
 
@@ -195,7 +202,7 @@ For example, to file a product under a "Trail Running" category:
     {
       "tool": "list_entities",
       "arguments": {
-        "entity_type": "category",
+        "type": "category",
         "filters": [{ "attribute_key": "name", "operator": "contains", "value": "Trail Running" }]
       }
     }
@@ -209,35 +216,35 @@ For example, to file a product under a "Trail Running" category:
     {
       "tool": "create_entity",
       "arguments": {
-        "entity_type": "category",
+        "type": "category",
         "attributes": { "name": "Trail Running" },
         "confirm": true
       }
     }
     ```
-    `create_entity` is a write tool, so the same preview-then-confirm flow applies. The response
-    includes the new category's `id`.
+    `create_entity` is a write tool, so the same preview-then-confirm flow applies. The response is
+    the full new resource, including its `id`.
   </Step>
   <Step title="Point the product at it">
     ```json
     {
-      "tool": "set_attribute_values",
+      "tool": "update_entity",
       "arguments": {
-        "product_id": "…",
+        "id": "9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21",
+        "type": "product",
         "attributes": { "category": "<category-id>" },
         "confirm": true
       }
     }
     ```
-    Single references take one entity ID; list references (like `product_images`) take an array of
-    them.
+    Single references take one entity ID (or an `{id}` stub — read stubs re-sent verbatim are valid
+    writes); list references (like `gallery_images`) take an array, replace semantics.
   </Step>
 </Steps>
 
-The same pattern works for vendors and images. Creating an **image** entity (the resource the REST
-API calls **assets**) records a hosted image URL — its `url` attribute. To upload files or pull
-images down from the web, use the image library in the app or a
-[CSV import](/product/sources-and-importing/importing-first-catalog-csv).
+The same pattern works for vendors and images. Creating an **image** entity records a hosted image
+URL — its `url` attribute. To upload files or pull images down from the web, use the image library
+in the app or a [CSV import](/product/sources-and-importing/importing-first-catalog-csv).
 
 <Callout type="info">
   References are deliberately ID-based: a reference can only point at an entity that already exists,

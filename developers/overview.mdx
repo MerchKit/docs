@@ -1,6 +1,6 @@
 ---
 title: "API Overview"
-description: "What the Merchkit API is, how to think about products and attributes, and where to find the base URL, OpenAPI spec, and llms.txt."
+description: "Your first five minutes with the Merchkit API: authenticate, learn your workspace's attribute keys, read a product in the one-map shape, and find anything by SKU."
 ---
 
 Merchkit is an AI-native **PIM** (Product Information Management) system. The API and MCP server let
@@ -11,32 +11,292 @@ Claude — over the same data your team works with in the Merchkit app.
   The examples below use `https://www.merchkit.com` as the base URL.
 </Note>
 
+## The first five minutes
+
+Three calls take you from a fresh API key to reading real catalog data.
+
+<Steps>
+  <Step title="Authenticate">
+    Every request carries your workspace API key as a bearer token:
+
+    ```bash
+    curl https://www.merchkit.com/api/v1/products \
+      -H "Authorization: Bearer mk_live_..."
+    ```
+
+    One key maps to exactly one workspace, and keys carry scopes. See
+    [Authentication](/developers/authentication) for the full model.
+  </Step>
+  <Step title="Learn your keys">
+    A product's fields are **attributes**, defined per workspace rather than hard-coded. So your
+    first real call is schema discovery — it tells you every key you can read and write, its data
+    type, whether it is writable, and (for selects) the exact acceptable values:
+
+    ```bash
+    curl "https://www.merchkit.com/api/v1/attributes?type=product" \
+      -H "Authorization: Bearer mk_live_..."
+    ```
+
+    ```json
+    {
+      "data": [
+        {
+          "id": "0d9e4c2b-7a31-4b8f-9c56-1e2d3f4a5b6c",
+          "key": "product_name",
+          "name": "Product Name",
+          "entity_type": "product",
+          "data_type": "text",
+          "channel": null,
+          "is_primary": true,
+          "writable": true,
+          "acceptable_values": [],
+          "default_value": null
+        },
+        {
+          "id": "1a2b3c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d",
+          "key": "sku",
+          "name": "SKU",
+          "entity_type": "product",
+          "data_type": "text",
+          "channel": null,
+          "is_primary": false,
+          "writable": true,
+          "acceptable_values": [],
+          "default_value": null
+        },
+        {
+          "id": "2b3c4d5e-6f7a-4b9c-8d0e-2f3a4b5c6d7e",
+          "key": "material",
+          "name": "Material",
+          "entity_type": "product",
+          "data_type": "single_select_list",
+          "channel": null,
+          "is_primary": false,
+          "writable": true,
+          "acceptable_values": ["White Oak", "Walnut", "Ash", "Beech"],
+          "default_value": null
+        },
+        { "key": "vendor", "data_type": "entity_reference", "writable": true, "…": "…" },
+        { "key": "gallery_images", "data_type": "entity_list_reference", "writable": true, "…": "…" },
+        { "key": "data_sources", "data_type": "entity_list_reference", "writable": true, "…": "…" }
+      ]
+    }
+    ```
+
+    Cache this — it is the canonical answer to "what fields exist", and it rarely changes.
+  </Step>
+  <Step title="Read a product">
+    Every entity — list row, detail read, or mutation response — uses the same **one-map shape**:
+    system fields at the top level, every customer-defined key inside `attributes`. References come
+    back as labeled stubs, so you never do a second lookup just to render a name:
+
+    ```bash
+    curl "https://www.merchkit.com/api/v1/products?limit=1" \
+      -H "Authorization: Bearer mk_live_..."
+    ```
+
+    ```json
+    {
+      "data": [
+        {
+          "id": "9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21",
+          "type": "product",
+          "label": "Aria Oak Dining Table",
+          "parent_id": null,
+          "created_at": "2026-06-02T14:11:09Z",
+          "updated_at": "2026-07-18T09:30:22Z",
+          "attributes": {
+            "sku": "ARIA-DT-72",
+            "product_name": "Aria Oak Dining Table",
+            "price": 1299,
+            "material": "White Oak",
+            "vendor": {
+              "id": "77e1b2aa-4f6d-4c1a-9e6b-2f8a1d3c5e70",
+              "type": "vendor",
+              "label": "Nordic Timber Co."
+            },
+            "category": {
+              "id": "c41d09f3-2b1e-4f7a-8c3d-6e9b0a2d4f81",
+              "type": "category",
+              "label": "Dining Tables"
+            },
+            "gallery_images": [
+              { "id": "f0a1c2d3-e4b5-46a7-98c9-0d1e2f3a4b5c", "type": "image", "label": "aria-hero.jpg" },
+              { "id": "f0a2d3e4-f5a6-47b8-a9d0-1e2f3a4b5c6d", "type": "image", "label": "aria-detail.jpg" },
+              { "id": "f0a3e4f5-a6b7-48c9-b0e1-2f3a4b5c6d7e", "type": "image", "label": "aria-side.jpg" }
+            ]
+          }
+        }
+      ],
+      "pagination": { "total": 1240, "limit": 1, "offset": 0, "has_more": true }
+    }
+    ```
+
+    `attributes` is **sparse** — only keys with values appear. Read with `attributes[key] ?? null`,
+    render names with `label ?? id`. The full anatomy lives in
+    [Conventions](/developers/conventions#resource-anatomy).
+  </Step>
+  <Step title="Find anything by SKU">
+    ```bash
+    curl "https://www.merchkit.com/api/v1/products?filter[sku]=ARIA-DT-72" \
+      -H "Authorization: Bearer mk_live_..."
+    ```
+
+    That's the whole recipe — a bare `filter[key]=value` means equals. The full
+    [filter grammar](/developers/conventions#filtering-and-sorting) covers the rest.
+  </Step>
+</Steps>
+
+## The identity rule
+
+<Callout type="info">
+  **The UUID is the address. Your SKU is a filter.** Item paths take UUIDs only
+  (`GET /v1/products/{id}`), and reference values are UUIDs. To resolve your own identifier, filter:
+  `?filter[sku]=ARIA-DT-72` — or resolve 100 at once with `?filter[sku][in]=A,B,C`. And when you'd
+  rather not resolve IDs at all, **upsert and batch write by your own key**: `POST /v1/products/upsert`
+  and `POST /v1/products/batch` match on any text attribute you name (`merge_key`, usually `sku`) and
+  create or update accordingly.
+</Callout>
+
 ## The mental model
 
 A few concepts carry the whole API. Internalize these and the rest follows.
 
 <Steps>
-  <Step title="A product is the core object">
-    The **product** is the central resource. (Assets, vendors, and categories are modeled the same
-    way and live alongside it.) When you talk to a person about a product, identify it by its primary
-    attribute — usually its SKU. When you call the API, identify it by its UUID `id`.
+  <Step title="Five resources, one shape">
+    `products`, `images`, `vendors`, `categories`, and `sources` are the same kind of object — an
+    entity with dynamic attributes — and share identical list/read/write mechanics. `type`
+    discriminates (`product | image | vendor | category | source`).
   </Step>
-  <Step title="Attributes are dynamic">
-    A product's fields are **attributes**, defined per workspace rather than hard-coded. Attribute
-    definitions describe what a product can hold; attribute *values* are what a given product holds.
-    To enrich a product you set attribute values — you never recreate the product to change a field.
+  <Step title="Attributes are dynamic — and sparse">
+    Attribute definitions describe what an entity *can* hold; `attributes` holds what it *does*
+    hold. To enrich a product you `PATCH` attribute values — you never recreate the product to
+    change a field. Videos are not a resource: a generated video is a plain URL value inside
+    `attributes`, like any other scalar.
+  </Step>
+  <Step title="Sources are async">
+    A **source** is a web page or document Merchkit scrapes for enrichment. `POST /v1/sources` with
+    a URL returns `202` and a `job_id` — processing is asynchronous. Poll `GET /v1/jobs/{job_id}`
+    until `completed`, then find the created source via `GET /v1/sources?filter[url]=...`. Attaching
+    a source to a product is just a reference write: set `data_sources` in the product's
+    `attributes`.
   </Step>
   <Step title="Completeness is per-channel">
-    Attributes can be **channel-scoped**, so completeness is evaluated **per channel**. The same
-    product can be complete for one channel and incomplete for another. Whenever you check
-    completeness, you pass the channel you care about.
+    Attributes can be **channel-scoped**, so completeness is evaluated **per channel** — the same
+    product can be complete for one channel and incomplete for another. Always pass `?channel=`.
   </Step>
 </Steps>
 
 <Callout type="info">
-  Channels are **read-only and global** in the API — you read the available channel catalog, but you
-  cannot create channels through the API.
+  Channels are **read-only and global** in the API — you read the enabled channel catalog via
+  `GET /v1/channels`, but you cannot create channels through the API.
 </Callout>
+
+## Pushing a catalog from an ERP
+
+The headline workflow: a 5,000-SKU delta push is **50 calls**, with no ID-mapping table and no
+create-vs-update fork on your side.
+
+```bash
+curl -X POST "https://www.merchkit.com/api/v1/products/batch" \
+  -H "Authorization: Bearer mk_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "merge_key": "sku",
+    "items": [
+      { "attributes": { "sku": "ARIA-DT-72", "product_name": "Aria Oak Dining Table", "price": 1299 } },
+      { "attributes": { "sku": "ARIA-BN-18", "product_name": "Aria Oak Bench",        "price": 549  } },
+      { "attributes": { "sku": "ARIA-RG-90", "pricee": 890 } }
+    ]
+  }'
+```
+
+Note the deliberate typo in the third item (`pricee`) — it shows what a failed item looks like:
+
+```json
+{
+  "summary": { "total": 3, "created": 1, "updated": 1, "failed": 1, "has_errors": true },
+  "data": [
+    { "index": 0, "merge_value": "ARIA-DT-72", "id": "9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21", "status": "updated" },
+    { "index": 1, "merge_value": "ARIA-BN-18", "id": "3c77a1b9-5d2e-4f80-9a1c-7b6d5e4f3a2b", "status": "created" },
+    {
+      "index": 2,
+      "merge_value": "ARIA-RG-90",
+      "status": "error",
+      "error": {
+        "code": "validation_failed",
+        "retriable": false,
+        "message": "Unknown attribute key(s): pricee.",
+        "field_errors": [{ "field": "pricee", "issue": "not_a_defined_attribute" }]
+      }
+    }
+  ]
+}
+```
+
+Three habits make batch integrations robust:
+
+- **Check `summary.has_errors` first** — clean batches (the steady-state majority) need no per-item scan, and `summary.failed` is your log line and alerting metric.
+- **Join results to your source rows by `merge_value`, not by array position** — it survives sorting, re-sliced batches, and error reports read days later. (`index` is still there and always matches input order.)
+- **Route retries on `error.retriable`, never on message text.** `retriable: false` means the same item will fail the same way — dead-letter it for a human; `retriable: true` (rate limits, transient server errors) belongs in your retry queue. Don't sum `summary` counts across re-runs of the same batch: an idempotent retry reports `updated` for rows the first attempt `created`.
+
+Each item is matched on `sku` (trimmed, case-insensitive) and created or updated accordingly, with a
+**per-item status** — re-running the same batch is idempotent. Check every item: an HTTP `200` does
+**not** mean every item succeeded; failed items carry an `error` instead of an `id`. Up to 100 items
+per call; omit `merge_key` for pure creates.
+
+Single-record flows use `POST /v1/products/upsert` with the same semantics. The status code tells you
+what happened, and both outcomes return the full resource — no follow-up `GET` needed:
+
+```bash
+curl -X POST "https://www.merchkit.com/api/v1/products/upsert" \
+  -H "Authorization: Bearer mk_live_…" -H "Content-Type: application/json" \
+  -d '{"merge_key": "sku", "attributes": {"sku": "ARIA-BENCH-48", "product_name": "Aria Oak Bench 48\"", "price": 449}}'
+```
+
+First call — no product carries that SKU yet, so one is **created** (`201 Created`):
+
+```json
+{
+  "data": {
+    "id": "d0212ae6-cfaf-49c6-8def-259e66ddca21",
+    "type": "product",
+    "label": "ARIA-BENCH-48",
+    "parent_id": null,
+    "created_at": "2026-07-22T18:30:03Z",
+    "updated_at": "2026-07-22T18:30:03Z",
+    "attributes": {
+      "sku": "ARIA-BENCH-48",
+      "product_name": "Aria Oak Bench 48\"",
+      "price": 449
+    }
+  }
+}
+```
+
+Re-run the same call with a changed price and the existing product is **updated** (`200 OK`) — same
+`id`, merged attributes, bumped `updated_at`:
+
+```json
+{
+  "data": {
+    "id": "d0212ae6-cfaf-49c6-8def-259e66ddca21",
+    "type": "product",
+    "label": "ARIA-BENCH-48",
+    "parent_id": null,
+    "created_at": "2026-07-22T18:30:03Z",
+    "updated_at": "2026-07-22T18:30:04Z",
+    "attributes": {
+      "sku": "ARIA-BENCH-48",
+      "product_name": "Aria Oak Bench 48\"",
+      "price": 429
+    }
+  }
+}
+```
+
+If more than one existing product matches the merge key, nothing is written and you get `409 Conflict`
+listing the matching ids — deduplicate or update one of them directly by `id`.
 
 ## Base URL and spec
 
@@ -45,44 +305,29 @@ A few concepts carry the whole API. Internalize these and the rest follows.
 </ParamField>
 
 <ParamField path="OpenAPI spec" type="string">
-  `https://www.merchkit.com/api/v1/openapi` — the machine-readable contract. Field and enum
-  descriptions are rich enough for an agent to route by semantic search, and the spec backs the
-  **API Reference** in these docs.
+  `https://www.merchkit.com/api/v1/openapi` — the machine-readable contract, with worked examples on
+  every operation. It backs the **API Reference** in these docs.
 </ParamField>
 
 <ParamField path="llms.txt" type="string">
   `https://www.merchkit.com/llms.txt` — a curated, instruction-bearing guide written for agents. It
-  lists the preferred endpoints, the filter DSL, and the common footguns. If you are pointing an
+  carries the identity rule, the filter grammar, and the common recipes. If you are pointing an
   agent at Merchkit, give it this URL.
 </ParamField>
-
-## Authentication, in one line
-
-Every request carries your workspace API key as a bearer token:
-
-```http
-Authorization: Bearer mk_live_...
-```
-
-One key maps to exactly one workspace, and keys carry scopes. See
-[Authentication](/developers/authentication) for the full model.
-
-Agents can also connect to the [MCP server](/developers/mcp) over **OAuth** — one click, a sign-in,
-and a workspace + scope choice, with no API key to manage.
 
 ## Where to go next
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/developers/authentication">
-    API keys, scopes, and read vs write access.
+    API keys, OAuth for agents, and the per-resource scope taxonomy.
   </Card>
   <Card title="Conventions" icon="list-check" href="/developers/conventions">
-    Pagination, the filter DSL, the error envelope, and async jobs.
+    Resource anatomy, the filter grammar, pagination, events polling, and async jobs.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/developers/errors">
+    Every error code, every field-level issue, and how to recover from each.
   </Card>
   <Card title="MCP server" icon="robot" href="/developers/mcp">
-    Connect Claude, ChatGPT, or VS Code in one click — or over an API key.
-  </Card>
-  <Card title="API Reference" icon="code" href="/api-reference">
-    The full endpoint reference, generated from the OpenAPI spec.
+    Connect Claude, ChatGPT, or VS Code in one click — same shapes as REST.
   </Card>
 </CardGroup>
