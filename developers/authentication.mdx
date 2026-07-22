@@ -1,13 +1,13 @@
 ---
 title: "Authentication"
-description: "Authenticate the API and MCP server: connect an agent with OAuth (no key), or use a workspace API key — bearer mk_live_ tokens, one key per workspace, and a symmetric read/write/delete scope per resource."
+description: "Authenticate the API and MCP server: connect an agent with OAuth (no key), or use a workspace API key, with bearer mk_live_ tokens, one key per workspace, and a symmetric read/write/delete scope per resource."
 ---
 
-The Merchkit **REST API** authenticates with a **workspace API key** — create a key in your
-workspace settings and send it as a bearer token on every request. The **MCP server** accepts the
-same key, and it *also* lets an agent connect over **OAuth** with no key at all — the recommended
-path for tools like Claude, ChatGPT, and VS Code. See [connecting an agent](#connecting-an-agent)
-for that flow; the rest of this page covers API keys and the scopes they carry.
+The Merchkit REST API authenticates with a workspace API key. Create a key in your workspace
+settings and send it as a bearer token on every request. The MCP server accepts the same key. It
+also lets an agent connect over OAuth with no key at all, the recommended path for tools like
+Claude, ChatGPT, and VS Code. See [connecting an agent](#connecting-an-agent) for that flow; the
+rest of this page covers API keys and the scopes they carry.
 
 <Note>
   The examples use `https://www.merchkit.com` as the base URL.
@@ -35,39 +35,39 @@ const res = await fetch("https://www.merchkit.com/api/v1/products", {
 </CodeGroup>
 
 <Callout type="warning">
-  A key is a secret with workspace access. Store it in a secret manager or environment variable —
-  never commit it to source control or expose it to a browser client.
+  A key is a secret with workspace access. Store it in a secret manager or environment variable.
+  Never commit it to source control or expose it to a browser client.
 </Callout>
 
 ### One key, one workspace
 
-Each API key maps to **exactly one workspace**. There is no account-level key that spans workspaces —
-to operate across multiple workspaces, create one key per workspace and select the right key per
-request. The same key authenticates both the REST API and the [MCP server](/developers/mcp).
+Each API key maps to exactly one workspace. No account-level key spans workspaces. To operate across
+multiple workspaces, create one key per workspace and select the right key per request. The same key
+authenticates both the REST API and the [MCP server](/developers/mcp).
 
 ## Connecting an agent
 
 Interactive agents don't need an API key. When you add Merchkit to Claude, ChatGPT, VS Code, or
-another MCP client, the app connects to the [MCP server](/developers/mcp) over **OAuth 2.1**: you
-sign in, pick the **workspace** to connect, and choose the **scopes** to grant on a consent screen.
+another MCP client, the app connects to the [MCP server](/developers/mcp) over OAuth 2.1: you sign
+in, pick the workspace to connect, and choose the scopes to grant on a consent screen.
 
-- **No secret on disk** — the agent holds a short-lived token, not your API key.
-- **One connection, one workspace** — the same model as an API key.
-- **Scopes work identically** — the consent screen grants the same scopes documented below, with
-  every scope except the `delete:*` scopes selected by default.
-- **Revoke anytime** — manage connections under **Settings → API keys → Connected apps**; revoking
-  cuts the agent's access on its next request.
+- No secret sits on disk. The agent holds a short-lived token, not your API key.
+- One connection maps to one workspace, the same model as an API key.
+- Scopes work the same way. The consent screen grants the same scopes documented below, with every
+  scope except the `delete:*` scopes selected by default.
+- Revoke access anytime under **Settings → API keys → Connected apps**. Revoking cuts the agent's
+  access on its next request.
 
-Use an API key for non-interactive clients — servers, scripts, and CI — that can't complete a browser
-sign-in. See the [MCP guide](/developers/mcp#connect-in-one-click) for the one-click connect buttons.
+Use an API key for non-interactive clients that can't complete a browser sign-in: servers, scripts,
+and CI. See the [MCP guide](/developers/mcp#connect-in-one-click) for the one-click connect buttons.
 
 ## Scopes
 
 Keys carry **scopes** that grant least-privilege access. Each operation declares the scope(s) it
-requires, and the key must hold all of them — otherwise the request fails with
+requires, and the key must hold all of them. Otherwise the request fails with
 [`insufficient_scope`](/developers/errors#insufficient_scope). Every entity resource gets a
-symmetric **read / write / delete** triple; attribute *values* are governed by the owning resource's
-write scope — writing a product's `price` needs `write:products`, an image's `alt_text` needs
+symmetric read / write / delete triple. Attribute values are governed by the owning resource's
+write scope: writing a product's `price` needs `write:products`, and an image's `alt_text` needs
 `write:images`.
 
 | Scope group | Scopes | Grants |
@@ -83,20 +83,20 @@ write scope — writing a product's `price` needs `write:products`, an image's `
 | Events | `read:events` | The workspace change feed **and** per-entity events |
 | Jobs | `read:jobs` | Listing and polling async jobs |
 
-Scopes that no longer exist:
+These scopes no longer exist:
 
-- **`write:attribute_values`** — gone. Value writes use the resource's own write scope, on REST and
-  MCP alike; the old split (REST checked `write:products` while MCP checked `write:attribute_values`)
-  is dead.
-- **`read:completeness`** — gone. Completeness is an ordinary product read (`read:products`).
-- **`read:history`** — renamed to `read:events`.
+- `write:attribute_values` is gone. Value writes use the resource's own write scope on REST and MCP
+  alike. The old split, where REST checked `write:products` while MCP checked
+  `write:attribute_values`, no longer applies.
+- `read:completeness` is gone. Completeness is an ordinary product read (`read:products`).
+- `read:history` is renamed to `read:events`.
 
 <Callout type="info">
-  **Already issued keys were remapped automatically** to this taxonomy: `read:history` became
-  `read:events`; keys holding product scopes gained the matching `images` scopes (images shared
-  product scopes before — a faithful mapping, not a widening); `write:attribute_values` became the
-  four entity write scopes it effectively granted. Review your keys and trim anything broader than
-  the integration needs. `sources` scopes are net-new — no old key holds them; grant explicitly.
+  Already issued keys were remapped automatically to this taxonomy. `read:history` became
+  `read:events`. Keys holding product scopes gained the matching `images` scopes, since images
+  shared product scopes before. `write:attribute_values` became the four entity write scopes it
+  effectively granted. Review your keys and trim anything broader than the integration needs. The
+  `sources` scopes are net-new: no old key holds them, so grant them explicitly.
 </Callout>
 
 <Callout type="info">
@@ -108,19 +108,19 @@ Scopes that no longer exist:
 
 Because scopes are per-resource with split read/write/delete, you can mint keys for different jobs:
 
-- **Read-only key** — grant only `read:*` scopes. It can list and read every resource you authorize
-  but cannot mutate anything. Use it for dashboards, analytics, sync-out jobs, or pointing an agent
-  at your catalog for inspection.
-- **Write key** — grant the `write:*` scopes the integration needs, in addition to the reads. Use it
-  for enrichment, imports, upserts, and any agent that mutates data.
+- A read-only key holds only `read:*` scopes. It can list and read every resource you authorize but
+  cannot mutate anything. Use it for dashboards, analytics, sync-out jobs, or pointing an agent at
+  your catalog for inspection.
+- A write key adds the `write:*` scopes the integration needs to those reads. Use it for enrichment,
+  imports, upserts, and any agent that mutates data.
 
-A read-only key **cannot perform writes** — this is enforced by scope on both the REST API and the
-MCP write tools.
+A read-only key cannot perform writes. Scope enforces this on both the REST API and the MCP write
+tools.
 
 ## Beta limitation: deletes are disabled
 
 <Callout type="warning">
-  **During the beta, destructive operations are disabled.** `DELETE` endpoints return **`403`**, and
-  there is no delete tool in MCP, even if a key holds a `delete:*` scope. Destructive actions are
-  enabled in a later release. Build your integrations against create, update, and upsert for now.
+  During the beta, destructive operations are disabled. `DELETE` endpoints return `403`, and there
+  is no delete tool in MCP, even if a key holds a `delete:*` scope. Destructive actions are enabled
+  in a later release. Build your integrations against create, update, and upsert for now.
 </Callout>

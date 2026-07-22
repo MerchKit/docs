@@ -4,8 +4,8 @@ description: "Your first five minutes with the Merchkit API: authenticate, learn
 ---
 
 Merchkit is an AI-native **PIM** (Product Information Management) system. The API and MCP server let
-you operate your catalog programmatically — from your own backend, a script, or an AI agent such as
-Claude — over the same data your team works with in the Merchkit app.
+you operate your catalog programmatically, from your own backend, a script, or an AI agent such as
+Claude. You work over the same data your team uses in the Merchkit app.
 
 <Note>
   The examples below use `https://www.merchkit.com` as the base URL.
@@ -28,8 +28,8 @@ Three calls take you from a fresh API key to reading real catalog data.
     [Authentication](/developers/authentication) for the full model.
   </Step>
   <Step title="Learn your keys">
-    A product's fields are **attributes**, defined per workspace rather than hard-coded. So your
-    first real call is schema discovery — it tells you every key you can read and write, its data
+    A product's fields are **attributes**, defined per workspace rather than hard-coded. Your
+    first real call is schema discovery. It returns every key you can read and write, its data
     type, whether it is writable, and (for selects) the exact acceptable values:
 
     ```bash
@@ -83,12 +83,13 @@ Three calls take you from a fresh API key to reading real catalog data.
     }
     ```
 
-    Cache this — it is the canonical answer to "what fields exist", and it rarely changes.
+    Cache this. It is the canonical answer to "what fields exist", and it rarely changes.
   </Step>
   <Step title="Read a product">
-    Every entity — list row, detail read, or mutation response — uses the same **one-map shape**:
-    system fields at the top level, every customer-defined key inside `attributes`. References come
-    back as labeled stubs, so you never do a second lookup just to render a name:
+    Every entity uses the same **one-map shape**, whether it is a list row, a detail read, or a
+    mutation response: system fields at the top level, every customer-defined key inside
+    `attributes`. References come back as labeled stubs, so you never do a second lookup just to
+    render a name:
 
     ```bash
     curl "https://www.merchkit.com/api/v1/products?limit=1" \
@@ -132,7 +133,7 @@ Three calls take you from a fresh API key to reading real catalog data.
     }
     ```
 
-    `attributes` is **sparse** — only keys with values appear. Read with `attributes[key] ?? null`,
+    `attributes` is **sparse**: only keys with values appear. Read with `attributes[key] ?? null`,
     render names with `label ?? id`. The full anatomy lives in
     [Conventions](/developers/conventions#resource-anatomy).
   </Step>
@@ -142,7 +143,7 @@ Three calls take you from a fresh API key to reading real catalog data.
       -H "Authorization: Bearer mk_live_..."
     ```
 
-    That's the whole recipe — a bare `filter[key]=value` means equals. The full
+    A bare `filter[key]=value` means equals. The full
     [filter grammar](/developers/conventions#filtering-and-sorting) covers the rest.
   </Step>
 </Steps>
@@ -151,8 +152,8 @@ Three calls take you from a fresh API key to reading real catalog data.
 
 <Callout type="info">
   **The UUID is the address. Your SKU is a filter.** Item paths take UUIDs only
-  (`GET /v1/products/{id}`), and reference values are UUIDs. To resolve your own identifier, filter:
-  `?filter[sku]=ARIA-DT-72` — or resolve 100 at once with `?filter[sku][in]=A,B,C`. And when you'd
+  (`GET /v1/products/{id}`), and reference values are UUIDs. To resolve your own identifier, filter
+  with `?filter[sku]=ARIA-DT-72`, or resolve 100 at once with `?filter[sku][in]=A,B,C`. When you'd
   rather not resolve IDs at all, **upsert and batch write by your own key**: `POST /v1/products/upsert`
   and `POST /v1/products/batch` match on any text attribute you name (`merge_key`, usually `sku`) and
   create or update accordingly.
@@ -160,42 +161,43 @@ Three calls take you from a fresh API key to reading real catalog data.
 
 ## The mental model
 
-A few concepts carry the whole API. Internalize these and the rest follows.
+These concepts cover how every resource behaves.
 
 <Steps>
   <Step title="Five resources, one shape">
-    `products`, `images`, `vendors`, `categories`, and `sources` are the same kind of object — an
-    entity with dynamic attributes — and share identical list/read/write mechanics. `type`
+    `products`, `images`, `vendors`, `categories`, and `sources` are the same kind of object, an
+    entity with dynamic attributes, and share identical list/read/write mechanics. `type`
     discriminates (`product | image | vendor | category | source`).
   </Step>
   <Step title="Attributes are dynamic — and sparse">
     Attribute definitions describe what an entity *can* hold; `attributes` holds what it *does*
-    hold. To enrich a product you `PATCH` attribute values — you never recreate the product to
+    hold. To enrich a product you `PATCH` attribute values. You never recreate the product to
     change a field. Videos are not a resource: a generated video is a plain URL value inside
     `attributes`, like any other scalar.
   </Step>
   <Step title="Sources are async">
-    A **source** is a web page or document Merchkit scrapes for enrichment. `POST /v1/sources` with
-    a URL returns `202` and a `job_id` — processing is asynchronous. Poll `GET /v1/jobs/{job_id}`
-    until `completed`, then find the created source via `GET /v1/sources?filter[url]=...`. Attaching
+    A **source** is a web page or document Merchkit scrapes for enrichment. Processing is
+    asynchronous: `POST /v1/sources` with a URL returns `202` and a `job_id`. Poll
+    `GET /v1/jobs/{job_id}` until `completed`, then find the created source via
+    `GET /v1/sources?filter[url]=...`. Attaching
     a source to a product is just a reference write: set `data_sources` in the product's
     `attributes`.
   </Step>
   <Step title="Completeness is per-channel">
-    Attributes can be **channel-scoped**, so completeness is evaluated **per channel** — the same
+    Attributes can be **channel-scoped**, so completeness is evaluated per channel. The same
     product can be complete for one channel and incomplete for another. Always pass `?channel=`.
   </Step>
 </Steps>
 
 <Callout type="info">
-  Channels are **read-only and global** in the API — you read the enabled channel catalog via
+  Channels are **read-only and global** in the API. You read the enabled channel catalog via
   `GET /v1/channels`, but you cannot create channels through the API.
 </Callout>
 
 ## Pushing a catalog from an ERP
 
-The headline workflow: a 5,000-SKU delta push is **50 calls**, with no ID-mapping table and no
-create-vs-update fork on your side.
+A 5,000-SKU delta push is 50 calls, with no ID-mapping table and no create-vs-update fork on your
+side.
 
 ```bash
 curl -X POST "https://www.merchkit.com/api/v1/products/batch" \
@@ -211,7 +213,7 @@ curl -X POST "https://www.merchkit.com/api/v1/products/batch" \
   }'
 ```
 
-Note the deliberate typo in the third item (`pricee`) — it shows what a failed item looks like:
+The third item has a deliberate typo (`pricee`), which shows what a failed item looks like:
 
 ```json
 {
@@ -234,19 +236,19 @@ Note the deliberate typo in the third item (`pricee`) — it shows what a failed
 }
 ```
 
-Three habits make batch integrations robust:
+Handle batch results with three rules:
 
-- **Check `summary.has_errors` first** — clean batches (the steady-state majority) need no per-item scan, and `summary.failed` is your log line and alerting metric.
-- **Join results to your source rows by `merge_value`, not by array position** — it survives sorting, re-sliced batches, and error reports read days later. (`index` is still there and always matches input order.)
-- **Route retries on `error.retriable`, never on message text.** `retriable: false` means the same item will fail the same way — dead-letter it for a human; `retriable: true` (rate limits, transient server errors) belongs in your retry queue. Don't sum `summary` counts across re-runs of the same batch: an idempotent retry reports `updated` for rows the first attempt `created`.
+- **Check `summary.has_errors` first.** Clean batches need no per-item scan, and `summary.failed` is your log line and alerting metric.
+- **Join results to your source rows by `merge_value`, not by array position.** It survives sorting, re-sliced batches, and error reports read days later. (`index` is still there and always matches input order.)
+- **Route retries on `error.retriable`, never on message text.** `retriable: false` means the same item will fail the same way, so dead-letter it for a human. `retriable: true` (rate limits, transient server errors) belongs in your retry queue. Don't sum `summary` counts across re-runs of the same batch: an idempotent retry reports `updated` for rows the first attempt `created`.
 
 Each item is matched on `sku` (trimmed, case-insensitive) and created or updated accordingly, with a
-**per-item status** — re-running the same batch is idempotent. Check every item: an HTTP `200` does
-**not** mean every item succeeded; failed items carry an `error` instead of an `id`. Up to 100 items
+per-item status. Re-running the same batch is idempotent. Check every item: an HTTP `200` does not
+mean every item succeeded, and failed items carry an `error` instead of an `id`. Up to 100 items
 per call; omit `merge_key` for pure creates.
 
 Single-record flows use `POST /v1/products/upsert` with the same semantics. The status code tells you
-what happened, and both outcomes return the full resource — no follow-up `GET` needed:
+what happened, and both outcomes return the full resource, so no follow-up `GET` is needed:
 
 ```bash
 curl -X POST "https://www.merchkit.com/api/v1/products/upsert" \
@@ -254,7 +256,7 @@ curl -X POST "https://www.merchkit.com/api/v1/products/upsert" \
   -d '{"merge_key": "sku", "attributes": {"sku": "ARIA-BENCH-48", "product_name": "Aria Oak Bench 48\"", "price": 449}}'
 ```
 
-First call — no product carries that SKU yet, so one is **created** (`201 Created`):
+On the first call, no product carries that SKU yet, so one is **created** (`201 Created`):
 
 ```json
 {
@@ -274,8 +276,8 @@ First call — no product carries that SKU yet, so one is **created** (`201 Crea
 }
 ```
 
-Re-run the same call with a changed price and the existing product is **updated** (`200 OK`) — same
-`id`, merged attributes, bumped `updated_at`:
+Re-run the same call with a changed price and the existing product is **updated** (`200 OK`), with
+the same `id`, merged attributes, and a bumped `updated_at`:
 
 ```json
 {
@@ -296,21 +298,21 @@ Re-run the same call with a changed price and the existing product is **updated*
 ```
 
 If more than one existing product matches the merge key, nothing is written and you get `409 Conflict`
-listing the matching ids — deduplicate or update one of them directly by `id`.
+listing the matching ids. Deduplicate, or update one of them directly by `id`.
 
 ## Base URL and spec
 
 <ParamField path="Base URL" type="string">
-  `https://www.merchkit.com/api/v1` — all REST endpoints live under the `/api/v1` prefix.
+  `https://www.merchkit.com/api/v1`. All REST endpoints live under the `/api/v1` prefix.
 </ParamField>
 
 <ParamField path="OpenAPI spec" type="string">
-  `https://www.merchkit.com/api/v1/openapi` — the machine-readable contract, with worked examples on
+  `https://www.merchkit.com/api/v1/openapi` is the machine-readable contract, with worked examples on
   every operation. It backs the **API Reference** in these docs.
 </ParamField>
 
 <ParamField path="llms.txt" type="string">
-  `https://www.merchkit.com/llms.txt` — a curated, instruction-bearing guide written for agents. It
+  `https://www.merchkit.com/llms.txt` is a curated, instruction-bearing guide written for agents. It
   carries the identity rule, the filter grammar, and the common recipes. If you are pointing an
   agent at Merchkit, give it this URL.
 </ParamField>
@@ -328,6 +330,6 @@ listing the matching ids — deduplicate or update one of them directly by `id`.
     Every error code, every field-level issue, and how to recover from each.
   </Card>
   <Card title="MCP server" icon="robot" href="/developers/mcp">
-    Connect Claude, ChatGPT, or VS Code in one click — same shapes as REST.
+    Connect Claude, ChatGPT, or VS Code in one click, with the same shapes as REST.
   </Card>
 </CardGroup>
