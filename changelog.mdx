@@ -6,6 +6,49 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
+<Update label="July 21, 2026" description="API v1 redesign: one shape everywhere, labeled references, upsert & batch, sources, and a consolidated MCP surface">
+
+  The public API and MCP server were redesigned ahead of general availability. **This is a breaking
+  release** — the beta had no external integrators, so no compatibility shims were kept. The five
+  developer guides were rewritten to match; start with the new
+  [first five minutes](/developers/overview).
+
+  **New**
+  - **One shape everywhere.** Every entity — list row, detail, and mutation response — is the same
+    [one-map resource](/developers/conventions#resource-anatomy): system fields (`id`, `type`,
+    `label`, `parent_id`, timestamps) at the top level, every customer-defined key inside a sparse
+    `attributes` map. Mutations return the full resource, so no follow-up `GET` is ever needed.
+  - **References carry labels inline.** A reference reads as `{id, type, label}` — no N+1 name
+    lookups — and list references arrive as complete ordered arrays. Writes are symmetric: a read
+    stub re-sent verbatim is a valid write.
+  - **Upsert and batch, by your own key.** `POST /{resource}/upsert` and `POST /{resource}/batch`
+    (≤100 items, per-item statuses) create-or-update by any text attribute you name — a 5,000-SKU
+    ERP delta push is now 50 idempotent calls with no client-side ID map.
+  - **Sources are a first-class resource.** `POST /v1/sources` schedules the scrape-and-create
+    pipeline (`202` + job to poll); attaching to a product is a `data_sources` reference write.
+  - **Shorter filters.** Bare `filter[sku]=…` means equals; operators are now `eq`, `ne`,
+    `contains`, `not_contains`, `starts_with`, `ends_with`, `gt`/`gte`/`lt`/`lte`, `exists`
+    (replacing `blank`/`notBlank`), and a new `in` for batch lookups (≤200 values).
+  - **An [errors page](/developers/errors)** documents every error code and field-level issue code;
+    `documentation_url` in error responses now resolves there.
+
+  **Changed (breaking)**
+  - `/assets*` is now **`/images*`**; `/{id}/history` is now `/{id}/events`; `/{id}/attributes` is
+    gone — `PATCH /{id}` is the one write path; `grid-views` and `attribute-classes` left public
+    REST (they remain on MCP).
+  - snake_case everywhere: write bodies, MCP arguments, and responses all agree
+    (`parent_entity` → `parent_id`, `{entityId, entityType}` → `{id, type}`).
+  - **Scopes are one taxonomy** across REST and MCP: a symmetric read/write/delete triple per
+    resource, images and sources included. `write:attribute_values`, `read:completeness`, and
+    `read:history` are gone; issued keys were
+    [remapped automatically](/developers/authentication#scopes).
+  - **MCP tools consolidated to generic tools** — `list_entities`, `get_entity`, `create_entity`,
+    `update_entity`, `upsert_entity`, and friends, with `type` as a parameter. The per-type tools
+    (`search_products`, `get_product`, `set_attribute_values`, `set_parent`, `get_history`) retired;
+    shapes are identical to REST.
+
+</Update>
+
 <Update label="Week of July 13, 2026" description="MCP tools for vendors, categories, and images">
 
   **New**

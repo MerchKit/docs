@@ -1,0 +1,298 @@
+---
+title: "Errors"
+description: "Every API error code — meaning, HTTP status, retriability, an example body, and how to fix it — plus the full catalog of field-level issue codes."
+---
+
+Every non-2xx response from `/api/v1` uses one machine-recoverable envelope. The `code` is stable
+and machine-readable; `documentation_url` links to the matching section on this page; and
+`field_errors` (when present) name the exact field or filter clause at fault.
+
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "One or more attribute values are invalid.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#validation_failed",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "alternative_action": "List valid attribute keys via GET /v1/attributes?type=product.",
+    "request_id": "3f6c9a1e-8b04-4c6e-b0d3-5f2f6f7a9e21",
+    "field_errors": [
+      {
+        "field": "material",
+        "issue": "not_an_acceptable_value",
+        "acceptable_values": ["White Oak", "Walnut", "Ash", "Beech"]
+      }
+    ]
+  }
+}
+```
+
+<ParamField path="code" type="string">
+  One of the eight stable codes below.
+</ParamField>
+<ParamField path="is_retriable" type="boolean">
+  Whether retrying the same request could succeed. Only `rate_limited` and `internal_error` are
+  retriable — never retry a `4xx` validation or auth error unchanged.
+</ParamField>
+<ParamField path="retry_after_seconds" type="integer | null">
+  How long to wait before retrying, when set. A `429` also carries a `Retry-After` header.
+</ParamField>
+<ParamField path="alternative_action" type="string">
+  A suggested next step that may resolve the problem, when one exists.
+</ParamField>
+<ParamField path="request_id" type="string">
+  Echoed in the `X-Request-Id` response header and our logs — include it when contacting support.
+</ParamField>
+<ParamField path="field_errors[]" type="array">
+  Per-field details: `{field, issue, acceptable_values?}`. See the
+  [issue code catalog](#field-error-issue-codes).
+</ParamField>
+
+<Callout type="info">
+  `field_errors[].acceptable_values` is the strongest self-correction signal in the API: when a
+  select value is rejected, the response carries the exact set that would have passed, so an agent
+  can fix the payload and retry without a human.
+</Callout>
+
+## unauthorized
+
+**HTTP 401 · `is_retriable: false`**
+
+The request carried no API key, an invalid key, or an expired key.
+
+```json
+{
+  "error": {
+    "code": "unauthorized",
+    "message": "Missing API key. Provide it as `Authorization: Bearer <key>`.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#unauthorized",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** send `Authorization: Bearer mk_live_...` on every request. If the key was valid
+before, check its expiry in **Settings → API keys** and mint a replacement. Retrying the same
+request unchanged will never succeed.
+
+## insufficient_scope
+
+**HTTP 403 · `is_retriable: false`**
+
+The key is valid but does not hold every scope the operation requires. The message names the
+missing scope(s).
+
+```json
+{
+  "error": {
+    "code": "insufficient_scope",
+    "message": "This API key is missing required scope(s): write:products.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#insufficient_scope",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "alternative_action": "Issue a new key that includes the required scopes, or use a key with broader access.",
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** issue a key with the named scopes, or (for an OAuth-connected agent) reconnect and
+grant them on the consent screen. The [scope table](/developers/authentication#scopes) maps every
+operation to its scope.
+
+## forbidden
+
+**HTTP 403 · `is_retriable: false`**
+
+The key is valid and scoped, but the operation is disabled — today that means **deletes during the
+beta**.
+
+```json
+{
+  "error": {
+    "code": "forbidden",
+    "message": "Deleting products is disabled during the beta.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#forbidden",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "alternative_action": "Contact Merchkit to enable destructive actions for your workspace.",
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** build against create, update, and upsert for now; contact support to discuss
+enabling destructive actions.
+
+## not_found
+
+**HTTP 404 · `is_retriable: false`**
+
+The resource does not exist **in your workspace** — or the path itself is unknown.
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Product \"9b2f6c1e-8a04-4c6e-b0d3-5f2f6f7a9e21\" was not found.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#not_found",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** re-resolve the id (`GET /v1/products?filter[sku]=...`) — ids never change, so a
+`404` on a previously valid id means the entity was deleted. Note the
+[tenancy rule](/developers/conventions#tenancy-404-not-403): an id belonging to another workspace
+is a uniform `404`, indistinguishable from an id that never existed — there is no cross-tenant
+`403`. A `404` on the path itself means the endpoint doesn't exist; check `GET /api/v1/openapi`.
+
+## validation_failed
+
+**HTTP 400 · `is_retriable: false`**
+
+The request was understood but rejected — a malformed body, an unknown attribute key, a bad filter
+clause, or a value that fails its data type or acceptable values. `field_errors` names each fault.
+
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "One or more filters are invalid.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#validation_failed",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "request_id": "…",
+    "field_errors": [
+      { "field": "filter[price][between]", "issue": "unknown_operator" },
+      { "field": "filter[color]", "issue": "not_a_defined_attribute" }
+    ]
+  }
+}
+```
+
+**How to fix:** walk `field_errors` and correct every entry — all faults are reported at once, not
+one per request. The [issue code catalog](#field-error-issue-codes) below explains each code. For
+unknown keys, discover the schema with `GET /v1/attributes?type=<type>`; for rejected select
+values, use the echoed `acceptable_values`.
+
+## rate_limited
+
+**HTTP 429 · `is_retriable: true`**
+
+Too many requests. Limits are enforced at the edge during the beta — no fixed numbers are
+published.
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "Too many requests.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#rate_limited",
+    "is_retriable": true,
+    "retry_after_seconds": 30,
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** honor the `Retry-After` header (mirrored in `retry_after_seconds`) and back off.
+Reduce round-trips structurally: batch reads with `filter[id][in]` / `filter[sku][in]`, batch
+writes with `POST /{resource}/batch`, and raise `limit` toward 200 instead of paging in small
+steps.
+
+## conflict
+
+**HTTP 409 · `is_retriable: false`**
+
+The operation contradicts existing data. The two cases: an **upsert** matched more than one
+existing entity (the message carries the matching ids), or a write hit a uniqueness constraint.
+
+```json
+{
+  "error": {
+    "code": "conflict",
+    "message": "More than one product matches sku — upsert requires a unique match. Matching ids: 9b2f6c1e-…, 3c77a1b9-….",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#conflict",
+    "is_retriable": false,
+    "retry_after_seconds": null,
+    "alternative_action": "Deduplicate the matching entities or update one of them directly by id.",
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** for upsert conflicts, deduplicate the listed entities (or `PATCH` the one you mean
+directly by id) and re-run. Retrying unchanged returns the same conflict.
+
+## internal_error
+
+**HTTP 500 · `is_retriable: true`**
+
+Something failed on our side. The request may or may not have taken effect.
+
+```json
+{
+  "error": {
+    "code": "internal_error",
+    "message": "An unexpected error occurred.",
+    "documentation_url": "https://docs.merchkit.com/developers/errors#internal_error",
+    "is_retriable": true,
+    "retry_after_seconds": null,
+    "request_id": "…"
+  }
+}
+```
+
+**How to fix:** retry with exponential backoff. For writes, prefer idempotent forms (`upsert`,
+`batch` with a `merge_key`) so a retry after an ambiguous failure cannot double-create. If it
+persists, contact support with the `request_id`.
+
+## Field error issue codes
+
+`field_errors[].issue` carries a stable code for every fault the query parser, filter validator, and
+write validator can raise. (One exception: when a request **body fails its structural schema** —
+wrong JSON types, unknown top-level fields — `issue` carries the human-readable schema message
+instead of a code.)
+
+### Query, filter, and sort issues
+
+| `issue` | Raised when | How to fix |
+|---|---|---|
+| `expected_non_negative_integer` | `limit` or `offset` isn't a plain integer | Send digits only |
+| `out_of_range` | `limit` outside 1–200 | Clamp to 1–200 |
+| `invalid_value` | `filter_join` isn't `and`/`or`, or `type` isn't a valid entity type | Use the documented values |
+| `unknown_operator` | The operator isn't in the [public set](/developers/conventions#filtering-and-sorting) | Use the short operators (`gte`, not `greaterThanOrEqual`) |
+| `not_a_defined_attribute` | A filter, sort, write, or `merge_key` names a key that doesn't exist for this type | Discover keys via `GET /v1/attributes?type=…` |
+| `operator_not_supported_for_type` | Operator/type mismatch — e.g. `contains` on a number, `in` on a number or date | Check the type column in the operator table |
+| `expected_value_or_use_exists` | An empty filter value, e.g. `filter[description]=` | You probably mean `filter[description][exists]=false` |
+| `expected_boolean` | `[exists]` given something other than `true`/`false`; or a boolean attribute written with a non-boolean | Send `true` or `false` |
+| `expected_values` | `[in]` with an empty value list | Provide at least one comma-separated value |
+| `too_many_values` | `[in]` with more than 200 values | Split into multiple calls |
+| `expected_uuid` | An `id`/reference filter value (or an `[in]` token) isn't a UUID | References filter by entity UUID, not label |
+| `expected_number` | A number-typed filter value or attribute write isn't numeric | Send a number |
+| `expected_date` | A date-typed filter value or attribute write isn't an ISO date | Send `YYYY-MM-DD` (or a full ISO timestamp for `created_at`/`updated_at`) |
+| `not_sortable` | `sort` names a reference attribute | Sort on text, number, or date attributes, or the builtins |
+
+### Write issues
+
+| `issue` | Raised when | How to fix |
+|---|---|---|
+| `read_only_attribute` | Writing a `formula`, `inverse_reference`, or `reference_lookup` key | These are derived — check `writable` in `GET /v1/attributes` |
+| `expected_scalar` | An array or object written to a scalar attribute | Send a bare string/number/boolean |
+| `expected_uuid_or_null` | A single-reference key given something other than a UUID, an `{id}` stub, or `null` | Write what you read: a bare UUID or `{ "id": "…" }` |
+| `expected_uuid_array` | A list-reference key given something other than an array of UUIDs / `{id}` stubs | Send an array; it replaces the whole list |
+| `expected_url` | A `url` attribute value isn't an `http(s)` URL | Send a full URL including the scheme |
+| `expected_json` | A `json` attribute value doesn't parse | Send valid JSON (as a string) |
+| `not_an_acceptable_value` | A select value isn't one of the attribute's options — the error echoes `acceptable_values` | Pick from the echoed list, or extend the definition via `PATCH /v1/attributes/{key}` |
+| `required` | Create is missing the type's primary attribute (e.g. `product_name`) | Include the primary key — it's `is_primary: true` in `GET /v1/attributes` |
+| `referenced_entity_not_found` | A reference target UUID doesn't exist in this workspace | Create or look up the target first; foreign-workspace ids are invisible |
+| `self_reference` | `parent_id` equals the entity's own id | An entity cannot be its own parent |
+| `merge_key_value_required` | An upsert/batch item carries no value for the named `merge_key` | Every item must include a non-empty value for the merge key |
+| `not_a_text_attribute` | `merge_key` names a reference, read-only, or non-text attribute | Merge on a writable text attribute, e.g. `sku` |
+| `not_a_reference_attribute` | `?attribute=` (or MCP `get_references`) names a key that isn't a reference | Reference keys are `entity_list_reference` / `inverse_reference` in `GET /v1/attributes` |

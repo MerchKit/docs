@@ -1,6 +1,6 @@
 ---
 title: "Authentication"
-description: "Authenticate the API and MCP server: connect an agent with OAuth (no key), or use a workspace API key — bearer mk_live_ tokens, one key per workspace, and per-resource read/write scopes."
+description: "Authenticate the API and MCP server: connect an agent with OAuth (no key), or use a workspace API key — bearer mk_live_ tokens, one key per workspace, and a symmetric read/write/delete scope per resource."
 ---
 
 The Merchkit **REST API** authenticates with a **workspace API key** — create a key in your
@@ -53,8 +53,8 @@ sign in, pick the **workspace** to connect, and choose the **scopes** to grant o
 
 - **No secret on disk** — the agent holds a short-lived token, not your API key.
 - **One connection, one workspace** — the same model as an API key.
-- **Scopes work identically** — the consent screen grants the same read/write scopes documented
-  below, with every scope except `delete:products` selected by default.
+- **Scopes work identically** — the consent screen grants the same scopes documented below, with
+  every scope except the `delete:*` scopes selected by default.
 - **Revoke anytime** — manage connections under **Settings → API keys → Connected apps**; revoking
   cuts the agent's access on its next request.
 
@@ -64,48 +64,55 @@ sign-in. See the [MCP guide](/developers/mcp#connect-in-one-click) for the one-c
 ## Scopes
 
 Keys carry **scopes** that grant least-privilege access. Each operation declares the scope(s) it
-requires, and the key must hold all of them — otherwise the request fails with `insufficient_scope`.
-Scopes are granted per resource and split into **read** and **write** granularity.
+requires, and the key must hold all of them — otherwise the request fails with
+[`insufficient_scope`](/developers/errors#insufficient_scope). Every entity resource gets a
+symmetric **read / write / delete** triple; attribute *values* are governed by the owning resource's
+write scope — writing a product's `price` needs `write:products`, an image's `alt_text` needs
+`write:images`.
 
-| Resource | Read scope | Write scope(s) |
+| Scope group | Scopes | Grants |
 |---|---|---|
-| Products | `read:products` | `write:products` |
-| Assets (images) | `read:products` | `write:products` |
-| Attribute definitions | `read:attributes` | `write:attributes` |
-| Attribute values | — | `write:attribute_values` |
-| Grid views | `read:views` | `write:views` |
-| Vendors | `read:vendors` | `write:vendors` |
-| Categories | `read:categories` | `write:categories` |
-| Channels | `read:channels` | — |
-| Completeness | `read:completeness` | — |
-| History | `read:history` | — |
-| Jobs | `read:jobs` | — |
+| Products | `read:products` / `write:products` / `delete:products` | Products and variants, references, per-channel completeness |
+| Images | `read:images` / `write:images` / `delete:images` | Images (their own triple — no longer piggybacking product scopes) |
+| Vendors | `read:vendors` / `write:vendors` / `delete:vendors` | Vendors |
+| Categories | `read:categories` / `write:categories` / `delete:categories` | Categories |
+| Sources | `read:sources` / `write:sources` / `delete:sources` | Data sources, including scraped content; `write:sources` triggers processing |
+| Attributes | `read:attributes` / `write:attributes` | Attribute definitions everywhere, plus attribute classes over MCP |
+| Grid views (MCP only) | `read:views` / `write:views` | Saved grid views — an MCP-only surface, no REST endpoints |
+| Channels | `read:channels` | The enabled channel catalog (read-only) |
+| Events | `read:events` | The workspace change feed **and** per-entity events |
+| Jobs | `read:jobs` | Listing and polling async jobs |
 
-Three scope details worth knowing:
+Scopes that no longer exist:
 
-- **Assets (images) share the product scopes** (`read:products` / `write:products`) — there is no
-  separate `read:assets`.
-- **Product enrichment differs by surface.** The MCP `set_attribute_values` tool checks
-  `write:attribute_values`; the REST equivalent (`PATCH /api/v1/products/{id}/attributes`) checks
-  `write:products`. Grant both to a key that enriches over both surfaces.
-- **Other entities use their own write scope.** Updating attribute values on a vendor or category
-  requires `write:vendors` / `write:categories`; on an image, `write:products`.
+- **`write:attribute_values`** — gone. Value writes use the resource's own write scope, on REST and
+  MCP alike; the old split (REST checked `write:products` while MCP checked `write:attribute_values`)
+  is dead.
+- **`read:completeness`** — gone. Completeness is an ordinary product read (`read:products`).
+- **`read:history`** — renamed to `read:events`.
 
 <Callout type="info">
-  Scopes mirror Merchkit's internal permission model, so an API key and a human team member reason
-  about access the same way. The OpenAPI spec documents the required scope for every operation in its
-  `securitySchemes`, so an agent can determine up front whether a key can perform an action.
+  **Already issued keys were remapped automatically** to this taxonomy: `read:history` became
+  `read:events`; keys holding product scopes gained the matching `images` scopes (images shared
+  product scopes before — a faithful mapping, not a widening); `write:attribute_values` became the
+  four entity write scopes it effectively granted. Review your keys and trim anything broader than
+  the integration needs. `sources` scopes are net-new — no old key holds them; grant explicitly.
+</Callout>
+
+<Callout type="info">
+  The OpenAPI spec documents the required scope for every operation in its `securitySchemes`, so an
+  agent can determine up front whether a key can perform an action.
 </Callout>
 
 ### Read-only vs write keys
 
-Because scopes are per-resource and split read/write, you can mint keys for different jobs:
+Because scopes are per-resource with split read/write/delete, you can mint keys for different jobs:
 
 - **Read-only key** — grant only `read:*` scopes. It can list and read every resource you authorize
   but cannot mutate anything. Use it for dashboards, analytics, sync-out jobs, or pointing an agent
   at your catalog for inspection.
 - **Write key** — grant the `write:*` scopes the integration needs, in addition to the reads. Use it
-  for enrichment, imports, and any agent that mutates data.
+  for enrichment, imports, upserts, and any agent that mutates data.
 
 A read-only key **cannot perform writes** — this is enforced by scope on both the REST API and the
 MCP write tools.
@@ -115,5 +122,5 @@ MCP write tools.
 <Callout type="warning">
   **During the beta, destructive operations are disabled.** `DELETE` endpoints return **`403`**, and
   there is no delete tool in MCP, even if a key holds a `delete:*` scope. Destructive actions are
-  enabled in a later release. Build your integrations against create and update for now.
+  enabled in a later release. Build your integrations against create, update, and upsert for now.
 </Callout>
