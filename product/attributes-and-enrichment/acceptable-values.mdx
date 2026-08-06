@@ -14,7 +14,7 @@ Acceptable Values are a comma-separated list that you enter in the Configure Att
 **Example:**
 
 - Acceptable Values: `Red, Blue, Green, Black, White, Gray, Yellow, Orange, Purple, Pink, Brown, Gold, Silver, Bronze`
-- Prompt: "Based on {{product_title}} and product images, identify the primary color."
+- Prompt: "Based on `{{product_title}}` and product images, identify the primary color."
 - Result: The AI will only return one of the 14 colors listed, even if the product is a shade of red that's not on the list—it will return the closest match (e.g., "Red").
 
 ## When to Use Acceptable Values
@@ -148,11 +148,11 @@ Now you can filter, segment, and report on color with confidence. All red produc
 - Or add both versions to your list: `Small, S, Medium, M, Large, L`
 - Or normalize in the prompt: "Convert S/M/L abbreviations to Small/Medium/Large"
 
-## Advanced: Using Acceptable Values with {{ }} Tags
+## Advanced: Using Acceptable Values with `{{ }}` Tags
 
 You can reference other attributes in your prompt and still use Acceptable Values:
 
-**Example prompt:** "Based on {{product_title}}, {{category}}, and images, identify the intended audience. Return only one value."
+**Example prompt:** "Based on `{{product_title}}`, `{{category}}`, and images, identify the intended audience. Return only one value."
 
 **Acceptable Values:** `Men, Women, Unisex, Children, Infants`
 
