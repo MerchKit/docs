@@ -13,7 +13,7 @@ The mechanism behind this is **Insert Value**, the `{{ }}` tag syntax that lets 
 
 When you reference another attribute using `{{attribute_name}}`, Merchkit substitutes that field's actual value for each product during enrichment. This means your AI prompt can read real data and make decisions based on it.
 
-**Example**: A product titled "Leather Desk Chair" with price "$299" and color "Charcoal" can use all three values in a single prompt: "Create an SEO description for this {{product_title}} in {{color}}, priced at {{price}}."
+**Example**: A product titled "Leather Desk Chair" with price "$299" and color "Charcoal" can use all three values in a single prompt: "Create an SEO description for this `{{product_title}}` in `{{color}}`, priced at `{{price}}`."
 
 ## How to Insert Values
 
@@ -125,7 +125,7 @@ This pattern shows a **three-step chain** where one attribute feeds the next.
 
 **Step 2: MSRP (Number, AI ON)**
 - Attribute: `msrp` (Number, AI ON)
-- Prompt: "Read the following pricing rules: {{pricing_policy}}. Extract the MSRP for this product. Return only the numeric value with two decimal places, e.g. 99.99"
+- Prompt: "Read the following pricing rules: `{{pricing_policy}}`. Extract the MSRP for this product. Return only the numeric value with two decimal places, e.g. 99.99"
 - **Required Values**: Toggle ON pricing_policy.
 - Result: AI interprets vendor rules and extracts the MSRP. Because pricing_policy is required, enrichment skips any product whose vendor is missing rules.
 
@@ -144,9 +144,9 @@ Each step depends on the previous. If a vendor's pricing_policy is empty, steps 
 
 [SCREENSHOT: Attribute configuration showing pricing_policy reference lookup, with data like "MSRP = cost × 2.5"]
 
-[SCREENSHOT: AI prompt for msrp attribute, showing {{pricing_policy}} reference]
+[SCREENSHOT: AI prompt for msrp attribute, showing `{{pricing_policy}}` reference]
 
-[SCREENSHOT: Formula attribute for channel_price, showing {{msrp}} * 1.15]
+[SCREENSHOT: Formula attribute for channel_price, showing `{{msrp}}` * 1.15]
 
 ## Common Patterns
 
@@ -181,7 +181,7 @@ Check your `{{ }}` syntax. Use the @ dropdown instead of typing manually—it av
 You've toggled too many attributes as "Required" and they're all empty. Either fill those fields first, or toggle them to OFF and let enrichment run.
 
 **Issue: AI output doesn't use the referenced data**
-The prompt may be ambiguous. Instead of "Use {{product_title}} if helpful," try "Begin your answer with {{product_title}}:" This makes the expectation explicit.
+The prompt may be ambiguous. Instead of "Use `{{product_title}}` if helpful," try "Begin your answer with `{{product_title}}`:" This makes the expectation explicit.
 
 **Issue: Inconsistent output across products**
 Different data types (some titles are short, others are long) produce different outputs. Add constraints to your prompt: "Keep the description under 50 words" or "Always include the brand name."

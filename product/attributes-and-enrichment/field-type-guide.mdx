@@ -21,15 +21,15 @@ This guide covers every field type with examples, configuration details, and dec
 **AI Support:** Yes. You can write a prompt to have the AI generate or extract text.
 
 **Configuration:**
-- **Prompt field:** Write instructions for the AI (e.g., "Generate a 2-3 sentence product description for {{product_title}}")
+- **Prompt field:** Write instructions for the AI (e.g., "Generate a 2-3 sentence product description for `{{product_title}}`")
 - **Acceptable Values:** Optional. Use if you want to constrain output to a specific list
-- **Product Data Context:** The AI can reference other attributes via {{ }} tags
+- **Product Data Context:** The AI can reference other attributes via `{{ }}` tags
 - **Image Source:** The AI can see your product images to inform text generation
 
 **Example use cases:**
-- `Product Description` — "Write a compelling 2-3 sentence description of {{product_title}} highlighting {{material}} and {{intended_use}}."
-- `Care Instructions` — "Extract or write care instructions for {{product_title}}. Format as a bulleted list."
-- `Key Features` — "List 3-4 key features of {{product_title}}. Be specific and avoid marketing hype."
+- `Product Description` — "Write a compelling 2-3 sentence description of `{{product_title}}` highlighting `{{material}}` and `{{intended_use}}`."
+- `Care Instructions` — "Extract or write care instructions for `{{product_title}}`. Format as a bulleted list."
+- `Key Features` — "List 3-4 key features of `{{product_title}}`. Be specific and avoid marketing hype."
 
 **Validation:**
 - Single Line Text typically has a character limit (e.g., 500 characters); Merchkit will warn you if you exceed it
@@ -61,9 +61,9 @@ This guide covers every field type with examples, configuration details, and dec
 - **Image Source:** AI can analyze images to extract dimensions or measurements
 
 **Example use cases:**
-- `MSRP` — "Extract the MSRP (list price) from the source document for {{product_title}}. Return only the numeric value (e.g., 29.99)."
-- `Weight (kg)` — "Extract the product weight in kilograms from {{product_title}} source documents. Return only the number."
-- `Lead Time (Days)` — "Based on {{vendor_name}} inventory and shipping policy, estimate the lead time in days. Return an integer."
+- `MSRP` — "Extract the MSRP (list price) from the source document for `{{product_title}}`. Return only the numeric value (e.g., 29.99)."
+- `Weight (kg)` — "Extract the product weight in kilograms from `{{product_title}}` source documents. Return only the number."
+- `Lead Time (Days)` — "Based on `{{vendor_name}}` inventory and shipping policy, estimate the lead time in days. Return an integer."
 
 **Validation:**
 - Returns only numeric values
@@ -102,9 +102,9 @@ This guide covers every field type with examples, configuration details, and dec
 - **Acceptable Values:** Not applicable for images
 
 **Example use cases:**
-- `Dimension Diagram` — "Generate a dimension line drawing of {{product_title}} showing height, width, and depth. Include measurement labels in cm. Use white background."
-- `Lifestyle Render` — "Generate a lifestyle image showing {{product_title}} in use. Show {{intended_use}} context. Maintain {{brand}} colors and style."
-- `Size Comparison` — "Generate an image showing {{product_title}} next to a standard object (e.g., ruler, coin) for scale reference."
+- `Dimension Diagram` — "Generate a dimension line drawing of `{{product_title}}` showing height, width, and depth. Include measurement labels in cm. Use white background."
+- `Lifestyle Render` — "Generate a lifestyle image showing `{{product_title}}` in use. Show `{{intended_use}}` context. Maintain `{{brand}}` colors and style."
+- `Size Comparison` — "Generate an image showing `{{product_title}}` next to a standard object (e.g., ruler, coin) for scale reference."
 
 **Validation:**
 - Image generation may take longer than text generation
@@ -125,7 +125,7 @@ This guide covers every field type with examples, configuration details, and dec
 
 ## Formula (ruler icon)
 
-**What it is:** Deterministic calculation field. NO AI involvement. Uses {{ }} references to other attributes in a mathematical expression.
+**What it is:** Deterministic calculation field. NO AI involvement. Uses `{{ }}` references to other attributes in a mathematical expression.
 
 **Best for:**
 - Calculated fields that don't require AI judgment
@@ -138,7 +138,7 @@ This guide covers every field type with examples, configuration details, and dec
 **AI Support:** No. Formulas are purely deterministic—same input always produces the same output.
 
 **How it works:**
-1. You write a formula using {{ }} references: `={{msrp}} * 1.1` (MSRP + 10%)
+1. You write a formula using `{{ }}` references: `={{msrp}} * 1.1` (MSRP + 10%)
 2. When Merchkit generates or updates the formula field, it evaluates the expression
 3. The result is stored as a calculated value
 
@@ -178,7 +178,7 @@ For validation that requires context judgment (e.g., "is this material plausible
 - Formulas are recalculated whenever referenced attributes change
 
 **Common mistakes:**
-- Forgetting {{ }} syntax (write `{{msrp}}` not `msrp`)
+- Forgetting `{{ }}` syntax (write `{{msrp}}` not `msrp`)
 - Referencing non-existent attributes (formula will fail)
 - Using formula when you should use AI (formulas can't make judgment calls)
 - Complex nested formulas that are hard to debug
