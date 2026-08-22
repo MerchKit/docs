@@ -163,6 +163,62 @@ Unknown keys, unknown operators, and operator/type mismatches all return `400` w
   missing an attribute?", and matches both never-set and cleared values.
 </Callout>
 
+## Selecting fields
+
+`fields` narrows the `attributes` map to the keys you name. Reach for it when a workspace carries
+hundreds of attributes and your integration reads a handful of them.
+
+```bash
+GET /api/v1/products?fields=sku,price                       # two keys per row
+GET /api/v1/products?fields=sku&fields=price                # repeated form, same result
+GET /api/v1/products/9b2f6c1e-…?fields=gallery_images       # detail reads too
+GET /api/v1/products/9b2f6c1e-…/variants?fields=sku         # and variants
+```
+
+<ParamField path="fields" type="string">
+  Comma-separated attribute keys, or the parameter repeated. Omit it to get every populated key.
+  Available on list, detail, and variants reads, for all five resources.
+</ParamField>
+
+Only `attributes` narrows. System fields (`id`, `type`, `label`, `parent_id`, `created_at`,
+`updated_at`) always come back, so naming one returns a `400` rather than silently doing nothing.
+`label` keeps resolving from the primary attribute whether or not you select it.
+
+Selection is independent of `filter` and `sort` — both may reference keys you didn't select — and
+`pagination.total` is unaffected. [Sparseness](#sparse-attributes) is unchanged too: a key you select
+that has no value is still absent, so keep reading `attributes[key] ?? null`. Selecting a key never
+forces it to appear.
+
+### No traversal into references
+
+Reference keys still read as complete `{id, type, label}` stubs, but `fields` does not reach through
+them: `fields=gallery_images.image_url` is not supported. To pull one attribute off referenced
+entities, select the reference key, then batch-fetch that type:
+
+```bash
+# 1. Which images does each product point at?
+curl "https://www.merchkit.com/api/v1/products?limit=200&fields=gallery_images" \
+  -H "Authorization: Bearer mk_live_..."
+
+# 2. Read one key off those images — a single follow-up call
+curl "https://www.merchkit.com/api/v1/images?filter[id][in]=<id1>,<id2>&fields=image_url" \
+  -H "Authorization: Bearer mk_live_..."
+```
+
+The `in` cap of 200 values matches the maximum page size, so a full product page always resolves in
+exactly one follow-up call.
+
+Unknown keys return `400` with [`field_errors`](/developers/errors#validation_failed) naming each
+offender. Inverse-reference keys are rejected the same way, because they are
+[queries, not data](#inverse-references-are-queries-not-data) — read them through
+`GET /{id}/references?attribute=`.
+
+<Callout type="info">
+  Selecting only non-reference keys is cheaper than a smaller payload suggests: Merchkit skips the
+  reference join altogether, and that join otherwise loads every referenced entity just to build its
+  label.
+</Callout>
+
 ## Pagination
 
 List endpoints return rows under `data` and cursor metadata under `pagination`.
@@ -324,7 +380,6 @@ Documented now so you can plan for them; none are emitted yet:
   (confidence, flags) behind `?include=attribute_metadata`. `attributes` values themselves will
   never grow envelopes.
 - **`Idempotency-Key`**: a reserved request header for safe write retries.
-- **`?attributes=sku,price`**: a reserved sparse-fieldset parameter for narrowing rows.
 - **Webhooks**: the committed roadmap item for push-based sync. Until then, sync is polling: the
   [events feed](#events-the-change-feed) plus `filter[updated_at][gte]` recovery, the same
   reconciliation pattern the feed's overflow recipe already uses. When webhooks ship, subscriptions

@@ -268,7 +268,7 @@ instead of a code.
 | `out_of_range` | `limit` outside 1–200 | Clamp to 1–200 |
 | `invalid_value` | `filter_join` isn't `and`/`or`, or `type` isn't a valid entity type | Use the documented values |
 | `unknown_operator` | The operator isn't in the [public set](/developers/conventions#filtering-and-sorting) | Use the short operators (`gte`, not `greaterThanOrEqual`) |
-| `not_a_defined_attribute` | A filter, sort, write, or `merge_key` names a key that doesn't exist for this type | Discover keys via `GET /v1/attributes?type=…` |
+| `not_a_defined_attribute` | A filter, sort, `fields`, write, or `merge_key` names a key that doesn't exist for this type | Discover keys via `GET /v1/attributes?type=…` |
 | `operator_not_supported_for_type` | Operator/type mismatch — e.g. `contains` on a number, `in` on a number or date | Check the type column in the operator table |
 | `expected_value_or_use_exists` | An empty filter value, e.g. `filter[description]=` | You probably mean `filter[description][exists]=false` |
 | `expected_boolean` | `[exists]` given something other than `true`/`false`; or a boolean attribute written with a non-boolean | Send `true` or `false` |
@@ -278,6 +278,8 @@ instead of a code.
 | `expected_number` | A number-typed filter value or attribute write isn't numeric | Send a number |
 | `expected_date` | A date-typed filter value or attribute write isn't an ISO date | Send `YYYY-MM-DD` (or a full ISO timestamp for `created_at`/`updated_at`) |
 | `not_sortable` | `sort` names a reference attribute | Sort on text, number, or date attributes, or the builtins |
+| `system_field_always_returned` | [`fields`](/developers/conventions#selecting-fields) names a system field (`id`, `type`, `label`, `parent_id`, `created_at`, `updated_at`) | Drop it — system fields are always returned; `fields` selects attribute keys only |
+| `not_selectable_inverse_reference` | `fields` names an `inverse_reference` key | Inverse references never appear in `attributes` — read them via `GET /{resource}/{id}/references?attribute=…` |
 
 ### Write issues
 

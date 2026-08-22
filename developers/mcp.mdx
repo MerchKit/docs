@@ -142,9 +142,9 @@ write tools require the matching `write:*` scope. See
 
 | Tool | What it does |
 |---|---|
-| `list_entities(type, filters?, filter_join?, sort?, limit?, offset?)` | List and search any entity type. Filters are structured objects — `{attribute_key, operator, value}` — with the same semantics **and the same short operator spellings** as the REST [filter grammar](/developers/conventions#filtering-and-sorting): `eq`, `ne`, `contains`, `not_contains`, `starts_with`, `ends_with`, `gt`, `gte`, `lt`, `lte`, `exists`, `in` |
-| `get_entity(id, type)` | Fetch one entity's full detail (the one-map shape, references complete) |
-| `list_variants(id, limit?, offset?)` | List a product's variants (children) |
+| `list_entities(type, filters?, filter_join?, sort?, limit?, offset?, fields?)` | List and search any entity type. Filters are structured objects — `{attribute_key, operator, value}` — with the same semantics **and the same short operator spellings** as the REST [filter grammar](/developers/conventions#filtering-and-sorting): `eq`, `ne`, `contains`, `not_contains`, `starts_with`, `ends_with`, `gt`, `gte`, `lt`, `lte`, `exists`, `in` |
+| `get_entity(id, type, fields?)` | Fetch one entity's full detail (the one-map shape, references complete) |
+| `list_variants(id, limit?, offset?, fields?)` | List a product's variants (children) |
 | `get_references(id, type, attribute?)` | The key-scoped reference view with explicit positions — and **the** way to walk [inverse references](/developers/conventions#inverse-references-are-queries-not-data), which never appear in `attributes` |
 | `get_completeness(product_id, channel)` | Per-channel completeness with actionable issues |
 | `list_events(since?, entity_id?, limit?)` | The [change feed](/developers/conventions#events-the-change-feed) — workspace-wide, or scoped to one entity |
@@ -152,6 +152,13 @@ write tools require the matching `write:*` scope. See
 | `get_attribute(key, type?)` | One attribute definition |
 | `list_channels()` | The enabled channel catalog |
 | `list_jobs()` / `get_job(id)` | List / poll async [jobs](/developers/conventions#async-jobs) |
+
+`fields` is an array of attribute keys on the three reads that return entities, and it matters more
+here than over REST: a workspace with hundreds of attributes can fill an agent's context with keys it
+never asked about. Pass `fields: ["sku", "price"]` and only those come back — system fields and
+`label` always do. Same rules as
+[REST field selection](/developers/conventions#selecting-fields), including no traversal into
+references.
 
 ### Write tools
 

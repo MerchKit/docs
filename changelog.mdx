@@ -6,6 +6,41 @@ rss: true
 
 Everything new in Merchkit, newest first. Want something added to the roadmap? Email [support@merchkit.com](mailto:support@merchkit.com) or reply to any of our product updates.
 
+<Update label="August 21, 2026" description="Field selection: ask the API for only the attributes you need">
+
+  Reads on the API and MCP server now take a `fields` parameter that narrows the `attributes` map to
+  the keys you name. If your workspace carries hundreds of attributes and your integration reads a
+  handful, you no longer pay for the rest on every row. See
+  [selecting fields](/developers/conventions#selecting-fields).
+
+  **New**
+  - **`fields` on every entity read.** `GET /v1/products?fields=sku,price` returns just those two
+    keys per row — comma-separated, or repeat the parameter. Works the same on detail reads
+    (`GET /v1/products/{id}?fields=…`) and variants, across all five resources. Omit it and nothing
+    changes: you get every populated key, exactly as before.
+  - **The MCP read tools take it too.** `list_entities`, `get_entity`, and `list_variants` accept
+    `fields: ["sku", "price"]`, which is the cheapest way to keep a wide catalog from crowding out an
+    agent's context. See [MCP read tools](/developers/mcp#read-tools).
+  - **Faster, not just smaller.** When nothing you select is a reference, Merchkit skips loading
+    referenced entities altogether — that work exists only to attach labels to reference stubs.
+
+  **Good to know**
+  - System fields (`id`, `type`, `label`, `parent_id`, timestamps) always come back, and `label`
+    still resolves from the primary attribute whether or not you select it. Naming a system field in
+    `fields` returns a `400` rather than quietly ignoring it.
+  - Selection is independent of `filter` and `sort` — filter on keys you didn't select — and
+    `pagination.total` is unchanged.
+  - Sparse still means sparse: a key you select that holds no value stays absent, so keep reading
+    `attributes[key] ?? null`.
+  - `fields` does not reach through references — `fields=gallery_images.image_url` is not supported.
+    Select the reference key, then batch-fetch that type with
+    `filter[id][in]=…&fields=image_url`; the 200-value `in` cap matches the maximum page size, so a
+    full page always resolves in one follow-up call.
+  - Two new [issue codes](/developers/errors#field-error-issue-codes) name what went wrong:
+    `system_field_always_returned` and `not_selectable_inverse_reference`.
+
+</Update>
+
 <Update label="July 21, 2026" description="API v1 redesign: one shape everywhere, labeled references, upsert & batch, sources, and a consolidated MCP surface">
 
   The public API and MCP server were redesigned ahead of general availability. **This is a breaking
