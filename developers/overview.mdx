@@ -135,7 +135,8 @@ Three calls take you from a fresh API key to reading real catalog data.
 
     `attributes` is **sparse**: only keys with values appear. Read with `attributes[key] ?? null`,
     render names with `label ?? id`. The full anatomy lives in
-    [Conventions](/developers/conventions#resource-anatomy).
+    [Conventions](/developers/conventions#resource-anatomy). Reading a wide catalog and only need a
+    few keys? Add [`?fields=sku,price`](/developers/conventions#selecting-fields).
   </Step>
   <Step title="Find anything by SKU">
     ```bash
