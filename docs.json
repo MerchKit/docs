@@ -8,6 +8,11 @@
     "dark": "#2E5530"
   },
   "favicon": "/favicon.png",
+  "api": {
+    "examples": {
+      "defaults": "required"
+    }
+  },
   "navigation": {
     "tabs": [
       {
