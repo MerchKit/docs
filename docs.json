@@ -8,6 +8,11 @@
     "dark": "#2E5530"
   },
   "favicon": "/favicon.png",
+  "api": {
+    "examples": {
+      "defaults": "required"
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -137,7 +142,100 @@
           },
           {
             "group": "API Reference",
-            "openapi": "https://www.merchkit.com/api/v1/openapi"
+            "openapi": "https://www.merchkit.com/api/v1/openapi",
+            "pages": [
+              {
+                "group": "Catalog",
+                "pages": [
+                  {
+                    "group": "Products",
+                    "pages": [
+                      "GET /products",
+                      "POST /products",
+                      "GET /products/{id}",
+                      "PATCH /products/{id}",
+                      "POST /products/upsert",
+                      "POST /products/batch",
+                      "GET /products/{id}/variants",
+                      "GET /products/{id}/references"
+                    ]
+                  },
+                  {
+                    "group": "Images",
+                    "pages": [
+                      "GET /images",
+                      "POST /images",
+                      "GET /images/{id}",
+                      "PATCH /images/{id}",
+                      "POST /images/upsert",
+                      "POST /images/batch"
+                    ]
+                  },
+                  {
+                    "group": "Vendors",
+                    "pages": [
+                      "GET /vendors",
+                      "POST /vendors",
+                      "GET /vendors/{id}",
+                      "PATCH /vendors/{id}",
+                      "POST /vendors/upsert",
+                      "POST /vendors/batch"
+                    ]
+                  },
+                  {
+                    "group": "Categories",
+                    "pages": [
+                      "GET /categories",
+                      "POST /categories",
+                      "GET /categories/{id}",
+                      "PATCH /categories/{id}",
+                      "POST /categories/upsert",
+                      "POST /categories/batch"
+                    ]
+                  },
+                  {
+                    "group": "Sources",
+                    "pages": [
+                      "GET /sources",
+                      "POST /sources",
+                      "GET /sources/{id}",
+                      "PATCH /sources/{id}"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Schema & configuration",
+                "pages": [
+                  "GET /attributes",
+                  "POST /attributes",
+                  "GET /attributes/{key}",
+                  "PATCH /attributes/{key}",
+                  "GET /channels"
+                ]
+              },
+              {
+                "group": "Channel readiness",
+                "pages": [
+                  "GET /products/{id}/completeness"
+                ]
+              },
+              {
+                "group": "Sync & monitoring",
+                "pages": [
+                  "GET /events",
+                  "GET /products/{id}/events",
+                  "GET /jobs",
+                  "GET /jobs/{id}"
+                ]
+              },
+              {
+                "group": "Spec",
+                "pages": [
+                  "GET /openapi"
+                ]
+              }
+            ]
           }
         ]
       },
