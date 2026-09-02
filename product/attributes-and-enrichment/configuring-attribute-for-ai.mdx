@@ -66,7 +66,7 @@ Checked fields are sent to the AI as context. Unchecked fields are not.
 
 **Why does this matter?** The more relevant context you give the AI, the better its output. For example:
 - If you're generating a "brand" attribute, make sure the product description is included (it often mentions the brand)
-- If you're generating "size_range", include price (expensive items may come in more sizes)
+- If you're generating `size_range`, include price (expensive items may come in more sizes)
 - If you're generating something unrelated to price, you can uncheck it to reduce noise
 
 Select the fields that are most relevant to this attribute.
@@ -78,9 +78,9 @@ Select the fields that are most relevant to this attribute.
 The **Image Source** section tells the AI which product images to analyze when generating this attribute.
 
 You'll only use this if your attribute requires image analysis. Examples:
-- "product_color" — the AI looks at the image to detect color
-- "has_packaging" — the AI looks for packaging in the image
-- "style_category" — the AI analyzes the visual style
+- `product_color` — the AI looks at the image to detect color
+- `has_packaging` — the AI looks for packaging in the image
+- `style_category` — the AI analyzes the visual style
 
 If your attribute doesn't need images (e.g., "SEO title", "material"), leave Image Source unchecked.
 
@@ -139,7 +139,7 @@ Red, Blue, Green, Black, White, Other
 When you set acceptable values, the AI will only return one of those options. This is useful for:
 - Size attributes (where you want standardized sizes)
 - Category or type attributes (where options are fixed)
-- Status attributes (approved, rejected, needs_review)
+- Status attributes (`approved`, `rejected`, `needs_review`)
 
 Leave this blank if you want the AI to have freedom to generate any value.
 
