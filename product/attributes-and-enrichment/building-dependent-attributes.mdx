@@ -13,7 +13,7 @@ The mechanism behind this is **Insert Value**, the `{{ }}` tag syntax that lets 
 
 When you reference another attribute using `{{attribute_name}}`, Merchkit substitutes that field's actual value for each product during enrichment. This means your AI prompt can read real data and make decisions based on it.
 
-**Example**: A product titled "Leather Desk Chair" with price "$299" and color "Charcoal" can use all three values in a single prompt: "Create an SEO description for this `{{product_title}}` in `{{color}}`, priced at `{{price}}`."
+**Example**: A product titled "Leather Desk Chair" with price `$299` and color "Charcoal" can use all three values in a single prompt: "Create an SEO description for this `{{product_title}}` in `{{color}}`, priced at `{{price}}`."
 
 ## How to Insert Values
 
@@ -23,7 +23,7 @@ You have two ways to add attribute references to your prompt:
 
 2. **Click the "Insert Value" button** — Located below the prompt field, this button opens an attribute selector panel. Click any attribute, and it gets added to your cursor position.
 
-[SCREENSHOT: Prompt field with @ dropdown showing available attributes like product_title, brand, price, etc.]
+[SCREENSHOT: Prompt field with @ dropdown showing available attributes like `product_title`, brand, price, etc.]
 
 [SCREENSHOT: Insert Value button below a prompt field, with attribute selector panel open]
 
@@ -45,7 +45,7 @@ When you toggle an attribute as "Required," you're saying: "Don't run enrichment
 
 3. Save your configuration.
 
-[SCREENSHOT: Required Values panel showing toggles for product_title (ON), brand (ON), price (ON), material (OFF), color (OFF)]
+[SCREENSHOT: Required Values panel showing toggles for `product_title` (ON), brand (ON), price (ON), material (OFF), color (OFF)]
 
 This is how you build **attribute chains**. One attribute feeds another. Dependencies flow downward. Your enrichment respects these boundaries automatically.
 
@@ -75,7 +75,7 @@ Use the following information:
 Write in active voice. Include the brand name, material, and price point. Example: "Buy premium leather office chairs in charcoal by Acme Home. Free shipping over $500."
 ```
 
-**Required Values**: Toggle ON product_title, brand, price, l2_category. Toggle OFF material, style, color (nice-to-have, but don't block).
+**Required Values**: Toggle ON `product_title`, brand, price, `l2_category`. Toggle OFF material, style, color (nice-to-have, but don't block).
 
 **Result**: AI reads seven fields per product and generates a rich, context-aware meta description. A charcoal chair and a mahogany desk generate completely different descriptions because the prompt sees their actual data.
 
@@ -104,7 +104,7 @@ If available, include seat height: {{seat_height_in}} inches
 Use a light gray background. Make the lines sharp and legible. This drawing should be usable in a product listing."
 ```
 
-**Required Values**: Toggle ON the three dimensions (width, depth, height). Toggle OFF seat_height (useful if available, but some products don't have it).
+**Required Values**: Toggle ON the three dimensions (width, depth, height). Toggle OFF `seat_height` (useful if available, but some products don't have it).
 
 **Result**: Merchkit generates a unique line drawing for each product, scaled and labeled with its actual dimensions. Sofas, chairs, and tables all get contextually correct drawings.
 
@@ -120,14 +120,14 @@ This pattern shows a **three-step chain** where one attribute feeds the next.
 **Step 1: Pricing Policy (Reference Lookup)**
 - Attribute: `pricing_policy` (Reference Lookup, AI OFF)
 - References: Vendor entity
-- Example data: "MSRP = cost × 2.5. Minimum MSRP $50."
+- Example data: "MSRP = cost × 2.5. Minimum MSRP `$50`."
 - No AI involved. This just pulls vendor rules.
 
 **Step 2: MSRP (Number, AI ON)**
 - Attribute: `msrp` (Number, AI ON)
 - Prompt: "Read the following pricing rules: `{{pricing_policy}}`. Extract the MSRP for this product. Return only the numeric value with two decimal places, e.g. 99.99"
-- **Required Values**: Toggle ON pricing_policy.
-- Result: AI interprets vendor rules and extracts the MSRP. Because pricing_policy is required, enrichment skips any product whose vendor is missing rules.
+- **Required Values**: Toggle ON `pricing_policy`.
+- Result: AI interprets vendor rules and extracts the MSRP. Because `pricing_policy` is required, enrichment skips any product whose vendor is missing rules.
 
 **Step 3: MSRP + 15% (Formula)**
 - Attribute: `channel_price` (Number, AI OFF, Formula)
@@ -140,23 +140,23 @@ This pattern shows a **three-step chain** where one attribute feeds the next.
 2. AI reads the policy and extracts MSRP (AI enrichment, depends on step 1).
 3. Channel price is calculated from MSRP (Formula, depends on step 2).
 
-Each step depends on the previous. If a vendor's pricing_policy is empty, steps 2 and 3 skip that product. Once the vendor data is added, the entire chain runs.
+Each step depends on the previous. If a vendor's `pricing_policy` is empty, steps 2 and 3 skip that product. Once the vendor data is added, the entire chain runs.
 
-[SCREENSHOT: Attribute configuration showing pricing_policy reference lookup, with data like "MSRP = cost × 2.5"]
+[SCREENSHOT: Attribute configuration showing `pricing_policy` reference lookup, with data like "MSRP = cost × 2.5"]
 
 [SCREENSHOT: AI prompt for msrp attribute, showing `{{pricing_policy}}` reference]
 
-[SCREENSHOT: Formula attribute for channel_price, showing `{{msrp}}` * 1.15]
+[SCREENSHOT: Formula attribute for `channel_price`, showing `{{msrp}}` × 1.15]
 
 ## Common Patterns
 
-**Text → Text**: One attribute's content enriches another. E.g., product_description feeds seo_description, product_title feeds marketing_headline.
+**Text → Text**: One attribute's content enriches another. E.g., `product_description` feeds `seo_description`, `product_title` feeds `marketing_headline`.
 
 **Structured Data → AI → Number**: Dimensions, weights, or specs feed AI extraction. E.g., dimensions feed line drawing, specs feed technical summary.
 
 **Number → Formula**: AI enrichment produces a number, which a formula then transforms. E.g., MSRP feeds markup calculation, rating feeds weighted score.
 
-**Multiple Sources → Single Output**: A prompt references 5+ attributes to generate one rich field. E.g., seo_description in Example A uses 8 fields.
+**Multiple Sources → Single Output**: A prompt references 5+ attributes to generate one rich field. E.g., `seo_description` in Example A uses 8 fields.
 
 ## Tips for Success
 
@@ -164,7 +164,7 @@ Each step depends on the previous. If a vendor's pricing_policy is empty, steps 
 
 2. **Test with a subset**: Before running enrichment on all 37K products, enrich 10–20 and review the output. Does the AI read the referenced data correctly?
 
-3. **Document your dependencies**: Keep a simple list of which attributes feed which. E.g., "pricing_policy → msrp → channel_price."
+3. **Document your dependencies**: Keep a simple list of which attributes feed which. E.g., "`pricing_policy` → `msrp` → `channel_price`."
 
 4. **Use Required Values strategically**: Toggle ON only attributes that truly block enrichment. Too many required values can halt your workflow.
 

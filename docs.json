@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Merchkit",
+  "description": "Merchkit is an AI-native PIM: import your catalog, enrich it with AI, and publish channel-ready content. Product guides plus the developer reference for the Merchkit API and MCP server.",
   "colors": {
     "primary": "#3E703F",
     "light": "#6EA570",
