@@ -1,118 +1,68 @@
 ---
 title: "Adding Sources to a Product"
-description: "Step-by-step guide to attaching URLs, text, and documents as sources for individual products."
+description: "Attach supplier information, edit source details from a product, and save useful editor columns for your team."
 ---
 
-# Adding Sources to a Product
+# Adding sources to a product
 
-Adding sources to a product is straightforward. You can attach URLs, paste text, or upload documents—all through the per-product Sources upload view.
+A product may have both a specification sheet and an installation guide. Keep those documents linked to the product, then edit their source details in Merchkit so your team can find the right information.
 
-## Opening the Sources View
+## Before you start
 
-1. Navigate to **Products** in the sidebar.
-2. Find the product you want to add sources to.
-3. In the row for that product, look for the **Data Sources** cell (a column showing source count or an empty state).
-4. Double-click on the Data Sources cell.
+Open a product in **Catalog → Products**. You need permission to manage data sources (`data_sources.manage`) to edit source records. Saving shared editor columns separately requires permission to manage views (`views.manage`). Ask a workspace administrator if an edit or save control is unavailable.
 
-The Sources upload view opens directly connected to that cell.
+Source attributes and their names depend on your workspace. These edits change the source record in Merchkit; they do not modify the supplier's original file. A source linked to several products is shared, so changes to its attributes affect that shared record.
 
-[SCREENSHOT: Products table with Data Sources column highlighted, Sources upload view open from the cell]
+## Open and edit a product's sources
 
-## Adding a URL Source
+1. Find the product's **Data Sources** cell and double-click it to open the source editor.
+2. Use the column visibility control to show the source attributes you need. Search for an attribute if the list is long.
+3. Edit an editable cell, such as the filename or an existing label attribute. For example, distinguish `Chair specification sheet` from `Chair installation guide`. Use the columns your workspace provides rather than adding text to the URL field.
+4. Finish the cell edit and check the value in the table. There is no separate document-save action for these attribute edits.
+5. To work in the full Sources page, click **Open in Sources**. It opens a new tab filtered to the sources linked to this product.
 
-URLs are the fastest way to give the AI context. Point it to product pages, spec sheets, or technical documentation.
+The source editor has no document preview pane. For a source with an HTTP URL, use the **Open in new tab** row icon. URL sources also offer **Refresh source**, which schedules a refresh of the source information. These actions are not available for every source type.
 
-**To add a URL:**
+## Add a supplier URL
 
-1. In the Sources view, click **Enter URL**.
-2. Paste or type the full URL (e.g., `https://supplier.com/product/SKU-123-specs`).
-3. Click **Add** or press Enter.
+1. In the editor footer, paste the URL into **Enter a URL to scrape**.
+2. Click **Add URL**.
+3. Wait for processing to complete, then check that the source appears in the product's list.
 
-The URL is now attached to this product. The AI will fetch and read the content when you run enrichment.
+Scheduling the URL is not the same as finishing the scrape. If processing fails, verify that the page is accessible and use [Import and source troubleshooting](/product/troubleshooting/import-source-errors).
 
-**Tips for best results:**
-- Use direct product or specification pages, not search result pages.
-- Prefer official supplier or manufacturer pages over third-party resellers.
-- Avoid auto-redirects or short links—use the final destination URL.
-- If you're having trouble with a particular website, contact support and we can help with unique sites.
+## Add text or upload documents
 
-## Adding Text Source
+1. Click **Add** in the footer.
+2. Choose **Add text source**, paste the supplier text, then click **Add text source** to save it. Alternatively, choose **Upload files** and select your documents.
+3. Check the source list. Text is added directly; uploaded files require processing before their content is ready to use.
 
-Sometimes you have product specs or descriptions already in text form—from an email, a supplier sheet, or internal notes. Paste it directly.
+Use readable supplier content. An attachment alone does not prove the AI has extracted the right information; [review generated values against their sources](/product/attributes-and-enrichment/reviewing-ai-content).
 
-**To add text:**
+## Save useful columns for the team
 
-1. In the Sources view, click **Enter text**.
-2. Paste or type the product information (specifications, descriptions, features, certifications, etc.).
-3. Click **Add** or press Enter.
+Image and source editors each have their own account-wide default view.
 
-The text is now stored as a source for this product.
+1. Open the source editor and choose the columns you want visible with the column visibility control.
+2. Adjust column widths if needed.
+3. Click **Save view**. Its tooltip says **Save the current columns as the account default for this editor**.
+4. Reopen a source editor to check the saved layout. Repeat in a product's image editor to set its separate default.
 
-**Tips for best results:**
-- Paste structured data when possible: "Material: Polycarbonate, Dimensions: 12x8x4 inches, Weight: 2.5 lbs"
-- Include certifications, compliance info, or unique selling points.
-- The more context you can provide, the better the AI output will be — don't hold back on detail.
+This requires `views.manage` and changes the default for your account, not just your own session. The saved editor configuration concerns columns, including their widths; it is not a saved product filter or sort. New attributes are not automatically added to an already saved set of visible columns. To include one, show it and save the view again.
 
-## Uploading Document Sources
+## Remove a source from a product
 
-For detailed spec sheets, technical manuals, or vendor documentation, upload the document directly. Merchkit supports PDF, Excel, Word, OpenDocument, and RTF files up to 25MB each.
+1. Select the source row.
+2. Open **Remove** in the footer.
+3. Choose **Unlink from product** to keep the source in your library but remove this product's link.
 
-**To upload a document:**
+**Delete permanently** is a different action and is available only when the source is unused elsewhere. Do not delete a source just to tidy one product's list.
 
-1. In the Sources view, click **Drop documents** or **Choose file**.
-2. Select one or more files from your computer (PDF, .xlsx, .docx, .odt, .rtf).
-3. Click **Upload** or confirm the upload.
+## Troubleshooting
 
-The documents are now attached to this product. The AI will read them during enrichment.
+- **A column is missing:** check the editor's column visibility control and account-default view. Column labels are workspace-specific.
+- **A value is read-only:** check your data-source permissions and whether the attribute itself is editable. The inverse **Products** reference is read-only.
+- **Refresh is missing:** it applies to URL sources. Text and uploaded-file sources do not have the same refresh action.
+- **The source is linked, but a generated value has no citation:** citations are optional and appear only on supported new prompt generations. See [AI review limits](/product/attributes-and-enrichment/reviewing-ai-content#when-a-source-is-missing).
 
-**Tips for best results:**
-- Upload spec sheets and data sheets directly from suppliers.
-- Use PDFs when possible—they're easier for the AI to parse than scanned images.
-- If a document has multiple products, paste the relevant section as text instead, or upload the document and let the AI extract the relevant parts.
-- Keep file size reasonable (under 5MB per file is ideal).
-
-## Copying Sources from Parent to Variant
-
-If you have product variants (e.g., different colors or sizes of the same product), you don't need to add sources to each variant individually. Copy them from the parent product.
-
-**To duplicate sources from parent:**
-
-1. Open the Sources view for a variant product.
-2. Look for the **Duplicate Sources from Parent** button (visible only if a parent product exists).
-3. Click the button.
-
-All sources from the parent product are now copied to this variant.
-
-[SCREENSHOT: Sources view with "Duplicate Sources from Parent" button visible]
-
-This is especially useful when you bulk-import variants—add sources to the parent once, then copy down.
-
-## Managing and Viewing Sources
-
-Once you've added sources to a product, the Sources view shows:
-- **Count of sources** in the Data Sources cell (e.g., "3 sources")
-- **List of sources** with their type (URL, text, or document name)
-- **Option to remove** sources individually (hover over a source and click delete/remove)
-
-## Common Issues
-
-**"The URL didn't load"**
-- Check that the URL is correct and publicly accessible.
-- If you're having trouble with a particular website, contact support — we can help with unique sites.
-
-**"I uploaded a document but it looks wrong"**
-- Make sure the document is not password-protected or image-only.
-- PDFs with native text (not scanned images) work best.
-- If you uploaded a scanned PDF, consider pasting the text instead.
-
-**"I have 10 sources for one product—is that too many?"**
-- No. More sources = more context for the AI. Go ahead.
-- However, if many of them are redundant, consider removing duplicates to keep things clean.
-
-**"Where do I see if the AI read my sources?"**
-- Sources are read during enrichment runs. You don't see a real-time log, but the AI uses them to generate attribute values.
-- If enrichment results look better after adding sources, that's your signal it's working.
-
-## Next Steps
-
-Once you've added sources to your products, you're ready to run enrichment. Or, if you have many products and want to add sources in bulk, check out [**Bulk Importing Sources**](/product/sources-and-importing/bulk-importing-sources).
+For larger imports, see [Bulk importing sources](/product/sources-and-importing/bulk-importing-sources). For image selection, see [Managing product images](/product/sources-and-importing/managing-product-images).

@@ -19,17 +19,35 @@ Each product can have one or more images. When you import products, you can map 
 
 Images are powerful inputs for AI-powered attribute generation. When you set up an attribute in Merchkit, you can tell the AI which images to analyze to generate or enrich that attribute.
 
-### Image Source in Attribute Configuration
+### Select existing photos from a parent product
 
-When creating or editing an attribute:
+Suppose a chair has oak and walnut variants, while the main product holds all the photos. An AI-generated reference can select existing photos for each variant from that parent's gallery. This selects links to images; it does not generate new photos or automatically inherit a gallery.
 
-1. In the attribute settings, look for **Image Source**
-2. Select which product images you want the AI to analyze
-3. The AI will use those images to generate or enhance the attribute value
+Before starting:
 
-This is how Merchkit generates rich, accurate product descriptions and specifications directly from visual data.
+- Link each variant to its immediate parent product.
+- Make sure the parent's image list already contains the candidate photos.
+- Have a product **Reference** or **List Reference** attribute targeting images, and permission to manage attributes (`attributes.manage`) and run generation (`attributes.generate`). This is different from the **Image** field type used to create new images.
 
-[SCREENSHOT: Image Source option in attribute configuration]
+1. Open the destination reference attribute's **Configure Attribute** panel.
+2. Enable **Use AI** and confirm that the reference targets images.
+3. Under **Select From**, choose the image list or lists that hold the parent's candidate photos. This control appears for supported image and source references.
+4. After selecting a list, set **Sourced from** to **Parent product**. The default is **This product**.
+5. Write instructions describing which existing images to select, and include the variant information needed to distinguish them. For example: select photos matching the variant's finish; do not select a walnut photo for an oak variant.
+6. Click **Save changes**, then run reference generation on a small selection of variants using your normal [enrichment workflow](/product/attributes-and-enrichment/running-first-enrichment).
+7. Review the selected images and any recorded rationale or confidence before exporting them.
+
+The parent setting uses the immediate parent's selected lists. It does not combine them with the child's lists or search further ancestors. A missing parent or empty parent list supplies no candidates; adding the setting alone does not create or copy images. AI selection still needs review and can return no match.
+
+The same **Select From** and **Sourced from** controls apply to supported source references. If **Sourced from** is missing, check the reference's target type, **Use AI** setting and whether you selected a candidate list first.
+
+### Save image editor columns
+
+Open a product's image list editor, use its column visibility control to show the fields your team needs, then click **Save view**. This account-wide setting requires `views.manage`. Image and source editors have separate defaults; see [Saving editor columns](/product/sources-and-importing/adding-sources-to-product#save-useful-columns-for-the-team).
+
+### Use images as context for text generation
+
+For a prompt attribute that analyzes photos, choose images under **Product Data**, then select the relevant **Image Source**. This provides visual context for generating a value; it is separate from choosing existing image references from a parent's gallery.
 
 ### Image Field Type & AI-Generated Images
 

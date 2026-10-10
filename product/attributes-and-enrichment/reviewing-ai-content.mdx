@@ -17,25 +17,46 @@ Once enrichment completes, head back to your **Products view**. The attributes y
 
 Your enrichment results live in the same Products table where you work every day. This means:
 
-- **No separate review screen.** You review directly in the table.
+- **Review in context.** Inspect current values in the table, or use generation Job Details for the values a batch wrote.
 - **Real-time feedback.** As you review, you can immediately edit values (see [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) for details).
 - **Easy to scale.** Once you're confident in the quality, you can run enrichment on larger batches knowing your review process is simple.
 
-## Rationale, Citations, and Confidence Rating
+## Check a generated value against its source
 
-Every AI-generated value in Merchkit comes with a **rationale field** that you can inspect alongside the value itself. The rationale is the AI's explanation of how it arrived at the value, and it includes:
+Suppose an AI-written description says a chair is solid oak. A citation gives you a place to check that claim; it does not prove the claim is correct.
 
-- **Where the value came from** — which source(s) the AI used (the URL, document, or text), and the specific content that produced the answer (cited or quoted directly when possible)
-- **What the AI generated** — when the value was inferred or composed rather than directly extracted, the rationale states what was generated and how
-- **Confidence rating** — a qualitative rating of **High**, **Medium**, or **Low** that summarizes how confident the AI is in the value
+Before starting, generate a value with an AI prompt attribute that has the relevant supplier information as context. See [Configuring an attribute for AI](/product/attributes-and-enrichment/configuring-attribute-for-ai). You need permission to generate attributes; editing a result also requires permission to edit product values.
 
-This rationale is your fastest way to spot-check accuracy. Instead of opening the source and hunting for the value, click the cell to read the AI's reasoning and citations. If the rationale shows a strong source quote and the value matches, you can move on. If the rationale shows weak citations or a Low confidence rating, that's a cell to dig into.
+1. In **Products**, find the generated description or detail and click its cell to open the information popover.
+2. Read **Rationale** and **Confidence** when present. These are the model's explanation and confidence, not an independent quality check.
+3. Look for **Source**. Its badge identifies a **Data Source**, **Attribute**, **Image** or **Web** reference.
+4. Click a URL citation to open it in a new tab. For an attribute or image reference, inspect that information in Merchkit. Hover over a shortened badge to read its full reference.
+5. Compare the actual supplier information with the generated value. Correct unsupported claims using [Editing AI output](/product/attributes-and-enrichment/editing-overriding-output), or improve the context and regenerate a small sample.
 
-[SCREENSHOT: A cell in the Products table with the rationale panel open, showing the cited source quote, the AI's reasoning, and a confidence rating badge (High/Medium/Low)]
+### When a source is missing
 
-**Filtering by confidence rating.** Confidence ratings are filterable in Views. A common review pattern is to create a View filtered to all values with **Low** or **Medium** confidence on a specific attribute or category, then work through that View as a focused review queue. This is the closest thing in Merchkit to a traditional "review queue" — you build it via filters rather than via a dedicated UI.
+Source citations are optional, model-reported primary references for newly prompt-generated values. They are not an exhaustive list of everything the model considered.
 
-**Inferred vs. extracted values.** When a value is inferred (e.g., from a parent SKU's value via parent/child relationships, or from cross-attribute reasoning) rather than directly extracted from a source, the rationale states this explicitly — for example, "Inferred from parent SKU 220D Series; not present in this variant's source page." Inferred values typically carry Medium or Low confidence and surface in confidence-filtered Views automatically.
+- Older prompt-generated values need regeneration to gain this information; adding a source does not annotate existing values automatically.
+- Manual value edits clear the AI provenance, including source, rationale and confidence.
+- Taxonomy, image, video, formula and other non-prompt generators do not populate this Source field.
+- The reference may be an attribute name or the aggregate **Product Images**, rather than a link to one exact image.
+- CSV exports and public API responses do not include this source metadata.
+
+An absent citation is not evidence that a value is wrong, and a citation is not evidence that it is right. Review the underlying information before publishing.
+
+## Review what a generation job wrote
+
+Use this when you want to inspect a batch's results, rather than only today's cell values.
+
+1. Open **Jobs** in the workspace.
+2. Find the attribute-generation job and click **Details**.
+3. Review the affected entities and attribute columns in the paginated table. These are the values recorded when the job wrote them; later edits can differ.
+4. Inspect confidence where recorded, and hover over its badge for rationale when available. Use pagination to review more affected entities.
+
+**Details** is available for attribute-generation jobs, not every job type. Older results depend on retained audit records. A job spanning an archive transition can temporarily show a partial set; retry later if a recent archival transition is suspected. This view does not add rollback coverage.
+
+Reference-generation values can also carry rationale, confidence and failure information in their cell popovers. Review that context when a reference is empty or the selected image is unexpected; it is separate from the prompt-only **Source** citation.
 
 ## Reviewing at Scale
 

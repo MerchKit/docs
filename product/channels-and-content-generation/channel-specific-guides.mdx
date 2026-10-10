@@ -9,42 +9,15 @@ Each marketplace has unique requirements, strengths, and best practices. This gu
 
 ## Wayfair
 
-**Category:** Traditional marketplace (furniture and home goods)
+Wayfair attributes and accepted values depend on the product class. Prepare the supplier part number, category-specific details and mapped images before submitting a new product. Verify units and supported options against the configured class rather than relying on one universal list of fields.
 
-**Key Stats:**
-- Extensive channel-specific attributes across many categories
-- Category-specific attribute sets
-- Strict validation and data quality requirements
+1. Review a representative product and its class-specific attributes.
+2. Confirm the intended Wayfair connection and environment with your integration administrator.
+3. Follow [Submitting products to Wayfair](/product/channels-and-content-generation/exporting-channel-data#submit-products-to-wayfair) to send an explicit sample selection.
+4. Read the job's result counts and [resolve recorded export errors](/product/channels-and-content-generation/feed-validation-errors).
+5. Verify acceptance and eventual listing visibility in Wayfair.
 
-### Wayfair Requirements
-
-Wayfair enforces strict formatting and content standards:
-
-- **Packaging dimensions** — Exact Carton Width, Carton Height, Carton Depth, Carton Weight (required for all products)
-- **Material composition** — List all materials with percentages (required)
-- **Assembly information** — Assembly required (yes/no) and assembly time in minutes
-- **Care instructions** — Detailed maintenance and cleaning guidance
-- **Product categories** — Must match Wayfair's exact category taxonomy
-
-### Wayfair Best Practices
-
-1. **Use category views** — Generate attributes per category to ensure category-specific fields are filled
-2. **Focus on packaging** — Wayfair's packaging attributes are critical; ensure your product data includes carton dimensions
-3. **Material precision** — Break down complex materials (e.g., "Upholstery: 100% Polyester, Frame: Hardwood") rather than generic descriptions
-4. **Assembly realism** — Provide honest assembly times and clear instructions
-5. **Image quality** — Wayfair requires multiple high-quality images; use Merchkit's image enrichment before generating
-6. **Validate category mapping** — Confirm your products are assigned to correct Wayfair categories before generating
-
-### Wayfair Channel-Specific Attributes to Prioritize
-
-- Carton Width 1, Carton Height 1, Carton Depth 1, Carton Weight 1
-- Assembly Required, Assembly Time Minutes
-- Care Instructions
-- Material Composition
-- Warranty
-- Color, Size (if applicable)
-
-[SCREENSHOT: Wayfair channel grid with category selector and key attributes]
+Required images are sent in the initial create submission, and multi-select answers are sent as ranked values. Submission acceptance and listing visibility are separate stages. A completed Merchkit export can still contain rejected products.
 
 ## Amazon
 
