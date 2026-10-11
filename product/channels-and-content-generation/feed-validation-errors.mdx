@@ -1,17 +1,47 @@
 ---
 title: "Feed Validation & Error Resolution"
-description: "Diagnose and fix common channel and feed rejection reasons. Understand channel-specific error patterns and how to resolve them."
+description: "Diagnose feed rejections, resolve Wayfair field errors, and verify corrected products before retrying."
 ---
 
 # Feed Validation & Error Resolution
 
 Sometimes a marketplace rejects your feed or individual products. Don't panic—most rejections are fixable. This guide walks you through diagnosing and resolving common errors.
 
+## Before you start
+
+You need access to the exported products and job results. Correcting a product value requires edit permission; retrying the integration export requires `data.export`. Keep the supplier information and the destination's accepted values available for comparison.
+
+The **Status** column described here surfaces recorded errors. It does not guarantee that every marketplace requirement has been checked before export.
+
+## Find and fix a Wayfair rejection
+
+1. Read the finished export job's result counts. A completed job can include products that failed validation.
+2. Find an affected product in the catalog grid and inspect its **Status** column. Open the error indicator to see the affected attribute names.
+3. When an attribute is identified, select its name to bring the column into view. Inspect the cell's **Errors** information. Some errors remain under **Integration Errors** when they cannot be tied to a specific attribute.
+4. Read Wayfair's original response as well as any added guidance. Compare the value with the supplier information and the allowed values for the product's Wayfair class.
+5. Correct the value, then select that product and export through the same Wayfair connection again. See [Submitting products to Wayfair](/product/channels-and-content-generation/exporting-channel-data#submit-products-to-wayfair).
+6. Check the new job's result counts and the product's error state. A successful retry clears stale export errors. Confirm acceptance and eventual visibility in Wayfair separately.
+
+For example, an error may name a material-related attribute but contain only a technical identifier in the raw response. Start with the named field; do not substitute a guessed material simply to clear the error. If the message is still unclear, retain the raw text for support.
+
+## Images and multi-select values
+
+For a new product, check that the mapped channel image attributes contain valid, accessible image URLs. A missing image can cause a failed submission. Adding an image somewhere in the workspace is not enough if the export does not reference it.
+
+For multi-select attributes, use supported options. The export sends separate ranked values to Wayfair; do not manually encode ranks or combine several options into a made-up option.
+
+## Interpret progress correctly
+
+- **The bar is still below 100%:** the export can still be storing errors or updating results after sending the payload.
+- **The job completed with errors:** the workflow finished, but some products failed. Fix those records and retry the appropriate selection.
+- **The request was accepted:** Wayfair can still be processing it. Acceptance is not proof of a visible listing.
+- **An old error remains:** check whether the retry actually succeeded for that product, and refresh the catalog data if a teammate ran it. See [Shared catalog refresh](/product/getting-started/understanding-products-view#refresh-after-a-teammates-job).
+
 ## Where Errors Come From
 
 Errors can originate from:
 
-1. **Pre-export validation in Merchkit** — Catches format and required field issues before export
+1. **Preparation in Merchkit** — Review values and recorded errors before export; this does not check every destination requirement
 2. **Marketplace feed validation** — Happens when you upload; marketplace checks format, business rules, and completeness
 3. **Listing suppression** — After marketplace accepts your feed, listings are suppressed (hidden) if they violate policies
 
@@ -67,7 +97,7 @@ When you receive a feed rejection:
 
 [SCREENSHOT: Filling in missing Carton Width in Wayfair channel]
 
-**Prevention:** Before export, filter to show "Empty required attributes" and fill them all.
+**Prevention:** Use the destination’s requirements for the product class to review required attributes manually. Add missing supplier evidence before generating or entering a value.
 
 ### Category 2: Format Errors
 
@@ -75,7 +105,9 @@ When you receive a feed rejection:
 
 **Cause:** Data doesn't match the required format.
 
-**Common format issues:**
+**Common format examples:**
+
+These examples assume the destination expects the format shown. Check its actual field specification before changing values.
 
 | Attribute | Wrong Format | Correct Format |
 |-----------|--------------|-----------------|
@@ -167,12 +199,12 @@ For dropdowns in Merchkit:
 
 **Error:** "Invalid character in description: 'ü'. Only ASCII characters allowed"
 
-**Cause:** The marketplace doesn't support special characters (accents, non-English characters, etc.).
+**Cause:** The field may restrict characters, or the file may have been opened with the wrong encoding. Check the exact error before changing valid product text.
 
 **How to fix:**
 
 1. Identify the special character (usually flagged in the error)
-2. Replace with ASCII equivalent:
+2. Only if the destination explicitly requires ASCII, replace the unsupported characters:
    - "Café" → "Cafe"
    - "Sofa $299" → "Sofa 299"
    - "100% linen" → "100 percent linen"
@@ -181,30 +213,20 @@ For dropdowns in Merchkit:
 
 [SCREENSHOT: Removing special characters from product description]
 
-**Prevention:** When creating AI prompts, specify "Remove special characters and use only ASCII characters" to prevent this at generation.
+**Prevention:** Preserve the destination’s supported encoding. Add a character restriction to a prompt only when that field actually requires it.
 
 ## Channel-Specific Error Patterns
 
 ### Wayfair Error Patterns
 
-**Most common Wayfair rejections:**
+Check the requirements for the configured product class. Common areas to investigate include:
 
-1. **Missing packaging dimensions** (Carton Width, Height, Depth, Weight)
-   - Fix: Measure cartons accurately and fill these critical attributes
+1. **Packaging dimensions** — Compare each carton’s dimensions and weight with supplier specifications, including the units. Do not substitute assembled-product dimensions for carton dimensions.
+2. **Assembly information** — Check whether the class requires assembly details and which units it accepts for time.
+3. **Category-specific attributes** — Confirm the category and accepted options before generating or correcting values.
+4. **Material composition** — Use the supplier’s actual material breakdown. Provide percentages only when supported by evidence and required by the field.
 
-2. **Assembly time missing** (Assembly Required = Yes but Assembly Time missing)
-   - Fix: Provide assembly time in minutes
-
-3. **Category-specific attributes missing**
-   - Fix: Ensure products are in the correct category view and all category-specific required fields are filled
-
-4. **Material composition incomplete**
-   - Fix: Break down materials clearly with percentages
-
-**Wayfair debugging tips:**
-- Use the category view selector to ensure you're in the right category
-- Review Wayfair's attribute documentation for your specific product category
-- Test with a small batch (5-10 products) before submitting 1,000+
+Review Wayfair’s attribute documentation for your product class and test a small batch (5–10 products) before submitting a larger assortment. Follow the verified [Wayfair rejection walkthrough](#find-and-fix-a-wayfair-rejection) above to locate recorded errors in Merchkit.
 
 ### Amazon Error Patterns
 
@@ -295,7 +317,7 @@ Before re-exporting:
 
 1. **Filter to show only fixed products**
 2. **Spot-check they look correct**
-3. **Check Merchkit's validation dashboard** — should show 0 errors for those products
+3. **Review the corrected values against the destination’s requirements** — an empty error state is not proof of a complete pre-export validation
 
 ### Step 7: Re-Export
 Click **Export** again with the fixed data.
@@ -317,8 +339,8 @@ If the same error affects many products, fix it systematically:
 1. Open the channel
 2. Filter to show products with Assembly Time = "30 min" (or similar format)
 3. Edit the AI prompt for the Assembly Time attribute
-4. Regenerate for the filtered products
-5. This applies the corrected prompt to all affected products at once
+4. Select the affected products and regenerate the attribute using the corrected prompt
+5. Review the new values before exporting them; changing a prompt alone does not update stored values
 
 [SCREENSHOT: Regenerating Assembly Time attribute for multiple products]
 
@@ -332,6 +354,10 @@ After you've resolved a batch of errors, prevent them in the future:
 2. **Update your process** — Did you miss a validation step? Add it to your workflow
 3. **Refine your prompts** — If an AI prompt caused the error, improve it
 4. **Educate your team** — Share learnings with team members managing other channels
+
+## When to ask for help
+
+If a field cannot be identified, a corrected value is still rejected, or an accepted product remains missing, share the product identifier, job, connection/environment and raw error with your support contact. Submission tracing can help distinguish a rejected request from one still being processed.
 
 ## When to Contact Support
 

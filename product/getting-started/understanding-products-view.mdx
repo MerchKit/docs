@@ -25,7 +25,7 @@ The toolbar runs across the top of the Products view. It controls what you see a
 
 **Import** — Opens a dropdown with your import options. This is the unified entry point for getting data into Merchkit. The dropdown always includes **CSV Import** at the top. If you've connected any integrations (like Shopify or BigCommerce), those appear as additional options below CSV Import. Clicking an integration name triggers an import using the field mapping you've configured under Workspace → Integrations.
 
-**Export** — Works the same way as Import but in reverse. The dropdown includes **CSV Export** plus any connected integrations. Clicking an integration name triggers an export using that integration's export mapping.
+**Export** — Works the same way as Import but in reverse. Choose **Export Selected** or **Export All** for **CSV** or **TSV** downloads. Connected integrations appear when products are selected; selecting a connection starts its export workflow. See [Exporting channel data](/product/channels-and-content-generation/exporting-channel-data) before sending live changes.
 
 **Save View** — Saves your current filter, sort, and column configuration as a named view so you can return to it later.
 
@@ -39,7 +39,7 @@ When you first open the Products view, you'll see a set of default columns. The 
 
 **Parent Product** — If a product is a variant (like a specific size or color of a rug), this column shows which parent product it belongs to. Parent-child relationships are set up during import or can be managed manually. Child SKUs can inherit attribute values from their parent, which is useful for series-style catalogs where many variants share most attributes — see [Parent/Child Product Relationships](/product/attributes-and-enrichment/parent-child-relationships) for a full walkthrough.
 
-**Data Sources** — Shows how many sources are attached to each product. This is an interactive column — double-clicking the cell opens the Sources upload view directly connected to that cell, where you can add URLs, paste text, or upload documents. Sources give the AI additional context for enrichment.
+**Data Sources** — Shows how many sources are attached to each product. This is an interactive column — double-clicking the cell opens the source editor connected to that cell, where you can edit source attributes, add URLs, paste text, or upload documents. Sources give the AI additional context for enrichment.
 
 **Product Images** — Thumbnails of the images associated with each product.
 
@@ -59,14 +59,17 @@ Click the **+** icon at the far right of the column headers to add more attribut
 
 ### Opening the Sources panel
 
-Double-click any product's **Data Sources** cell to open the Sources upload view connected to that cell. From here you can:
+Double-click a product's **Data Sources** cell to open its source table. Edit supplier-file details in context, use **Add URL** or **Add** to attach information, and use **Open in Sources** for a separate tab filtered to this product's sources.
 
-- Add a URL (paste a product page link, spec sheet, or supplier listing)
-- Add text (paste raw descriptions, specifications, or notes)
-- Upload documents (drag and drop PDFs, Excel files, Word docs, ODT, or RTF — up to 25MB per file)
-- Duplicate sources from the parent product (useful for variants that share the same reference material)
+From the source editor, you can:
 
-[SCREENSHOT: The Sources upload view open for a product, showing the URL input, text input, and document drop zone. If the product has existing sources, show those listed above the input area.]
+- Add a URL for a supplier product page or specification.
+- Paste text such as descriptions, measurements or internal notes.
+- Upload PDF, Excel, Word, ODT or RTF documents.
+- Use **Add → Link from parent** on a variant to reuse the parent’s source records, when available. These remain shared records.
+- Edit source attributes and save shared editor columns with the appropriate permissions.
+
+See [Adding sources to a product](/product/sources-and-importing/adding-sources-to-product) for precise steps, permissions, shared editor columns and the difference between unlinking and deleting a source.
 
 ### Editing cell values
 
@@ -76,13 +79,13 @@ Click any editable cell in the table to modify its value directly. Text cells op
 
 When you select one or more products using the checkboxes on the left side of each row, an **action bar** appears at the bottom of the screen. The action bar gives you bulk operations for the selected products.
 
-[SCREENSHOT: The action bar visible at the bottom of the screen with products selected, showing the Delete, Export, and Generate buttons.]
+[SCREENSHOT: The action bar visible at the bottom of the screen with products selected, showing the Delete and Generate buttons.]
 
 The action bar includes:
 
 **Delete** — Remove the selected products from your catalog.
 
-**Export** — Export just the selected products (as CSV or to a connected integration).
+Use the table toolbar’s **Export** menu for downloads and connected integrations.
 
 **Generate** — This is the button that triggers AI enrichment. Clicking Generate opens a dropdown with two options:
 
@@ -90,6 +93,19 @@ The action bar includes:
 - **Generate All Attributes** — Re-generates every AI-configured attribute, including ones that already have values. Use this when you've updated your prompts or acceptable values and want to refresh the output.
 
 The Generate action only runs on attributes that have the **Use AI** toggle enabled in the Attributes configuration. Non-AI attributes (formulas, manual fields, reference lookups) are unaffected.
+
+## Refresh after a teammate's job
+
+If a teammate finishes a generation batch while you are editing a product, finish your edit before refreshing the table.
+
+1. Look for the **Sync** button in the job-progress panel when new catalog data is available. Its tooltip is **Sync catalog data**.
+2. Complete your current cell edit.
+3. Click **Sync**, or press **Cmd/Ctrl + Shift + U**, to load the available changes.
+4. Review the refreshed values and the current filter results.
+
+Relevant completed jobs you started refresh the table automatically. Teammate and system jobs signal new data for you to load; some dialog-owned jobs manage their own refresh. The button appears only when data is pending, and can appear in either the collapsed or expanded job panel.
+
+This refresh updates your catalog view; it does not export data to Shopify or another channel. It also does not freeze membership in a filtered view: products can disappear from the view when their updated values no longer match its filters.
 
 ## Putting it together: a typical workflow in the Products view
 

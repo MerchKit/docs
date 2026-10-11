@@ -1,60 +1,98 @@
 ---
 title: "Formula Functions Reference"
-description: "Complete reference of all available functions for the Formula field type in Merchkit — text, logical, and numeric functions with examples."
+description: "Text, logical and numeric formula functions, with a step-by-step REGEXEXTRACT example and troubleshooting."
 ---
 
 # Merchkit Formula Functions Reference
 
-This reference documents all available functions for the **Formula** field type in Merchkit. Use these via the "Insert Function" button when configuring a Formula attribute.
+Use the **Formula** field type for calculations and repeatable text transformations. Enter an expression in **Formula Expression** when configuring a Formula attribute.
 
-Formula expressions use `{{attribute_name}}` to reference other attribute values, and can combine references with functions and operators (e.g., `{{msrp}}+15`, `ROUND({{price}} * 1.1, 2)`).
+Formula expressions use `{{attribute_key}}` to reference other attribute values, and can combine references with functions and operators (e.g., `{{msrp}}+15`, `ROUND({{price}} * 1.1, 2)`).
 
 ---
+
+## Extract measurements from supplier text
+
+Suppose a product's Supplier Notes attribute contains:
+
+```text
+Box 1: 24 x 18 x 12 in; Box 2: 30 x 20 x 15 in
+```
+
+You want separate Box 1 and Box 2 measurement attributes. Before starting, make sure Supplier Notes exists on products and contains text. You need permission to manage attributes (`attributes.manage`). Attribute names can differ by workspace; the examples below use the key `supplier_notes`.
+
+1. Open the destination attribute's **Configure Attribute** panel from **Workspace → Attributes**. To add one first, see [Creating custom attributes](/product/attributes-and-enrichment/creating-custom-attributes).
+2. Turn **Use AI** off so **Formula** is available under **Field Type**. Select **Formula**.
+3. In **Formula Expression**, enter the Box 1 expression below. Use your actual source attribute key inside the double braces.
+4. Review the formula validation message, then click **Save changes** (or **Create attribute** for a new attribute).
+5. Configure a second destination attribute with the Box 2 expression. Check the calculated results on a sample product before using them in an export.
+
+```text
+REGEXEXTRACT({{supplier_notes}}, "Box 1: ([^;]+)")
+REGEXEXTRACT({{supplier_notes}}, "Box 2: ([^;]+)")
+```
+
+The expected results are `24 x 18 x 12 in` and `30 x 20 x 15 in`. Each expression returns text, including the unit. The pattern matches the exact labels and spacing in this example; adapt it to your supplier's format.
+
+### REGEXEXTRACT syntax and limits
+
+`REGEXEXTRACT(text, pattern, groupIndex?)` uses JavaScript regular-expression syntax. Write the pattern as a quoted formula string, without surrounding `/` characters.
+
+- With a capturing group in parentheses, the default result is the first group. Without a group, it is the whole match.
+- The optional third argument selects a group: `0` returns the whole match, `1` the first group, and so on. Only the first match is used.
+- Matching is case-sensitive. For example, `Box 1:` does not match `BOX 1:`.
+- No match, an invalid or empty pattern, an unavailable group, or a pattern longer than 1,000 characters returns a blank value.
+- A blank result does not distinguish missing source data from a pattern problem. Check the source text, label, spacing and group number before exporting.
+
+For example, `REGEXEXTRACT({{supplier_notes}}, "Box 1: ([^;]+)", 0)` returns `Box 1: 24 x 18 x 12 in`.
+
+Attribute references appear as named chips in the editor but retain their `{{key}}` representation when copied. References must name attributes in your workspace. Formula extraction uses existing attribute text; it does not read a supplier document directly or use AI to infer missing measurements.
 
 ## Text Functions
 
 | Function | Description | Example |
 |---|---|---|
-| `CONCATENATE(text1, text2, ...)` | Join multiple text values into one string | `CONCATENATE({brand}, " - ", {name})` |
-| `UPPER(text)` | Convert text to uppercase | `UPPER({brand})` |
-| `LOWER(text)` | Convert text to lowercase | `LOWER({brand})` |
-| `TRIM(text)` | Remove leading and trailing whitespace | `TRIM({description})` |
-| `LEFT(text, count)` | Extract characters from the start of text | `LEFT({sku}, 3)` |
-| `RIGHT(text, count)` | Extract characters from the end of text | `RIGHT({sku}, 4)` |
-| `MID(text, start, count)` | Extract characters from the middle of text (1-based) | `MID({sku}, 4, 3)` |
-| `LEN(text)` | Get the length of text | `LEN({description})` |
-| `REPLACE(text, search, replacement)` | Replace first occurrence of text | `REPLACE({name}, "-", " ")` |
-| `SUBSTITUTE(text, oldText, newText)` | Replace all occurrences of text | `SUBSTITUTE({description}, "old", "new")` |
-| `TEXT(value)` | Format a value as text | `TEXT({price})` |
-| `LPAD(text, length, padChar?)` | Pad text on the left to reach target length | `LPAD({quantity}, 4, "0")` |
-| `RPAD(text, length, padChar?)` | Pad text on the right to reach target length | `RPAD({code}, 10, "-")` |
-| `CONTAINS(text, search)` | Check if text contains a substring (returns boolean) | `CONTAINS({description}, "premium")` |
+| `CONCATENATE(text1, text2, ...)` | Join multiple text values into one string | `CONCATENATE({{brand}}, " - ", {{name}})` |
+| `UPPER(text)` | Convert text to uppercase | `UPPER({{brand}})` |
+| `LOWER(text)` | Convert text to lowercase | `LOWER({{brand}})` |
+| `TRIM(text)` | Remove leading and trailing whitespace | `TRIM({{description}})` |
+| `LEFT(text, count)` | Extract characters from the start of text | `LEFT({{sku}}, 3)` |
+| `RIGHT(text, count)` | Extract characters from the end of text | `RIGHT({{sku}}, 4)` |
+| `MID(text, start, count)` | Extract characters from the middle of text (1-based) | `MID({{sku}}, 4, 3)` |
+| `LEN(text)` | Get the length of text | `LEN({{description}})` |
+| `REPLACE(text, search, replacement)` | Replace first occurrence of text | `REPLACE({{name}}, "-", " ")` |
+| `SUBSTITUTE(text, oldText, newText)` | Replace all occurrences of text | `SUBSTITUTE({{description}}, "old", "new")` |
+| `TEXT(value)` | Format a value as text | `TEXT({{price}})` |
+| `LPAD(text, length, padChar?)` | Pad text on the left to reach target length | `LPAD({{quantity}}, 4, "0")` |
+| `RPAD(text, length, padChar?)` | Pad text on the right to reach target length | `RPAD({{code}}, 10, "-")` |
+| `REGEXEXTRACT(text, pattern, groupIndex?)` | Extract the first match or a capturing group; blank if no match | `REGEXEXTRACT({{supplier_notes}}, "Box 1: ([^;]+)")` |
+| `CONTAINS(text, search)` | Check if text contains a substring (returns boolean) | `CONTAINS({{description}}, "premium")` |
 
 ## Logical Functions
 
 | Function | Description | Example |
 |---|---|---|
-| `IF(condition, ifTrue, ifFalse)` | Return different values based on a condition | `IF({price} > 100, "Premium", "Standard")` |
-| `ISBLANK(value)` | Check if a value is empty or null | `ISBLANK({sale_price})` |
-| `COALESCE(value1, value2, ...)` | Return the first non-blank value | `COALESCE({sale_price}, {price}, 0)` |
-| `AND(condition1, condition2, ...)` | Return true if all conditions are true | `AND({active}, {in_stock})` |
-| `OR(condition1, condition2, ...)` | Return true if any condition is true | `OR({featured}, {on_sale})` |
-| `NOT(value)` | Return the opposite boolean value | `NOT({discontinued})` |
-| `SWITCH(expr, case1, result1, ...)` | Return value based on matching expression | `SWITCH({status}, "A", "Active", "I", "Inactive", "Unknown")` |
-| `IFS(cond1, result1, cond2, result2, ...)` | Return value based on multiple conditions | `IFS({score} > 90, "A", {score} > 80, "B", true, "C")` |
+| `IF(condition, ifTrue, ifFalse)` | Return different values based on a condition | `IF({{price}} > 100, "Premium", "Standard")` |
+| `ISBLANK(value)` | Check if a value is empty or null | `ISBLANK({{sale_price}})` |
+| `COALESCE(value1, value2, ...)` | Return the first non-blank value | `COALESCE({{sale_price}}, {{price}}, 0)` |
+| `AND(condition1, condition2, ...)` | Return true if all conditions are true | `AND({{active}}, {{in_stock}})` |
+| `OR(condition1, condition2, ...)` | Return true if any condition is true | `OR({{featured}}, {{on_sale}})` |
+| `NOT(value)` | Return the opposite boolean value | `NOT({{discontinued}})` |
+| `SWITCH(expr, case1, result1, ...)` | Return value based on matching expression | `SWITCH({{status}}, "A", "Active", "I", "Inactive", "Unknown")` |
+| `IFS(cond1, result1, cond2, result2, ...)` | Return value based on multiple conditions | `IFS({{score}} > 90, "A", {{score}} > 80, "B", true, "C")` |
 
 ## Numeric Functions
 
 | Function | Description | Example |
 |---|---|---|
-| `ROUND(number, decimals?)` | Round a number to specified decimal places | `ROUND({price}, 2)` |
-| `FLOOR(number)` | Round down to nearest integer | `FLOOR({quantity})` |
-| `CEILING(number)` | Round up to nearest integer | `CEILING({quantity})` |
-| `ABS(number)` | Return the absolute value | `ABS({difference})` |
-| `MIN(number1, number2, ...)` | Return the minimum value | `MIN({price}, {sale_price})` |
-| `MAX(number1, number2, ...)` | Return the maximum value | `MAX({price}, {min_price})` |
-| `SUM(number1, number2, ...)` | Add multiple numbers together | `SUM({price}, {tax}, {shipping})` |
-| `AVERAGE(number1, number2, ...)` | Calculate the average of numbers | `AVERAGE({rating1}, {rating2}, {rating3})` |
+| `ROUND(number, decimals?)` | Round a number to specified decimal places | `ROUND({{price}}, 2)` |
+| `FLOOR(number)` | Round down to nearest integer | `FLOOR({{quantity}})` |
+| `CEILING(number)` | Round up to nearest integer | `CEILING({{quantity}})` |
+| `ABS(number)` | Return the absolute value | `ABS({{difference}})` |
+| `MIN(number1, number2, ...)` | Return the minimum value | `MIN({{price}}, {{sale_price}})` |
+| `MAX(number1, number2, ...)` | Return the maximum value | `MAX({{price}}, {{min_price}})` |
+| `SUM(number1, number2, ...)` | Add multiple numbers together | `SUM({{price}}, {{tax}}, {{shipping}})` |
+| `AVERAGE(number1, number2, ...)` | Calculate the average of numbers | `AVERAGE({{rating1}}, {{rating2}}, {{rating3}})` |
 
 ---
 
@@ -74,4 +112,4 @@ Formula expressions use `{{attribute_name}}` to reference other attribute values
 
 ---
 
-*This reference is part of the Merchkit Knowledge Base. See article 3.6a (Field Type Guide) for when to use Formulas vs. AI-generated attributes.*
+See the [Field type guide](/product/attributes-and-enrichment/field-type-guide#formula-ruler-icon) for when to use formulas instead of AI-generated attributes.

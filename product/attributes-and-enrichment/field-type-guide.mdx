@@ -125,68 +125,77 @@ This guide covers every field type with examples, configuration details, and dec
 
 ## Formula (ruler icon)
 
-**What it is:** Deterministic calculation field. NO AI involvement. Uses `{{ }}` references to other attributes in a mathematical expression.
+**What it is:** A deterministic calculation field. A formula calculates a value from other attributes using a repeatable rule, without AI judgment.
 
 **Best for:**
-- Calculated fields that don't require AI judgment
-- Tax calculations
-- Margin calculations
+- Calculated fields that follow a fixed rule
+- Tax, margin and discount calculations
 - Unit conversions
-- Discount calculations
-- Any math that follows a fixed rule
+- Text extraction and deterministic validation
 
-**AI Support:** No. Formulas are purely deterministic—same input always produces the same output.
+**AI Support:** No. The same expression and inputs produce the same result.
 
 **How it works:**
-1. You write a formula using `{{ }}` references: `={{msrp}} * 1.1` (MSRP + 10%)
-2. When Merchkit generates or updates the formula field, it evaluates the expression
-3. The result is stored as a calculated value
+1. Reference attributes by their keys in double braces, such as `{{msrp}}`.
+2. When the formula is evaluated, the expression calculates a result from those input values.
+3. Review the stored result against the inputs before using it in a channel export.
 
 **Configuration:**
-- **Formula field:** Write your mathematical expression
-- **Insert Function button:** Click to see 30 available functions organized by type:
-  - **Text functions (14):** CONCAT, UPPER, LOWER, TRIM, etc.
-  - **Logical functions (8):** IF, AND, OR, NOT, etc.
-  - **Numeric functions (8):** SUM, ROUND, AVERAGE, MIN, MAX, etc.
-- **Validation:** Merchkit shows a green checkmark ("Formula is valid and ready to use") when syntax is correct
 
-For the complete list of available functions, see the reference guide (linked from the Formula panel).
+1. Open the attribute's **Configure Attribute** panel.
+2. Turn **Use AI** off and select **Formula** under **Field Type**.
+3. Enter the expression in **Formula Expression**, using attribute keys in double braces.
+4. Review validation and click **Save changes**.
+
+For example, `ROUND({{cost}} * 1.4, 2)` calculates a price from cost. `REGEXEXTRACT({{supplier_notes}}, "Box 1: ([^;]+)")` extracts one box's measurements from structured supplier notes.
+
+Use your workspace's actual attribute keys. A valid expression does not guarantee that the input data is complete or accurate. Check the resulting value on a sample product before exporting it; if a stored result is missing or stale, do not assume it is ready to publish.
 
 **Example use cases:**
-- `Wholesale Price` — `={{msrp}} * 0.5` (MSRP with 50% wholesale discount)
-- `Tax Amount (USD)` — `={{msrp}} * 0.08` (assuming 8% tax rate)
-- `Product Code` — `=CONCAT({{brand}}, "-", {{product_id}})` (concatenate brand and ID)
-- `Margin Dollars` — `={{msrp}} - {{cost}}` (MSRP minus cost)
-- `Size Category` — `=IF({{weight}} > 10, "Large", "Standard")` (conditional logic)
+
+Replace these keys with the actual attribute keys in your workspace. The example results assume `msrp = 100`, `cost = 60`, `weight = 12`, `brand = "Acme"` and `product_id = "CHAIR-01"`.
+
+| Use case | Formula | Example result |
+| --- | --- | --- |
+| Wholesale price at 50% of MSRP | `{{msrp}} * 0.5` | `50` |
+| Tax amount at an example 8% rate | `{{msrp}} * 0.08` | `8` |
+| Price at a 40% markup on cost | `ROUND({{cost}} * 1.4, 2)` | `84` |
+| Margin dollars | `{{msrp}} - {{cost}}` | `40` |
+| Product code | `CONCATENATE({{brand}}, "-", {{product_id}})` | `Acme-CHAIR-01` |
+| Size label from weight | `IF({{weight}} > 10, "Large", "Standard")` | `Large` |
+
+Markup on cost and margin as a share of selling price are different calculations. Choose the rule your team intends and confirm the units and input values before using a result.
 
 **Using Formulas for Validation**
 
-Formulas are also the right tool for deterministic validation rules — checks where you want a guaranteed, reproducible answer rather than an LLM judgment. A Formula attribute can compute a boolean flag, a status string, or a quality score that you can then filter on in Views.
+Use a formula for checks with a precise rule. For example, `IF({{weight}} > 0, "Valid", "INVALID: weight must be positive")` flags a zero or negative weight. With `weight = 12`, it returns `Valid`; with `weight = 0`, it returns `INVALID: weight must be positive`.
 
-Common validation patterns:
-- `Weight Valid` — `=IF({{weight}} > 0, "Valid", "INVALID: weight must be > 0")` flags any extracted weight that's zero or negative
-- `Volume Check` — `=IF({{length}} * {{width}} * {{height}} = {{volume}}, "OK", "MISMATCH")` flags cross-field inconsistencies
-- `SKU Format Check` — pattern-validates that an extracted SKU matches your expected format
-- `Required Field Coverage` — `=IF(AND({{material}} <> "", {{weight}} <> "", {{dimensions}} <> ""), "Complete", "Missing required fields")` flags incomplete records
-- `Quality Score` — combine confidence ratings, validation flag presence, and source freshness into a per-SKU score that surfaces drift early
+Other deterministic checks can compare several fields:
 
-For validation that requires context judgment (e.g., "is this material plausible for this product category"), write the rule into the AI extraction prompt itself rather than a Formula. Use Formula when the rule is deterministic and reproducible; use prompt-based validation when context judgment is needed.
+- **Volume Check:** `IF({{length}} * {{width}} * {{height}} = {{volume}}, "OK", "MISMATCH")`. With dimensions `2`, `3`, `4` and volume `24`, the result is `OK`. Use consistent units and an appropriate tolerance for rounded measurements.
+- **Required Field Coverage:** `IF(AND(NOT(ISBLANK({{material}})), NOT(ISBLANK({{weight}})), NOT(ISBLANK({{dimensions}}))), "Complete", "Missing required fields")`. This checks presence for the named fields; it does not establish that their values meet destination rules.
+- **SKU Format Check:** use `REGEXEXTRACT` with your actual SKU pattern, then inspect blank results. See the function reference for no-match behavior.
+- **Quality Score:** if you maintain explicit validation or review attributes, a formula can combine those values into a score. Do not assume that AI confidence or source freshness metadata is automatically available as formula inputs.
+
+A formula checks the rule you provide; it cannot establish that a supplier’s measurement is true. For a judgment such as whether a material is plausible for a category, give the AI prompt the relevant evidence and review its answer. Use formulas for deterministic calculations, unit conversions and comparisons; use AI where the task requires interpretation.
 
 **Validation:**
-- Green checkmark ("Formula is valid") confirms syntax is correct
-- If formula errors, you'll see a red warning explaining the issue
-- Formulas are recalculated whenever referenced attributes change
+
+Review the formula editor’s validation feedback before saving. Syntax validation does not confirm source accuracy or freshness of a stored result. If an input changes, check the resulting value before export instead of assuming it has recalculated.
 
 **Common mistakes:**
-- Forgetting `{{ }}` syntax (write `{{msrp}}` not `msrp`)
-- Referencing non-existent attributes (formula will fail)
-- Using formula when you should use AI (formulas can't make judgment calls)
-- Complex nested formulas that are hard to debug
+
+- Use double braces around an attribute key: `{{msrp}}`, not `msrp`.
+- Check that the referenced keys exist and their values use the expected type and units.
+- Test each part of a complicated expression before combining it.
+- Compare stored results with sample inputs before export. Do not assume that a syntactically valid formula or an old stored result is accurate.
 
 **When NOT to use Formula:**
-- When you need the AI to make decisions (use Text field instead)
-- When the logic is subjective or context-dependent (use AI)
-- When the calculation doesn't follow a fixed rule
+- When the answer depends on interpreting product context or supplier prose
+- When the rule is subjective rather than repeatable
+- When you need to generate a description or make an evidence-based judgment
+
+The [Formula functions reference](/product/reference/formula-functions) includes a complete measurement-extraction walkthrough, expected results and blank-result troubleshooting.
 
 ---
 
@@ -292,8 +301,8 @@ For validation that requires context judgment (e.g., "is this material plausible
 
 ## Next Steps
 
-You now understand each field type and when to use it. The next step is to dive deeper into advanced attribute patterns and how to build dependent attributes (where one attribute's configuration depends on another). See [Building Dependent Attributes](/product/attributes-and-enrichment/building-dependent-attributes) (coming soon).
+You now understand each field type and when to use it. The next step is to dive deeper into advanced attribute patterns and how to build dependent attributes (where one attribute's configuration depends on another). See [Building Dependent Attributes](/product/attributes-and-enrichment/building-dependent-attributes).
 
 For hands-on guidance on creating your first attribute, return to [Creating Custom Attributes](/product/attributes-and-enrichment/creating-custom-attributes).
 
-For formula function reference, see the complete [Formula Functions Reference](/product/reference/formula-functions) (coming soon).
+For formula function reference, see the complete [Formula Functions Reference](/product/reference/formula-functions).
