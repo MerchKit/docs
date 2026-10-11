@@ -21,7 +21,11 @@ Your enrichment results live in the same Products table where you work every day
 - **Real-time feedback.** As you review, you can immediately edit values (see [Editing and Overriding AI Output](/product/attributes-and-enrichment/editing-overriding-output) for details).
 - **Easy to scale.** Once you're confident in the quality, you can run enrichment on larger batches knowing your review process is simple.
 
-## Check a generated value against its source
+## Rationale, Citations, and Confidence Rating
+
+When available, rationale explains how the model arrived at a value, confidence describes the model’s assessment, and a source reference points to supporting context. Use these to decide what to inspect; none is an independent accuracy check.
+
+### Check a generated value against its source
 
 Suppose an AI-written description says a chair is solid oak. A citation gives you a place to check that claim; it does not prove the claim is correct.
 
@@ -32,6 +36,10 @@ Before starting, generate a value with an AI prompt attribute that has the relev
 3. Look for **Source**. Its badge identifies a **Data Source**, **Attribute**, **Image** or **Web** reference.
 4. Click a URL citation to open it in a new tab. For an attribute or image reference, inspect that information in Merchkit. Hover over a shortened badge to read its full reference.
 5. Compare the actual supplier information with the generated value. Correct unsupported claims using [Editing AI output](/product/attributes-and-enrichment/editing-overriding-output), or improve the context and regenerate a small sample.
+
+**Inferred vs. extracted values.** A model may infer a value from a parent product, related attributes or other context rather than quote it directly. Read the rationale when available and compare it with the actual evidence. Do not assume that every inference is labeled or always receives a particular confidence rating.
+
+**Using confidence during review.** Treat a Low or Medium rating as a reason to inspect the source more closely, and spot-check High ratings too. Review the recorded confidence in cell information or generation Job Details. These signals help prioritize attention; they do not establish correctness.
 
 ### When a source is missing
 

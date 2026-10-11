@@ -1,13 +1,24 @@
 ---
 title: "Exporting Channel Data"
-description: "Send selected products through connected Shopify or Wayfair integrations, check results, or download a catalog file."
+description: "Download channel-formatted output and submit your marketplace feeds. Learn export formats and submission workflows."
 ---
 
-# Exporting channel data
+# Exporting Channel Data
 
-After updating a seasonal collection's tags or preparing a new assortment, choose how to send the data. A connected integration sends records to a platform. A CSV or TSV export downloads a file; downloading it does not publish products.
+Once your channel content is generated and validated, you're ready to export and submit to the marketplace. Use a connected integration to send records to its destination, or download a CSV/TSV file for review and submission.
 
-## Before you start
+## Export Overview
+
+Choose the workflow that matches your destination:
+
+1. Review the products and destination mapping.
+2. Select the intended products.
+3. Use **Export** to start a connected integration workflow or download a CSV/TSV file.
+4. Check the results in Merchkit and the destination before treating products as live.
+
+A catalog download is not guaranteed to match every marketplace’s upload template. A completed integration job can contain rejected products. See the destination walkthroughs below for Shopify and Wayfair.
+
+## Step 1: Prepare for Export
 
 - Your workspace must have the destination integration connected and configured. Review its [export mapping](/product/integrations-and-field-mapping/setting-up-export-mapping) before writing to a live store.
 - You need export permission (`data.export`). Editing product values and integration settings requires their respective permissions.
@@ -15,6 +26,102 @@ After updating a seasonal collection's tags or preparing a new assortment, choos
 - For Wayfair, confirm the intended environment, supplier configuration, product class and channel attributes with your integration administrator. Do not assume a test connection writes to production.
 
 Use the [pre-export checklist](/product/channels-and-content-generation/pre-export-validation) to review the data. Exporting can update live platform records; a successful Merchkit job does not guarantee marketplace acceptance or storefront visibility.
+
+Before exporting, confirm:
+
+- [ ] All required fields are filled
+- [ ] Validation shows no critical errors
+- [ ] You've spot-checked a sample of products
+- [ ] You're exporting the right products (filtered/selected correctly)
+
+If not, go back to [Pre-Export Validation Checklist](/product/channels-and-content-generation/pre-export-validation) and fix issues first.
+
+[SCREENSHOT: Channel grid with data ready for export]
+
+## Step 2: Select Products to Export
+
+You can export:
+
+### Option 1: Export All Products in Channel
+For a file download, **Export → Export All → CSV** or **TSV** exports the current filtered set. Review active filters; “all” does not necessarily mean the entire catalog.
+
+### Option 2: Export Selected Products
+Select specific SKUs with row checkboxes. For a file, use **Export → Export Selected → CSV** or **TSV**. For a connected integration, choose the connection name and mapping template where offered.
+
+**Use this when:**
+- You're doing an incremental update (only new products)
+- You want to test with a small batch before full export
+- You're updating a specific category
+
+### Option 3: Export Filtered Products
+For CSV/TSV, **Export All** uses the current filters. Shopify’s select-all selection also resolves products using the current filter model and exclusions. For Wayfair, use explicit row selections; do not assume it interprets select-all filters like Shopify. A saved view is not a permanent list of products.
+
+[SCREENSHOT: Selected products highlighted in channel grid]
+
+## Step 3: Click the Export Button
+
+Use **Export** in the table toolbar. Connected integrations appear when products are selected and you have export permission. If a connection has multiple mapping templates, choose the intended template from its submenu.
+
+For file downloads, choose **Export Selected** or **Export All**, then **CSV** or **TSV**. For an integration, choosing the connection starts its export workflow; it does not download a file for a later manual upload.
+
+## Step 4: Download the File
+
+Follow the file-export job and retrieve its output when ready. Check your browser’s download location. Give saved copies clear names such as `Wayfair_2026-10-10_v1.csv`; this is an organizational suggestion, not a guaranteed generated filename.
+
+TSV separates columns with tabs; tabs and line breaks within a value become spaces.
+
+## Step 5: Verify the Download
+
+Before uploading to the marketplace:
+
+1. **Open the file locally** — Use a spreadsheet or text editor
+2. **Spot check a few rows** — Make sure products look correct
+3. **Check row count** — Does the number of rows match your expected product count?
+4. **Look for encoding issues** — Special characters should display correctly (not garbled)
+
+[SCREENSHOT: CSV file open in Excel showing product data]
+
+Check that spreadsheet software has not changed leading zeros in identifiers, date formats or numeric values. Keep the original export before resaving. Confirm headers and values match the destination’s current upload template.
+
+## Step 6: Submit to the Marketplace
+
+For manual file submission, use the marketplace’s import workflow and inspect its result. For connected Shopify and Wayfair workflows, follow the walkthroughs below; they submit directly from Merchkit.
+
+### Submission Process by Marketplace
+
+**Wayfair:** Use the [connected export walkthrough](#submit-products-to-wayfair) below. Its create/update handling, error reporting and processing stages differ from a manual file upload.
+
+**Amazon:**
+1. Log in to Seller Central
+2. Go to **Inventory → Uploads**
+3. Choose **Feed Type** (Inventory, Product, etc.)
+4. Upload your file
+5. Amazon processes and confirms
+6. Check **Performance → Listings** for any issues
+
+**Walmart:**
+1. Log in to Walmart Seller Center
+2. Go to **Catalog → Item Setup**
+3. Upload your feed
+4. Walmart validates and returns any errors
+5. Confirm items in your Dashboard
+
+**Google Merchant:**
+1. Log in to Google Merchant Center
+2. Go to **Feeds**
+3. Create or update your product feed
+4. Upload CSV
+5. Google validates; check **Diagnostics** for errors
+
+**Shopify:** Use the [connected export walkthrough](#export-a-shopify-tag-update) below. Connecting Shopify does not by itself enable automatic synchronization. If using a manual CSV import instead, follow Shopify’s current import template and review matching behavior before updating existing products.
+
+**Mirakl (custom marketplaces):**
+1. Access the specific marketplace's seller portal
+2. Look for **Product Feed** or **Catalog Upload**
+3. Upload your file
+4. Marketplace validates and confirms
+
+Different marketplaces have different processes. Check their documentation for specific steps.
 
 ## Export a Shopify tag update
 
@@ -53,13 +160,66 @@ Submission IDs and statuses are retained for tracing while Wayfair processes the
 
 A job marked completed can contain rejected records. Read its result counts; reaching 100% means the workflow finished, not that every product became a live listing. Successful retries clear previous export errors for the products that pass.
 
-## Download CSV or TSV
+## File Storage and Version Control
 
-1. Open the grid and review the attributes you want to export.
-2. For specific rows, select them and choose **Export → Export Selected → CSV** or **TSV**. The selected-row menu includes its count.
-3. To export the current filtered set, use **Export → Export All → CSV** or **TSV**. Check the filters before starting.
-4. Follow the export job and retrieve its output. Inspect the row count, headers and a few values before using the file elsewhere.
+After exporting, consider:
 
-TSV separates columns with tabs; tabs and line breaks inside a value become spaces. A downloaded catalog file is not guaranteed to meet every marketplace's upload template. Check the destination's current requirements before importing it there.
+1. **Keep exports organized** — Save by date and channel
+   - `exports/Wayfair_2026-04-05.csv`
+   - `exports/Amazon_2026-04-05.csv`
 
-For data corrections, see [Resolving export errors](/product/channels-and-content-generation/feed-validation-errors). For mapping changes, see [Setting up export mapping](/product/integrations-and-field-mapping/setting-up-export-mapping).
+2. **Version your files** — If you make multiple attempts, version them
+   - `Wayfair_v1.csv`, `Wayfair_v2.csv` (if issues found)
+
+3. **Archive old exports** — Keep successful exports for record-keeping
+   - Useful if you need to revert or compare versions
+
+## Export Frequency
+
+How often should you export?
+
+- **Initial launch** — Export immediately to populate the marketplace
+- **Weekly/monthly** — Regular updates to keep listings fresh
+- **After product changes** — When you update descriptions, prices, or images in Products view
+- **Seasonal changes** — Before peak seasons, update availability and inventory
+- **Continuous** — If your team separately configured API automation, confirm its schedule and monitor its results. An integration connection alone does not enable automatic exports.
+
+## Automating Exports (API)
+
+Use an API integration when you need repeated exports or a large catalog workflow. First configure the connection and its export mapping, then test a representative selection.
+
+A connected integration makes an export destination available; it does not mean every catalog edit automatically syncs. If your team has built scheduled or event-driven automation, confirm what triggers it, which products and fields it sends, and how failures are monitored. Avoid overlapping automated runs and manual retries until you understand the previous result.
+
+## Troubleshooting Export Issues
+
+### Issue 1: File Won't Download
+- Check your browser's download settings
+- Check the export job’s result before retrying; CSV and TSV downloads are available
+- Check blocked downloads and the browser’s download location
+- Try a smaller representative selection to isolate a large-export problem; keep the job identifier for support
+
+### Issue 2: Special Characters Look Wrong
+- This is usually an encoding issue
+- Check the encoding and delimiter selected when importing the file into your spreadsheet
+- Open in a text editor (not Excel) to verify encoding
+
+### Issue 3: File Format Doesn't Match Marketplace Requirements
+- Confirm you've selected the correct format for that marketplace
+- Check the marketplace's documentation for required format
+- Contact Merchkit support if the format isn't available
+
+### Issue 4: Rows or Columns Missing from Export
+- Review the actual row selection, active filters and expected exported headers
+- If specific products aren't exporting, check if they've been filtered out
+- Verify that the channel grid actually contains those products
+
+## Next Steps
+
+After you've submitted your feed to the marketplace:
+
+1. **Monitor for acceptance** — Most marketplaces email confirmation or errors within hours to days
+2. **Check your marketplace dashboard** — View your live listings
+3. **Address any rejections** — If the marketplace rejects the feed, see [Feed Validation & Error Resolution](/product/channels-and-content-generation/feed-validation-errors)
+4. **Optimize continuously** — See [Continuous Optimization](/product/channels-and-content-generation/continuous-optimization) to improve listing performance
+
+Confirm the destination has accepted the records and made the listings visible. Completion of a Merchkit export or file download alone does not establish that products are live.

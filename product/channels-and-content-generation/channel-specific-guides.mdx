@@ -9,7 +9,20 @@ Each marketplace has unique requirements, strengths, and best practices. This gu
 
 ## Wayfair
 
+**Category:** Traditional marketplace (furniture and home goods)
+
+**Key Stats:**
+- Extensive channel-specific attributes across many categories
+- Category-specific attribute sets
+- Strict validation and data quality requirements
+
+### Wayfair Requirements
+
 Wayfair attributes and accepted values depend on the product class. Prepare the supplier part number, category-specific details and mapped images before submitting a new product. Verify units and supported options against the configured class rather than relying on one universal list of fields.
+
+### Wayfair Best Practices
+
+Use the configured product class to guide enrichment. Focus on accurate packaging data, precise material descriptions, realistic assembly information and relevant images. Compare generated facts with supplier evidence before export.
 
 1. Review a representative product and its class-specific attributes.
 2. Confirm the intended Wayfair connection and environment with your integration administrator.
@@ -18,6 +31,19 @@ Wayfair attributes and accepted values depend on the product class. Prepare the 
 5. Verify acceptance and eventual listing visibility in Wayfair.
 
 Required images are sent in the initial create submission, and multi-select answers are sent as ranked values. Submission acceptance and listing visibility are separate stages. A completed Merchkit export can still contain rejected products.
+
+### Wayfair Channel-Specific Attributes to Prioritize
+
+Review the attributes required or recommended for your configured class:
+
+- **Packaging:** compare each carton’s width, height, depth and weight with supplier specifications. Keep carton and assembled-product dimensions distinct.
+- **Materials:** use precise descriptions such as `Upholstery: 100% Polyester, Frame: Hardwood` when supported by the source. Supply percentages only where relevant and documented.
+- **Assembly:** provide accurate assembly requirements and time in the units the field expects.
+- **Care and warranty:** include documented maintenance instructions and applicable warranty terms.
+- **Category, color and size:** confirm the category mapping and accepted options before generating class-specific content.
+- **Images:** review the mapped image attributes for relevant, accessible images before submitting.
+
+This is a preparation checklist, not a universal list of mandatory Wayfair fields. Test representative products from each class before sending a large assortment.
 
 ## Amazon
 

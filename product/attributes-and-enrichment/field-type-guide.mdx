@@ -125,7 +125,22 @@ This guide covers every field type with examples, configuration details, and dec
 
 ## Formula (ruler icon)
 
-A formula calculates a value from other attributes using a repeatable rule. Use one for price calculations, text extraction or checks that do not require AI judgment.
+**What it is:** A deterministic calculation field. A formula calculates a value from other attributes using a repeatable rule, without AI judgment.
+
+**Best for:**
+- Calculated fields that follow a fixed rule
+- Tax, margin and discount calculations
+- Unit conversions
+- Text extraction and deterministic validation
+
+**AI Support:** No. The same expression and inputs produce the same result.
+
+**How it works:**
+1. Reference attributes by their keys in double braces, such as `{{msrp}}`.
+2. When the formula is evaluated, the expression calculates a result from those input values.
+3. Review the stored result against the inputs before using it in a channel export.
+
+**Configuration:**
 
 1. Open the attribute's **Configure Attribute** panel.
 2. Turn **Use AI** off and select **Formula** under **Field Type**.
@@ -135,6 +150,50 @@ A formula calculates a value from other attributes using a repeatable rule. Use 
 For example, `ROUND({{cost}} * 1.4, 2)` calculates a price from cost. `REGEXEXTRACT({{supplier_notes}}, "Box 1: ([^;]+)")` extracts one box's measurements from structured supplier notes.
 
 Use your workspace's actual attribute keys. A valid expression does not guarantee that the input data is complete or accurate. Check the resulting value on a sample product before exporting it; if a stored result is missing or stale, do not assume it is ready to publish.
+
+**Example use cases:**
+
+Replace these keys with the actual attribute keys in your workspace. The example results assume `msrp = 100`, `cost = 60`, `weight = 12`, `brand = "Acme"` and `product_id = "CHAIR-01"`.
+
+| Use case | Formula | Example result |
+| --- | --- | --- |
+| Wholesale price at 50% of MSRP | `{{msrp}} * 0.5` | `50` |
+| Tax amount at an example 8% rate | `{{msrp}} * 0.08` | `8` |
+| Price at a 40% markup on cost | `ROUND({{cost}} * 1.4, 2)` | `84` |
+| Margin dollars | `{{msrp}} - {{cost}}` | `40` |
+| Product code | `CONCATENATE({{brand}}, "-", {{product_id}})` | `Acme-CHAIR-01` |
+| Size label from weight | `IF({{weight}} > 10, "Large", "Standard")` | `Large` |
+
+Markup on cost and margin as a share of selling price are different calculations. Choose the rule your team intends and confirm the units and input values before using a result.
+
+**Using Formulas for Validation**
+
+Use a formula for checks with a precise rule. For example, `IF({{weight}} > 0, "Valid", "INVALID: weight must be positive")` flags a zero or negative weight. With `weight = 12`, it returns `Valid`; with `weight = 0`, it returns `INVALID: weight must be positive`.
+
+Other deterministic checks can compare several fields:
+
+- **Volume Check:** `IF({{length}} * {{width}} * {{height}} = {{volume}}, "OK", "MISMATCH")`. With dimensions `2`, `3`, `4` and volume `24`, the result is `OK`. Use consistent units and an appropriate tolerance for rounded measurements.
+- **Required Field Coverage:** `IF(AND(NOT(ISBLANK({{material}})), NOT(ISBLANK({{weight}})), NOT(ISBLANK({{dimensions}}))), "Complete", "Missing required fields")`. This checks presence for the named fields; it does not establish that their values meet destination rules.
+- **SKU Format Check:** use `REGEXEXTRACT` with your actual SKU pattern, then inspect blank results. See the function reference for no-match behavior.
+- **Quality Score:** if you maintain explicit validation or review attributes, a formula can combine those values into a score. Do not assume that AI confidence or source freshness metadata is automatically available as formula inputs.
+
+A formula checks the rule you provide; it cannot establish that a supplier’s measurement is true. For a judgment such as whether a material is plausible for a category, give the AI prompt the relevant evidence and review its answer. Use formulas for deterministic calculations, unit conversions and comparisons; use AI where the task requires interpretation.
+
+**Validation:**
+
+Review the formula editor’s validation feedback before saving. Syntax validation does not confirm source accuracy or freshness of a stored result. If an input changes, check the resulting value before export instead of assuming it has recalculated.
+
+**Common mistakes:**
+
+- Use double braces around an attribute key: `{{msrp}}`, not `msrp`.
+- Check that the referenced keys exist and their values use the expected type and units.
+- Test each part of a complicated expression before combining it.
+- Compare stored results with sample inputs before export. Do not assume that a syntactically valid formula or an old stored result is accurate.
+
+**When NOT to use Formula:**
+- When the answer depends on interpreting product context or supplier prose
+- When the rule is subjective rather than repeatable
+- When you need to generate a description or make an evidence-based judgment
 
 The [Formula functions reference](/product/reference/formula-functions) includes a complete measurement-extraction walkthrough, expected results and blank-result troubleshooting.
 
