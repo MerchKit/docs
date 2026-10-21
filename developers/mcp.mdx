@@ -146,7 +146,7 @@ write tools require the matching `write:*` scope. See
 | `get_entity(id, type, fields?)` | Fetch one entity's full detail (the one-map shape, references complete) |
 | `list_variants(id, limit?, offset?, fields?)` | List a product's variants (children) |
 | `get_references(id, type, attribute?)` | The key-scoped reference view with explicit positions — and **the** way to walk [inverse references](/developers/conventions#inverse-references-are-queries-not-data), which never appear in `attributes` |
-| `get_completeness(product_id, channel)` | Per-channel completeness with actionable issues |
+| `get_completeness(product_id, channel)` | Per-channel completeness with actionable issues, measured against the workspace's [requirements](#mcp-only-tools) |
 | `list_events(since?, entity_id?, limit?)` | The [change feed](/developers/conventions#events-the-change-feed) — workspace-wide, or scoped to one entity |
 | `list_attributes(type, channel?)` | Attribute definitions — schema discovery |
 | `get_attribute(key, type?)` | One attribute definition |
@@ -174,16 +174,22 @@ Every write tool follows the preview-then-`confirm` flow above.
 
 ### MCP-only tools
 
-MCP is a superset. Grid views and attribute classes left the public REST surface and live only
-here.
+MCP is a superset. Grid views and requirements (attribute classes) left the public REST surface and
+live only here.
 
 | Tool | Scope | What it does |
 |---|---|---|
 | `list_grid_views` / `get_grid_view` / `create_grid_view` / `update_grid_view` | `read:views` / `write:views` | Saved grid (table) views |
 | `set_grid_view_column_visibility(grid_view_id, col_ids, hidden?)` | `write:views` | Show/hide specific columns **in place** — column order, widths, pinning, sorting, and filters are preserved exactly (`update_grid_view` rebuilds the layout; use this for visibility-only changes). Preview reports exactly what would flip; unmatched keys are reported, never guessed |
 | `reorder_grid_views(type, grid_view_ids)` | `write:views` | Reorder an entity type's view tabs. Takes **every** view id of that type in the desired order; partial lists are rejected with what's missing |
-| `list_attribute_classes` / `get_attribute_class` | `read:attributes` | Attribute classes (cell-disabling rule sets) |
-| `create_attribute_class` / `update_attribute_class` | `write:attributes` | Create / update attribute classes |
+| `list_attribute_classes` / `get_attribute_class` | `read:attributes` | Requirements (attribute classes), shown in the app under **Requirements**. Each applies to one entity type and, for each value of a primary attribute such as `category`, marks attributes as enabled, disabled, required or recommended |
+| `create_attribute_class` / `update_attribute_class` | `write:attributes` | Create / update a requirement. `update_attribute_class` replaces the whole `attribute_mappings`, so prefer the tools below for targeted edits |
+| `set_rule_attributes(entity_type, behavior, categories, attribute_keys, operation)` | `write:attributes` | Enable, disable, require or recommend attributes for specific categories, without handling ids or rebuilding mappings. Creates the requirement for that behavior if it doesn't exist yet |
+| `add_category_to_rules(entity_type, value, copy_from_value?)` / `remove_category_from_rules(entity_type, value)` | `write:attributes` | Add a category to every behavior at once (optionally copying another category's attributes), or remove one from every behavior |
+
+The three requirement editors also take an optional `channel_id` (omit for core attributes) and
+`primary_evaluation_attribute_key`, which is only needed when a scope has more than one requirements
+configuration.
 
 <Callout type="warning">
   **Deletes are disabled during the beta.** Destructive operations are turned off across both REST
